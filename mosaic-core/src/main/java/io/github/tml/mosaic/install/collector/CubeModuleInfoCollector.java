@@ -1,10 +1,7 @@
 package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.cube.ExtensionPackageApi;
-import io.github.tml.mosaic.cube.MCube;
-import io.github.tml.mosaic.cube.MExtensionPackage;
+import io.github.tml.mosaic.cube.*;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
 import io.github.tml.mosaic.install.support.InfoContext;
 
@@ -79,7 +76,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector{
      */
     private boolean isValidExtensionPackageApiClass(Class<?> clazz) {
         // 1. 必须实现Cube接口
-        if (!ExtensionPackageApi.class.isAssignableFrom(clazz)) {
+        if (!ExtensionPackage.class.isAssignableFrom(clazz)) {
             return false;
         }
 
