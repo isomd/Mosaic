@@ -49,18 +49,14 @@ public class AnnotationInfoCollector implements CommonInfoCollector{
             Class<?> clazz = extensionPackage.getClazz();
             MExtensionPackage pkgAnno = clazz.getAnnotation(MExtensionPackage.class);
             if (pkgAnno != null && pkgAnno.cubeId().equals(cubeInfo.getId().toString())) {
-                // 创建扩展包定义
-                InfoContext.ExtensionPackageInfo pkgDef = new InfoContext.ExtensionPackageInfo(
-                        pkgAnno.cubeId(),
-                        new ArrayList<>(),
-                        pkgAnno.version(),
-                        pkgAnno.description(),
-                        pkgAnno.name(),
-                        pkgAnno.value()
-                );
-
+                extensionPackage.setCubeId(pkgAnno.cubeId());
+                extensionPackage.setVersion(pkgAnno.version());
+                extensionPackage.setDescription(pkgAnno.description());
+                extensionPackage.setName(pkgAnno.name());
+                extensionPackage.setId(pkgAnno.value());
+                extensionPackage.setExtensionPoints(new ArrayList<>());
                 // 扫描扩展点
-                scanExtensionPoints(clazz, pkgDef);
+                scanExtensionPoints(clazz, extensionPackage);
             }
         }
     }

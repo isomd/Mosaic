@@ -3,10 +3,7 @@ package io.github.tml.mosaic.core.factory.support;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.cube.ExtensionPackage;
-import io.github.tml.mosaic.cube.MethodExtensionPoint;
-import io.github.tml.mosaic.cube.PointParam;
+import io.github.tml.mosaic.cube.*;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
 import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
@@ -85,20 +82,12 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
 
                 // 注册扩展点
                 for (ExtensionPointDefinition epd : pkgDef.getExtensionPoints()) {
-                    Method method = pkgClass.getDeclaredMethod(epd.getMethodName(), PointParam.class);
-
-                    MethodExtensionPoint extensionPoint = new MethodExtensionPoint(
-                            extensionPackage,
-                            method,
-                            epd.getId(),
-                            epd.getExtensionName(),
-                            epd.getDescription()
-                    );
-
-                    // 设置扩展点属性
-                    extensionPoint.setPriority(epd.getPriority());
-                    extensionPoint.setAsyncFlag(epd.isAsyncFlag());
-
+                    ExtensionPoint extensionPoint = new ExtensionPoint(new GUUID(epd.getId()));
+                    extensionPoint.setExtensionName(epd.getExtensionName());
+                    extensionPoint.setDescription(epd.getDescription());
+                    extensionPoint.setMethodName(epd.getMethodName());
+                    extensionPoint.setParameterTypes(epd.getParameterTypes());
+                    extensionPoint.setReturnType(epd.getReturnType());
                     // 注册扩展点到扩展包
                     packageMeta.addExtensionPoint(extensionPoint);
                 }

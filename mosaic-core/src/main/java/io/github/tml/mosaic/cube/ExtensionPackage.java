@@ -34,6 +34,10 @@ public abstract class ExtensionPackage {
     public ExtensionPackage() {
     }
 
+    public ExtensionPackage(Cube cube) {
+        this.cube = cube;
+    }
+
     public void addExtensionPoint(ExtensionPoint extensionPoint) {
         extensionPoints.add(extensionPoint);
         extensionPointMap.put(extensionPoint.getExtensionId(), extensionPoint);
