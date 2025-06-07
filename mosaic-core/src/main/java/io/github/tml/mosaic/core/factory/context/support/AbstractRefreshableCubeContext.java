@@ -2,7 +2,7 @@ package io.github.tml.mosaic.core.factory.context.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.context.ConfigurableCubeContext;
-import io.github.tml.mosaic.core.factory.support.ConfigurableListableCubeFactory;
+
 import io.github.tml.mosaic.core.factory.support.DefaultDefinitionListableCubeFactory;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 
