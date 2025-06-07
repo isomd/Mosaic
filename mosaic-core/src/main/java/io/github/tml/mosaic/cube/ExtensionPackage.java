@@ -22,16 +22,14 @@ public abstract class ExtensionPackage {
     private String name;
     private String description;
     private String version;
+
+    //TODO 改成CubeId
     private Cube cube; // 关联的Cube实例
 
     // 扩展点元数据
     private final List<ExtensionPoint> extensionPoints = new CopyOnWriteArrayList<>();
     private final Map<GUID, ExtensionPoint> extensionPointMap = new ConcurrentHashMap<>();
 
-    public ExtensionPackage(Cube cube) {
-        this.id = cube.getId();
-        this.cube = cube;
-    }
 
     public ExtensionPackage() {
     }

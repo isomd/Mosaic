@@ -18,4 +18,6 @@ public class ExtensionPackageDefinition {
     public void addExtensionPoint(ExtensionPointDefinition epd) {
         extensionPoints.add(epd);
     }
+
+
 }
