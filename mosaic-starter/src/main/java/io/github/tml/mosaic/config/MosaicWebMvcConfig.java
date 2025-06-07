@@ -14,6 +14,7 @@ public class MosaicWebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/mosaic/**")
                 .addResourceLocations("classpath:/view/");
+
     }
 
 }
