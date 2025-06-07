@@ -1,0 +1,9 @@
+package io.github.tml.mosaic.core.factory.support;
+
+import io.github.tml.mosaic.factory.config.CubeDefinitionRegistry;
+
+/**
+ * 链式存储CubeFactory
+ */
+public abstract class ListableCubeFactory extends AbstractAutowireCapableCubeFactory implements CubeDefinitionRegistry, ConfigurableCubeFactory  {
+}
