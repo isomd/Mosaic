@@ -5,9 +5,9 @@ import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.factory.definition.ExtensionPointDefinition;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
+import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;

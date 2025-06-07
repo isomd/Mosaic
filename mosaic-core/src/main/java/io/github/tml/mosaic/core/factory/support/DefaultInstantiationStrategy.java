@@ -3,8 +3,8 @@ package io.github.tml.mosaic.core.factory.support;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.factory.config.InstantiationStrategy;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
 
 import java.lang.reflect.Constructor;
 

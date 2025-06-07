@@ -1,8 +1,8 @@
 package io.github.tml.mosaic.core.factory.context.support;
 
-import io.github.tml.mosaic.factory.context.json.JsonCubeDefinitionReader;
-import io.github.tml.mosaic.factory.support.DefaultDefinitionListableCubeFactory;
-import io.github.tml.mosaic.factory.support.ListableCubeFactory;
+import io.github.tml.mosaic.core.factory.context.json.JsonCubeDefinitionReader;
+import io.github.tml.mosaic.core.factory.support.DefaultDefinitionListableCubeFactory;
+import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 import io.github.tml.mosaic.install.support.registry.InstallerRegistry;
 
 /**

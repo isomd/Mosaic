@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.factory.io.loader;
 
-import io.github.tml.mosaic.factory.io.resource.Resource;
+import io.github.tml.mosaic.core.factory.io.resource.Resource;
 
 /**
  * 描述: 资源加载器

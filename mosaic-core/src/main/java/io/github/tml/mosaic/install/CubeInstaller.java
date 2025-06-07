@@ -1,9 +1,9 @@
 package io.github.tml.mosaic.install;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.factory.io.resource.Resource;
-import io.github.tml.mosaic.factory.io.loader.ResourceLoader;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 
 import java.util.List;
 

@@ -7,10 +7,10 @@ import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.MethodExtensionPoint;
 import io.github.tml.mosaic.cube.PointParam;
-import io.github.tml.mosaic.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.factory.definition.ExtensionPointDefinition;
-import io.github.tml.mosaic.factory.config.InstantiationStrategy;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
+import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
+import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;

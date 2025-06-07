@@ -1,10 +1,10 @@
 package io.github.tml.mosaic.core.factory.context.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.factory.context.ConfigurableCubeContext;
-import io.github.tml.mosaic.factory.support.ConfigurableListableCubeFactory;
-import io.github.tml.mosaic.factory.support.DefaultDefinitionListableCubeFactory;
-import io.github.tml.mosaic.factory.support.ListableCubeFactory;
+import io.github.tml.mosaic.core.factory.context.ConfigurableCubeContext;
+import io.github.tml.mosaic.core.factory.support.ConfigurableListableCubeFactory;
+import io.github.tml.mosaic.core.factory.support.DefaultDefinitionListableCubeFactory;
+import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 
 /**
  * 描述: 获取Cube工厂和加载资源

@@ -13,9 +13,7 @@ public class GenericCubeActuator implements CubeActuator{
             GUID cubeId = setupCubeInfo.getCubeId();
 
             // TODO 从cube中获取方法
-            Cube cube =
 
-            Cube.MetaData metaData = cube.getMetaData();
 //            ExtensionPoint extensionPoint = metaData.findExtensionPoint(setupCubeInfo.getMethodId());
 
             // TODO 反射执行方法

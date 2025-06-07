@@ -1,9 +1,9 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.factory.config.CubeDefinitionRegistry;
-import io.github.tml.mosaic.factory.io.loader.ResourceLoader;
-import io.github.tml.mosaic.factory.io.resource.Resource;
+import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
+import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
+import io.github.tml.mosaic.core.factory.io.resource.Resource;
 
 /**
  * 描述: Cube定义读取接口

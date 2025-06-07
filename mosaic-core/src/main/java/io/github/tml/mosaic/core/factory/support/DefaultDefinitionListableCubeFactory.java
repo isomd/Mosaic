@@ -2,8 +2,8 @@ package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.factory.config.CubeDefinitionRegistry;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

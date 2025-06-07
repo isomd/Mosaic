@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.factory.context;
 
-import io.github.tml.mosaic.factory.CubeFactory;
+import io.github.tml.mosaic.core.factory.CubeFactory;
 
 /**
  * 描述: Cube上下文接口

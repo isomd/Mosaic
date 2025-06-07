@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.factory.support;
 
-import io.github.tml.mosaic.factory.config.CubeDefinitionRegistry;
+import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
 
 /**
  * 链式存储CubeFactory

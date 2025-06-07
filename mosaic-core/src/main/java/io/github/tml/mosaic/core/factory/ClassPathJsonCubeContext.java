@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.core.factory;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.factory.context.support.AbstractJsonCubeContext;
+import io.github.tml.mosaic.core.factory.context.support.AbstractJsonCubeContext;
 import io.github.tml.mosaic.install.support.registry.InstallerRegistry;
 import lombok.Data;
 

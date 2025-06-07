@@ -2,7 +2,7 @@ package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.factory.config.SingletonCubeRegistry;
+import io.github.tml.mosaic.core.factory.config.SingletonCubeRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

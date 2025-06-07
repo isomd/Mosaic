@@ -1,9 +1,9 @@
 package io.github.tml.mosaic.core.factory.io.loader;
 
-import io.github.tml.mosaic.factory.io.resource.Resource;
-import io.github.tml.mosaic.factory.io.resource.UrlResource;
-import io.github.tml.mosaic.factory.io.resource.ClassPathResource;
-import io.github.tml.mosaic.factory.io.resource.FileSystemResource;
+import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.core.factory.io.resource.UrlResource;
+import io.github.tml.mosaic.core.factory.io.resource.ClassPathResource;
+import io.github.tml.mosaic.core.factory.io.resource.FileSystemResource;
 import io.github.tml.mosaic.util.Assert;
 
 import java.net.MalformedURLException;
