@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.support.jar;
+package io.github.tml.mosaic.install.support;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;

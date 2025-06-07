@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.install.adpter;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.collector.CommonInfoCollector;
 import io.github.tml.mosaic.install.collector.InfoCollector;
@@ -17,10 +18,18 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractResourceFileAdapter implements ResourceFileAdapter{
 
+    private final ResourceLoader resourceLoader;
+
     private List<InfoCollector> collectorList;
 
-    public AbstractResourceFileAdapter(List<InfoCollector> collectorList) {
+    public AbstractResourceFileAdapter(List<InfoCollector> collectorList, ResourceLoader resourceLoader) {
         this.collectorList = collectorList;
+        this.resourceLoader = resourceLoader;
+    }
+
+    @Override
+    public ResourceLoader getResourceLoader() {
+        return resourceLoader;
     }
 
     @Override
@@ -42,5 +51,12 @@ public abstract class AbstractResourceFileAdapter implements ResourceFileAdapter
         }
 
         return infoContext;
+    }
+
+    @Override
+    public InfoContext adapter(String location) {
+        ResourceLoader resourceLoader = getResourceLoader();
+        Resource resource = resourceLoader.getResource(location);
+        return adapter(resource);
     }
 }

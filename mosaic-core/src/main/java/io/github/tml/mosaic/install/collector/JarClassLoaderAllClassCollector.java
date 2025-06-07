@@ -3,7 +3,7 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.support.InfoContext;
-import io.github.tml.mosaic.install.support.jar.JarPluginClassLoader;
+import io.github.tml.mosaic.install.support.JarPluginClassLoader;
 
 import java.io.File;
 import java.io.IOException;
