@@ -8,6 +8,11 @@
     <artifactId>Mosaic</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <name>mosaic</name>
+
+    <description>amazing plugin framework</description>
+
     <modules>
         <module>mosaic-core</module>
         <module>mosaic-starter</module>

@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * 子插件页面重定向过滤器
@@ -15,6 +16,10 @@ import java.io.IOException;
 @Configuration
 public class ChildAssetPathFilter extends OncePerRequestFilter {
 
+    private static final Set<String> ASSET_PATH_SET = new TreeSet<>();
+    static {
+        ASSET_PATH_SET.add("/mosaic/");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain) throws ServletException, IOException {
@@ -22,8 +27,9 @@ public class ChildAssetPathFilter extends OncePerRequestFilter {
         String requestURI = req.getRequestURI();
 
         // 处理子页面的静态资源
-        if(isChildPluginRequest(req) && requestURI.startsWith("/assets/")) {
-            String newPath = "/mosaic-child-plugin" + requestURI;
+        String assetPath = null;
+        if(Objects.nonNull(assetPath = getAssetPath(req)) && requestURI.startsWith("/assets/")) {
+            String newPath = assetPath + requestURI;
             req.getRequestDispatcher(newPath).forward(req, resp);
             return;
         }
@@ -32,8 +38,15 @@ public class ChildAssetPathFilter extends OncePerRequestFilter {
     }
 
 
-    private boolean isChildPluginRequest(HttpServletRequest request) {
+    private String getAssetPath(HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        return referer != null && referer.contains("/mosaic-child-plugin");
+        if (referer != null) {
+            for (String assetPath : ASSET_PATH_SET) {
+                if (referer.contains(assetPath)) {
+                    return assetPath;
+                }
+            }
+        }
+        return null;
     }
 }
