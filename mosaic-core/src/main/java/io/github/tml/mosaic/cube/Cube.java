@@ -29,10 +29,6 @@ public abstract class Cube extends UniqueEntity {
         this.metaData = new MetaData();
     }
 
-    public Cube() {
-        this(CommonComponent.GuidAllocator().nextGUID());
-    }
-
     public void initialize() {
         if (!initialized) {
             doInitialize();

@@ -10,13 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * 日期: 2025/5/27
  */
 @Slf4j
-@Data
 public abstract class AbstractCube extends Cube {
-
-    public AbstractCube() {
-        super();
-        getMetaData().setName(this.getClass().getSimpleName());
-    }
 
     public AbstractCube(GUID cubeId) {
         super(cubeId);

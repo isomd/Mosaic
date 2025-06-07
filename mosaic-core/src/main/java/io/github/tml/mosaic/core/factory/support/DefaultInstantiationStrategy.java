@@ -22,8 +22,8 @@ public class DefaultInstantiationStrategy implements InstantiationStrategy {
             Class<?> clazz = cubeDefinition.getClassLoader().loadClass(cubeDefinition.getClassName());
 
             // 通过反射实例化
-            Constructor<?> constructor = clazz.getConstructor();
-            return (Cube) constructor.newInstance();
+            Constructor<?> constructor = clazz.getConstructor(GUID.class);
+            return (Cube) constructor.newInstance(cubeId);
         } catch (Exception e) {
             throw new CubeException("Cube实例化失败: " + cubeDefinition.getClassName(), e);
         }
