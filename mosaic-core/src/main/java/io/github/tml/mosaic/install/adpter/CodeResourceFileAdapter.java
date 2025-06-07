@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.install.adpter;
 
+import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public class CodeResourceFileAdapter extends AbstractResourceFileAdapter{
 
     public CodeResourceFileAdapter() {
-        super(List.of());
+        super(List.of(), new DefaultResourceLoader());
     }
 
     @Override

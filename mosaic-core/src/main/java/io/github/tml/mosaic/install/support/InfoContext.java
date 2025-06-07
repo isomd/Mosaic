@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.install.support;
 
-import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import lombok.AllArgsConstructor;
@@ -84,8 +82,6 @@ public class InfoContext {
             extensionPoints.add(extensionPointInfo);
         }
     }
-
-
 
     // 扩展点信息
     @AllArgsConstructor

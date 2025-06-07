@@ -2,14 +2,14 @@ package io.github.tml.mosaic.core.factory.context.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.support.AbstractCubeDefinitionReader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
-import io.github.tml.mosaic.install.CubeInstaller;
-import io.github.tml.mosaic.install.support.registry.InstallerRegistry;
-
+import io.github.tml.mosaic.install.adpter.ResourceFileAdapter;
+import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
+import io.github.tml.mosaic.install.support.InfoContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -21,17 +21,17 @@ import java.util.List;
  */
 public class JsonCubeDefinitionReader extends AbstractCubeDefinitionReader {
 
-    private final InstallerRegistry installerRegistry;
+    private final ResourceFileAdapterRegistry fileAdapterRegistry;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public JsonCubeDefinitionReader(CubeDefinitionRegistry registry, InstallerRegistry installerRegistry) {
+    public JsonCubeDefinitionReader(CubeDefinitionRegistry registry, ResourceFileAdapterRegistry fileAdapterRegistry) {
         super(registry);
-        this.installerRegistry = installerRegistry;
+        this.fileAdapterRegistry = fileAdapterRegistry;
     }
 
-    public JsonCubeDefinitionReader(CubeDefinitionRegistry registry, ResourceLoader resourceLoader, InstallerRegistry installerRegistry) {
+    public JsonCubeDefinitionReader(CubeDefinitionRegistry registry, ResourceLoader resourceLoader, ResourceFileAdapterRegistry fileAdapterRegistry) {
         super(registry, resourceLoader);
-        this.installerRegistry = installerRegistry;
+        this.fileAdapterRegistry = fileAdapterRegistry;
     }
 
     @Override
@@ -60,19 +60,18 @@ public class JsonCubeDefinitionReader extends AbstractCubeDefinitionReader {
     }
 
     private void processInstallationItem(InstallationItem item) throws CubeException {
-        // 获取安装器
-        CubeInstaller installer = installerRegistry.getInstaller(item.getType());
-        if (installer == null) {
-            throw new CubeException("No installer found for type: " + item.getType());
-        }
+        ResourceFileAdapter adapter = fileAdapterRegistry.getAdapter(item.getType());
+        if (adapter == null) throw new CubeException("No adapter for type: " + item.getType());
 
-        // 执行安装
-        List<CubeDefinition> definitions = installer.installCube(item.getLocation());
+        InfoContext infoContext = adapter.adapter(item.getLocation());
 
-        // 注册CubeDefinition
+        // 关键转换步骤
+        List<CubeDefinition> cubeDefs = CubeDefinitionConverter.convertToCubeDefinitions(infoContext);
+
+        // 注册到CubeDefinitionRegistry
         CubeDefinitionRegistry registry = getRegistry();
-        for (CubeDefinition definition : definitions) {
-            registry.registerCubeDefinition(definition.getId(), definition);
+        for (CubeDefinition cubeDef : cubeDefs) {
+            registry.registerCubeDefinition(cubeDef.getId(), cubeDef);
         }
     }
 }
