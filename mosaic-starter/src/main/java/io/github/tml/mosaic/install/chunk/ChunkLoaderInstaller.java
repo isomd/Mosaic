@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.install.chunk;
 
+import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 
 /**
  * @author welsir
@@ -19,21 +22,27 @@ import java.nio.file.Paths;
 public class ChunkLoaderInstaller implements CommandLineRunner {
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws ClassNotFoundException {
         String pid = getCurrentPid();
-        String jarPath = getJarPath(io.github.tml.mosaic.MosaicChunkAgent.class);
-        String currentJar = getCurrentJarPath();
+
+        Class<?> currentClass = Class.forName(ChunkLoaderInstaller.class.getName());
+        Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicChunkAgent");
         try {
+            String currentPath = EnvironmentPathFindUtil.getJarPath(currentClass);
+
+            String agentPath = EnvironmentPathFindUtil.getJarPath(agentClass);
             String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             ProcessBuilder pb = new ProcessBuilder(
                     javaBin,
-                    "-cp", currentJar,
+                    "-cp", currentPath,
                     "io.github.tml.mosaic.install.chunk.MosaicChunkAgentInstallScript",
                     pid,
-                    jarPath
+                    agentPath
             );
-            log.info("检测到的agent安装器路径:{}",currentJar);
-            log.info("检测到的agent脚本路径:{}",jarPath);
+
+            log.info("检测到的agent安装器路径:{}",currentPath);
+            log.info("检测到的agent脚本路径:{}",agentPath);
+
             pb.inheritIO();
             Process process = pb.start();
         } catch (IOException e) {
@@ -41,21 +50,6 @@ public class ChunkLoaderInstaller implements CommandLineRunner {
         }
     }
 
-    public static String getJarPath(Class<?> clazz) {
-        try {
-            return Paths.get(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()).toString();
-        } catch (Exception e) {
-            throw new RuntimeException("无法获取jar路径", e);
-        }
-    }
-
-    private String getCurrentJarPath() {
-        try {
-            return new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
-        } catch (Exception e) {
-            throw new RuntimeException("无法获取当前 jar 路径", e);
-        }
-    }
 
     private String getCurrentPid() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
