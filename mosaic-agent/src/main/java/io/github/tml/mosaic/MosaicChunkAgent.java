@@ -1,6 +1,7 @@
 package io.github.tml.mosaic;
 
 import io.github.tml.mosaic.server.MosaicAgentSocketServer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.instrument.Instrumentation;
 
@@ -11,12 +12,13 @@ import java.lang.instrument.Instrumentation;
  * @date 2025/5/27
  */
 
+@Slf4j
 public class MosaicChunkAgent {
 
     private static Instrumentation instrumentation;
     public static void agentmain(String args, Instrumentation inst) {
 
-        System.out.println("run java agent...");
+        log.info("run java agent...");
         instrumentation = inst;
         new Thread(() -> {
             try {
