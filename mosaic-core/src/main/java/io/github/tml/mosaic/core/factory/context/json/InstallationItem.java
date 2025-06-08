@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.core.factory.context.json;
 
+import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
 @Data
 public class InstallationItem {
 
-    private String type;
+    private ResourceFileType type;
     private String location;
     private Map<String, Object> properties;
 }
