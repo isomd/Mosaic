@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.install;
+package io.github.tml.mosaic.install.chunk;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Paths;
 
 /**
  * @author welsir
@@ -18,14 +19,14 @@ public class ChunkLoaderInstaller implements CommandLineRunner {
     @Override
     public void run(String... args) {
         String pid = getCurrentPid();
-        String jarPath = getJarPath(org.springframework.boot.SpringApplication.class);
+        String jarPath = getJarPath(io.github.tml.mosaic.MosaicChunkAgent.class);
         String currentJar = getCurrentJarPath();
         try {
             String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             ProcessBuilder pb = new ProcessBuilder(
                     javaBin,
                     "-cp", currentJar,
-                    "com.agentscript.core.MosaicChunkAgentInstall",
+                    "io.github.tml.mosaic.install.chunk.MosaicChunkAgentInstallScript",
                     pid,
                     jarPath
             );
@@ -39,7 +40,7 @@ public class ChunkLoaderInstaller implements CommandLineRunner {
 
     public static String getJarPath(Class<?> clazz) {
         try {
-            return clazz.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            return Paths.get(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()).toString();
         } catch (Exception e) {
             throw new RuntimeException("无法获取jar路径", e);
         }

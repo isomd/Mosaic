@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.install;
+package io.github.tml.mosaic.install.chunk;
 
 import com.sun.tools.attach.VirtualMachine;
 

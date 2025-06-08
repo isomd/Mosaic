@@ -6,6 +6,7 @@ import io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO;
 import io.github.tml.mosaic.util.JavaStringToFileUtil;
 
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
 import java.net.ServerSocket;
@@ -33,13 +34,15 @@ public class MosaicAgentSocketServer {
                 AgentServerRequestDTO req = JSON.parseObject(json, AgentServerRequestDTO.class);
                 Class<?> targetClass = Class.forName(req.getClassName());
 
+                System.out.println("replace code:");
+                System.out.println(req.getClassCode());
+
                 //内存中 编译class
                 byte[] replace = JavaStringToFileUtil.compile(req.getClassName(), req.getClassCode());
 
                 //热替换
                 MosaicChunkAgent.getInstrumentation()
                         .redefineClasses(new ClassDefinition(targetClass,replace));
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
