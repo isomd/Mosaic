@@ -12,12 +12,11 @@ import java.util.Optional;
  * 槽构建器
  */
 public class SlotBuilder {
-
     public static BuilderContext builder(SlotManager manager) {
         return new BuilderContext(manager);
     }
 
-   static class BuilderContext{
+   public static class BuilderContext{
 
         private GUID slotId;
 
@@ -54,7 +53,10 @@ public class SlotBuilder {
         public Optional<Slot> build() {
            Slot slot = null;
            if(Objects.nonNull(slotId)) {
-               slot = new Slot((DotNotationId) slotId);
+               slot = manager.getSlot(slotId);
+               if(slot==null){
+                   slot = new Slot((DotNotationId) slotId);
+               }
                slot.Setup(setupCubeInfo);
                manager.registerSlot(slot);
            }
