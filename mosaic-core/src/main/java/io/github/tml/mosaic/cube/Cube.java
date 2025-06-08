@@ -69,7 +69,7 @@ public abstract class Cube extends UniqueEntity {
         getMetaData().extensionPackageMap.put(extensionPackage.getId(), extensionPackage);
     }
 
-    public ExtensionPackage getExtensionPackage(GUID packageId) {
+    public ExtensionPackage findExPackage(GUID packageId) {
         return getMetaData().extensionPackageMap.get(packageId);
     }
 }
