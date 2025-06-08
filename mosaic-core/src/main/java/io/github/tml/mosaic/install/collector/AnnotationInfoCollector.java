@@ -1,16 +1,11 @@
 package io.github.tml.mosaic.install.collector;
 
-import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.MCube;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
 import io.github.tml.mosaic.install.support.InfoContext;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,14 +26,7 @@ public class AnnotationInfoCollector implements CommonInfoCollector{
     private void scanCubeInfo(InfoContext.CubeInfo cubeInfo){
         Class<?> clazz = cubeInfo.getClazz();
         MCube mCube = clazz.getAnnotation(MCube.class);
-        String id = mCube.value();
-        String name = mCube.name().isEmpty() ? clazz.getSimpleName() : mCube.name();
-
-        cubeInfo.setId(new GUUID(id));
-        cubeInfo.setName(name);
-        cubeInfo.setVersion(mCube.version());
-        cubeInfo.setDescription(mCube.description());
-        cubeInfo.setModel(mCube.model());
+        cubeInfo.setInfoByMCube(mCube);
     }
 
     private void scanExtensionPackages(InfoContext.CubeInfo cubeInfo) {
@@ -49,12 +37,7 @@ public class AnnotationInfoCollector implements CommonInfoCollector{
             Class<?> clazz = extensionPackage.getClazz();
             MExtensionPackage pkgAnno = clazz.getAnnotation(MExtensionPackage.class);
             if (pkgAnno != null && pkgAnno.cubeId().equals(cubeInfo.getId().toString())) {
-                extensionPackage.setCubeId(pkgAnno.cubeId());
-                extensionPackage.setVersion(pkgAnno.version());
-                extensionPackage.setDescription(pkgAnno.description());
-                extensionPackage.setName(pkgAnno.name());
-                extensionPackage.setId(pkgAnno.value());
-                extensionPackage.setExtensionPoints(new ArrayList<>());
+                extensionPackage.setInfoByMExtensionPackage(pkgAnno);
                 // 扫描扩展点
                 scanExtensionPoints(clazz, extensionPackage);
             }
@@ -65,16 +48,9 @@ public class AnnotationInfoCollector implements CommonInfoCollector{
         for (Method method : pkgClass.getDeclaredMethods()) {
             MExtension extension = method.getAnnotation(MExtension.class);
             if (extension != null) {
-                InfoContext.ExtensionPointInfo epd = new InfoContext.ExtensionPointInfo(
-                        extension.value(),
-                        method.getName(),
-                        extension.name(),
-                        extension.priority(),
-                        extension.description(),
-                        false,
-                        method.getReturnType(),
-                        method.getParameterTypes()
-                );
+                InfoContext.ExtensionPointInfo epd = new InfoContext.ExtensionPointInfo();
+                epd.setInfoByMExtensionPoint(extension);
+                epd.setInfoByMethod(method);
                 packageInfo.addExtensionPoint(epd);
             }
         }
