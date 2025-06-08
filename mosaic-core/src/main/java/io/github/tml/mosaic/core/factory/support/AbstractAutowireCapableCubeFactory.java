@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.*;
@@ -72,14 +73,14 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
                 extensionPackage.setName(pkgDef.getName());
                 extensionPackage.setDescription(pkgDef.getDescription());
                 extensionPackage.setVersion(pkgDef.getVersion());
-                extensionPackage.setId(new GUUID(pkgDef.getId()));
+                extensionPackage.setId(new DotNotationId(pkgDef.getId()));
 
                 // 注册扩展包到Cube元数据
                 cube.addExtensionPackage(extensionPackage);
 
                 // 注册扩展点
                 for (ExtensionPointDefinition epd : pkgDef.getExtensionPoints()) {
-                    ExtensionPoint extensionPoint = new ExtensionPoint(new GUUID(epd.getId()));
+                    ExtensionPoint extensionPoint = new ExtensionPoint(new DotNotationId(epd.getId()));
                     extensionPoint.setExtensionName(epd.getExtensionName());
                     extensionPoint.setDescription(epd.getDescription());
                     extensionPoint.setMethodName(epd.getMethodName());

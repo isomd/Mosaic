@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.cube;
 
+import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
@@ -33,7 +34,7 @@ public class ExtensionPoint extends UniqueEntity {
     private int priority = 100;
 
     public ExtensionPoint(String id, String name, String description) {
-        super(new GUUID(id));
+        super(new DotNotationId(id));
         this.methodName = name;
         this.description = description;
     }
