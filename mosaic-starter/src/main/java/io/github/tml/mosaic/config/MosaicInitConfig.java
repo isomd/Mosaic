@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.config;
 
+import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.core.factory.ClassPathJsonCubeContext;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
@@ -59,7 +60,9 @@ public class MosaicInitConfig {
      */
     @Bean
     public SlotManager slotManager(){
-        return GenericSlotManager.manager();
+        GenericSlotManager manager = GenericSlotManager.manager();
+        GoldenShovel.loadSlotManager(manager);
+        return manager;
     }
 
     @Bean
@@ -67,6 +70,7 @@ public class MosaicInitConfig {
     public CubeActuatorProxy cubeActuatorProxy(CubeContext cubeContext, SlotManager slotManager){
         CubeActuatorProxy cubeActuatorProxy = new CubeActuatorProxy();
         cubeActuatorProxy.init(cubeContext, slotManager);
+        GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
     }
 }
