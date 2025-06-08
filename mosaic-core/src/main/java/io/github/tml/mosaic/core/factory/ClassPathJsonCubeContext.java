@@ -1,47 +1,37 @@
 package io.github.tml.mosaic.core.factory;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.context.support.AbstractJsonCubeContext;
-import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
-import lombok.Data;
-
+import io.github.tml.mosaic.core.factory.context.json.JsonCubeInstallationItemReader;
+import io.github.tml.mosaic.core.factory.context.support.AbstractResourcesLoaderCubeContext;
 
 /**
  * 描述: 核心应用上下文实现类
  * @author suifeng
  * 日期: 2025/6/7
  */
-@Data
-public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
+public class ClassPathJsonCubeContext extends AbstractResourcesLoaderCubeContext {
 
-    private ResourceFileAdapterRegistry adapterRegistry;
-
-    private String[] configLocations;
+    private final String[] configLocations;
 
     public ClassPathJsonCubeContext() {
-        refresh();
+        this(new String[0]);
     }
 
     /**
      * 从 JSON 中加载 CubeDefinition，并刷新上下文
      */
-    public ClassPathJsonCubeContext(String configLocations, ResourceFileAdapterRegistry adapterRegistry) throws CubeException {
-        this(new String[]{configLocations}, adapterRegistry);
+    public ClassPathJsonCubeContext(String configLocations) throws CubeException {
+        this(new String[]{configLocations});
     }
 
-    public ClassPathJsonCubeContext(String[] configLocations, ResourceFileAdapterRegistry adapterRegistry) throws CubeException {
+    public ClassPathJsonCubeContext(String[] configLocations) throws CubeException {
+        super();
         this.configLocations = configLocations;
-        this.adapterRegistry = adapterRegistry;
-        refresh();
+        this.cubeInstallationItemReader = new JsonCubeInstallationItemReader();
     }
 
     @Override
     protected String[] getConfigLocations() {
         return configLocations;
-    }
-
-    @Override
-    protected ResourceFileAdapterRegistry getAdapterRegistry() {
-        return adapterRegistry;
     }
 }
