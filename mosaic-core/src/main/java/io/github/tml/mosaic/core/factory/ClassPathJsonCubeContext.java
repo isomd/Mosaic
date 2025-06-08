@@ -1,7 +1,9 @@
 package io.github.tml.mosaic.core.factory;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.context.support.AbstractJsonCubeContext;
+import io.github.tml.mosaic.core.factory.context.json.JsonCubeInstallationItemReader;
+import io.github.tml.mosaic.core.factory.context.support.AbstractResourcesLoaderCubeContext;
+import io.github.tml.mosaic.core.factory.support.CubeInstallationItemReader;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
 import lombok.Data;
@@ -13,16 +15,17 @@ import lombok.Data;
  * 日期: 2025/6/7
  */
 @Data
-public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
+public class ClassPathJsonCubeContext extends AbstractResourcesLoaderCubeContext {
 
     private ResourceFileAdapterRegistry adapterRegistry;
 
     private CubeDefinitionInstaller cubeDefinitionInstaller;
 
+    private CubeInstallationItemReader cubeInstallationItemReader = new JsonCubeInstallationItemReader();
+
     private String[] configLocations;
 
     public ClassPathJsonCubeContext() {
-        refresh();
     }
 
     /**
@@ -33,8 +36,8 @@ public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
     }
 
     public ClassPathJsonCubeContext(String[] configLocations) throws CubeException {
+        super();
         this.configLocations = configLocations;
-        refresh();
     }
 
     public void setCubeDefinitionInstaller(CubeDefinitionInstaller cubeDefinitionInstaller) {

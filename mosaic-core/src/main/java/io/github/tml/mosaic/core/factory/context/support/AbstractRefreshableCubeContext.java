@@ -15,6 +15,10 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
 
     private DefaultDefinitionListableCubeFactory cubeFactory;
 
+    public AbstractRefreshableCubeContext() {
+        cubeFactory = createBeanFactory();
+    }
+
     @Override
     public void refresh() throws CubeException {
         // 1. 创建 CubeFactory，并加载 CubeDefinition

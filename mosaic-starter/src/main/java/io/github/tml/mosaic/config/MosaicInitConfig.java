@@ -65,9 +65,13 @@ public class MosaicInitConfig {
         if (cubeDefinitionInstaller != null){
             classPathJsonCubeContext.setCubeDefinitionInstaller(cubeDefinitionInstaller);
         }
+
         if (resourceFileAdapterRegistry != null){
             classPathJsonCubeContext.setResourceFileAdapterRegistry(resourceFileAdapterRegistry);
         }
+
+        // 在此处刷新
+        classPathJsonCubeContext.refresh();
 
         return classPathJsonCubeContext;
     }

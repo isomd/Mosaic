@@ -4,6 +4,7 @@ import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
 import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
 import io.github.tml.mosaic.core.factory.context.json.JsonCubeInstallationItemReader;
+import io.github.tml.mosaic.core.factory.support.CubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 import io.github.tml.mosaic.install.adpter.ResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
@@ -18,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
  * 日期: 2025/6/7
  */
 @Slf4j
-public abstract class AbstractJsonCubeContext extends AbstractRefreshableCubeContext {
+public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefreshableCubeContext {
 
     @Override
     protected void loadCubeDefinitions(ListableCubeFactory cubeFactory) {
-        JsonCubeInstallationItemReader cubeDefinitionReader = new JsonCubeInstallationItemReader();
         String[] configLocations = getConfigLocations();
         if (null != configLocations) {
-            InstallationConfig installationConfig = cubeDefinitionReader.loadCubeInstallationItem(configLocations);
+            InstallationConfig installationConfig = getCubeInstallationItemReader().loadCubeInstallationItem(configLocations);
             if (null != installationConfig && !installationConfig.getInstallations().isEmpty()) {
                 installationConfig.getInstallations().forEach(this::processInstallationItem);
             } else {
@@ -44,6 +44,8 @@ public abstract class AbstractJsonCubeContext extends AbstractRefreshableCubeCon
     }
 
     protected abstract String[] getConfigLocations();
+
+    protected abstract CubeInstallationItemReader getCubeInstallationItemReader();
 
     protected abstract ResourceFileAdapterRegistry getAdapterRegistry();
 

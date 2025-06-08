@@ -2,7 +2,6 @@ package io.github.tml.mosaic.core.factory.context.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
 import io.github.tml.mosaic.core.factory.support.AbstractCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
