@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.install.chunk;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
  * @date 2025/6/6
  */
 @Component
+@Slf4j
 public class ChunkLoaderInstaller implements CommandLineRunner {
 
     @Override
@@ -30,7 +32,8 @@ public class ChunkLoaderInstaller implements CommandLineRunner {
                     pid,
                     jarPath
             );
-
+            log.info("检测到的agent安装器路径:{}",currentJar);
+            log.info("检测到的agent脚本路径:{}",jarPath);
             pb.inheritIO();
             Process process = pb.start();
         } catch (IOException e) {
