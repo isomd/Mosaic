@@ -5,6 +5,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/mosaic-user-test-project/pom.xml" />
+        <option value="$PROJECT_DIR$/mosaic-test-plugin/pom.xml" />
       </list>
     </option>
   </component>

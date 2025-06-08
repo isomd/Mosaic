@@ -6,6 +6,10 @@
     <file url="file://$PROJECT_DIR$/mosaic-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mosaic-starter/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mosaic-starter/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mosaic-test-plugin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mosaic-test-plugin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mosaic-user-test-project/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mosaic-user-test-project/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

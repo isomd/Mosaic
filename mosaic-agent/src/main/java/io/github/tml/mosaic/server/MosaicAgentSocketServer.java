@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import io.github.tml.mosaic.MosaicChunkAgent;
 import io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO;
 import io.github.tml.mosaic.util.JavaStringToFileUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @description :
  * @date 2025/6/7
  */
+@Slf4j
 public class MosaicAgentSocketServer {
 
     public void start(int port) throws IOException {
@@ -34,8 +36,8 @@ public class MosaicAgentSocketServer {
                 AgentServerRequestDTO req = JSON.parseObject(json, AgentServerRequestDTO.class);
                 Class<?> targetClass = Class.forName(req.getClassName());
 
-                System.out.println("replace code:");
-                System.out.println(req.getClassCode());
+                log.info("replace className: {}",req.getClassName());
+                log.info("replace code: {}",req.getClassCode());
 
                 //内存中 编译class
                 byte[] replace = JavaStringToFileUtil.compile(req.getClassName(), req.getClassCode());

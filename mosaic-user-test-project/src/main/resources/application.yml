@@ -1,0 +1,11 @@
+server:
+  port: ${SERVER_PORT:9000}
+
+spring:
+  web:
+    resources:
+      static-locations: classpath:/web/
+
+mosaic:
+  startup:
+    resource-path: classpath:start1.json
