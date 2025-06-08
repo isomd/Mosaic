@@ -56,7 +56,7 @@ public class CubeActuatorProxy {
         Cube cube = Optional.ofNullable(context.getCube(setupCubeInfo.getCubeId()))
                 .orElseThrow(()->new ActuatorException(String.format("cube %s is not found", setupCubeInfo.getCubeId())));
 
-        ExtensionPackage exPackage = Optional.ofNullable(cube.findExPackage(setupCubeInfo.getExPackageId()))
+        ExtensionPackage<?> exPackage = Optional.ofNullable(cube.findExPackage(setupCubeInfo.getExPackageId()))
                 .orElseThrow(() -> new ActuatorException(String.format("cube %s exPackage %s is not found"
                         , setupCubeInfo.getCubeId(), setupCubeInfo.getExPackageId())));
 
