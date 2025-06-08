@@ -3,7 +3,6 @@ package io.github.tml.mosaic.core.factory.context.support;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
 import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
-import io.github.tml.mosaic.core.factory.context.json.JsonCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.CubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 import io.github.tml.mosaic.install.adpter.ResourceFileAdapter;
@@ -21,11 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefreshableCubeContext {
 
+    protected ResourceFileAdapterRegistry adapterRegistry;
+
+    protected CubeDefinitionInstaller cubeDefinitionInstaller;
+
+    protected CubeInstallationItemReader cubeInstallationItemReader;
+
     @Override
     protected void loadCubeDefinitions(ListableCubeFactory cubeFactory) {
         String[] configLocations = getConfigLocations();
         if (null != configLocations) {
-            InstallationConfig installationConfig = getCubeInstallationItemReader().loadCubeInstallationItem(configLocations);
+            InstallationConfig installationConfig = cubeInstallationItemReader.loadCubeInstallationItem(configLocations);
             if (null != installationConfig && !installationConfig.getInstallations().isEmpty()) {
                 installationConfig.getInstallations().forEach(this::processInstallationItem);
             } else {
@@ -41,13 +46,26 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
         }
         InfoContext infoContext = adapter.adapter(item.getLocation());
         getCubeDefinitionInstaller().installCubeDefinition(infoContext);
+
+    }
+
+    public void setCubeDefinitionInstaller(CubeDefinitionInstaller cubeDefinitionInstaller) {
+        this.cubeDefinitionInstaller = cubeDefinitionInstaller;
+        cubeDefinitionInstaller.setRegistry(getBeanFactory());
+    }
+
+
+    public void setResourceFileAdapterRegistry(ResourceFileAdapterRegistry adapterRegistry) {
+        this.adapterRegistry = adapterRegistry;
+    }
+
+    protected ResourceFileAdapterRegistry getAdapterRegistry() {
+        return adapterRegistry;
+    }
+
+    protected CubeDefinitionInstaller getCubeDefinitionInstaller() {
+        return cubeDefinitionInstaller;
     }
 
     protected abstract String[] getConfigLocations();
-
-    protected abstract CubeInstallationItemReader getCubeInstallationItemReader();
-
-    protected abstract ResourceFileAdapterRegistry getAdapterRegistry();
-
-    protected abstract CubeDefinitionInstaller getCubeDefinitionInstaller();
 }
