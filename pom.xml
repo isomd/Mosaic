@@ -16,12 +16,14 @@
     <modules>
         <module>mosaic-core</module>
         <module>mosaic-starter</module>
+        <module>mosaic-agent</module>
     </modules>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <fastjosn.version>2.0.32</fastjosn.version>
     </properties>
 
     <parent>
@@ -75,4 +77,14 @@
             <version>2.0.32</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjosn.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
