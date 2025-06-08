@@ -6,6 +6,8 @@ import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.CubeFactory;
 
+import java.util.Objects;
+
 /**
  * 描述: Cube工厂抽象类（定义getCube的模板方法）
  * @author suifeng
@@ -26,6 +28,11 @@ public abstract class AbstractCubeFactory extends DefaultSingletonCubeRegistry i
             return cube;
         }
         CubeDefinition cubeDefinition = getCubeDefinition(cubeId);
+
+        if (Objects.isNull(cubeDefinition)) {
+            return null;
+        }
+
         return createCube(cubeId, cubeDefinition, args);
     }
 
