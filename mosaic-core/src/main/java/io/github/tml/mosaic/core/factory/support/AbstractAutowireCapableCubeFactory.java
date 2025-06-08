@@ -67,18 +67,15 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
 
                 // 实例化扩展包
                 ExtensionPackage extensionPackage = (ExtensionPackage) pkgClass.getDeclaredConstructor(Cube.class).newInstance(cube);
-                extensionPackage.setCube(cube);
 
                 // 创建扩展包元数据对象
-                ExtensionPackage packageMeta = new ExtensionPackage() {};
-                packageMeta.setName(pkgDef.getName());
-                packageMeta.setDescription(pkgDef.getDescription());
-                packageMeta.setVersion(pkgDef.getVersion());
-                packageMeta.setId(new GUUID(pkgDef.getId()));
-                packageMeta.setCube(cube);
+                extensionPackage.setName(pkgDef.getName());
+                extensionPackage.setDescription(pkgDef.getDescription());
+                extensionPackage.setVersion(pkgDef.getVersion());
+                extensionPackage.setId(new GUUID(pkgDef.getId()));
 
                 // 注册扩展包到Cube元数据
-                cube.addExtensionPackage(packageMeta);
+                cube.addExtensionPackage(extensionPackage);
 
                 // 注册扩展点
                 for (ExtensionPointDefinition epd : pkgDef.getExtensionPoints()) {
@@ -89,7 +86,7 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
                     extensionPoint.setParameterTypes(epd.getParameterTypes());
                     extensionPoint.setReturnType(epd.getReturnType());
                     // 注册扩展点到扩展包
-                    packageMeta.addExtensionPoint(extensionPoint);
+                    extensionPackage.addExtensionPoint(extensionPoint);
                 }
 
             } catch (Exception e) {

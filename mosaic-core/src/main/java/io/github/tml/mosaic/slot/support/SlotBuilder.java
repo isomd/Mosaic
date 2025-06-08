@@ -40,10 +40,16 @@ public class SlotBuilder {
             return this;
         }
 
-        public BuilderContext methodName(String methodId) {
-            this.setupCubeInfo.setMethodId(new DotNotationId(methodId));
+       public BuilderContext exPackageId(String exPackageId) {
+           this.setupCubeInfo.setExPackageId(new DotNotationId(exPackageId));
+           return this;
+       }
+
+        public BuilderContext exPointId(String exPointId) {
+            this.setupCubeInfo.setExPointId(new DotNotationId(exPointId));
             return this;
         }
+
 
         public Optional<Slot> build() {
            Slot slot = null;

@@ -30,10 +30,6 @@ public abstract class ExtensionPackage {
     private final List<ExtensionPoint> extensionPoints = new CopyOnWriteArrayList<>();
     private final Map<GUID, ExtensionPoint> extensionPointMap = new ConcurrentHashMap<>();
 
-
-    public ExtensionPackage() {
-    }
-
     public ExtensionPackage(Cube cube) {
         this.cube = cube;
     }
@@ -43,7 +39,7 @@ public abstract class ExtensionPackage {
         extensionPointMap.put(extensionPoint.getExtensionId(), extensionPoint);
     }
 
-    public ExtensionPoint findExtensionPoint(GUID extensionPointId) {
+    public ExtensionPoint findExPoint(GUID extensionPointId) {
         return extensionPointMap.get(extensionPointId);
     }
 }
