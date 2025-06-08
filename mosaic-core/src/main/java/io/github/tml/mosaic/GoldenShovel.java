@@ -40,7 +40,7 @@ public class GoldenShovel {
         return new SlotBootStrap();
     }
 
-    protected static class ExecuteBootstrap{
+    public static class ExecuteBootstrap{
 
         private String slotId;
 
@@ -60,7 +60,7 @@ public class GoldenShovel {
         }
     }
 
-    protected static class SlotBootStrap{
+    public static class SlotBootStrap{
 
         private final SlotBuilder.BuilderContext builder = SlotBuilder.builder(slotManager);
 
