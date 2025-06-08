@@ -1,11 +1,14 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
 import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
+import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
 import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述: Cube定义读取抽象类
@@ -14,22 +17,14 @@ import io.github.tml.mosaic.core.factory.io.resource.Resource;
  */
 public abstract class AbstractCubeInstallationItemReader implements CubeInstallationItemReader {
 
-    private final CubeDefinitionRegistry registry;
-
     private final ResourceLoader resourceLoader;
 
-    protected AbstractCubeInstallationItemReader(CubeDefinitionRegistry registry) {
-        this(registry, new DefaultResourceLoader());
+    protected AbstractCubeInstallationItemReader() {
+        this(new DefaultResourceLoader());
     }
 
-    public AbstractCubeInstallationItemReader(CubeDefinitionRegistry registry, ResourceLoader resourceLoader) {
-        this.registry = registry;
+    public AbstractCubeInstallationItemReader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-    }
-
-    @Override
-    public CubeDefinitionRegistry getRegistry() {
-        return registry;
     }
 
     @Override
@@ -39,22 +34,32 @@ public abstract class AbstractCubeInstallationItemReader implements CubeInstalla
 
     @Override
     public InstallationConfig loadCubeInstallationItem(Resource... resources) throws CubeException {
+        InstallationConfig installationConfig = new InstallationConfig();
+        List<InstallationItem> installations = new ArrayList<InstallationItem>();
         for (Resource resource : resources) {
-            loadCubeInstallationItem(resource);
+            InstallationConfig temp = loadCubeInstallationItem(resource);
+            installations.addAll(temp.getInstallations());
         }
+        installationConfig.setInstallations(installations);
+        return installationConfig;
     }
 
     @Override
     public InstallationConfig loadCubeInstallationItem(String location) throws CubeException {
         ResourceLoader resourceLoader = getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
-        loadCubeInstallationItem(resource);
+        return loadCubeInstallationItem(resource);
     }
 
     @Override
     public InstallationConfig loadCubeInstallationItem(String... locations) throws CubeException {
+        InstallationConfig installationConfig = new InstallationConfig();
+        List<InstallationItem> installations = new ArrayList<InstallationItem>();
         for (String location : locations) {
-            loadCubeInstallationItem(location);
+            InstallationConfig temp = loadCubeInstallationItem(location);
+            installations.addAll(temp.getInstallations());
         }
+        installationConfig.setInstallations(installations);
+        return installationConfig;
     }
 }

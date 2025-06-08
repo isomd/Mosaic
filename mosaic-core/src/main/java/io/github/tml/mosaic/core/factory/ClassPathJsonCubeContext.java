@@ -3,6 +3,7 @@ package io.github.tml.mosaic.core.factory;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.context.support.AbstractJsonCubeContext;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
+import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
 import lombok.Data;
 
 
@@ -15,6 +16,8 @@ import lombok.Data;
 public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
 
     private ResourceFileAdapterRegistry adapterRegistry;
+
+    private CubeDefinitionInstaller cubeDefinitionInstaller;
 
     private String[] configLocations;
 
@@ -43,5 +46,10 @@ public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
     @Override
     protected ResourceFileAdapterRegistry getAdapterRegistry() {
         return adapterRegistry;
+    }
+
+    @Override
+    protected CubeDefinitionInstaller getCubeDefinitionInstaller() {
+        return cubeDefinitionInstaller;
     }
 }
