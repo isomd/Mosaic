@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.collector;
+package io.github.tml.mosaic.install.collector.core;
 
 import io.github.tml.mosaic.install.support.InfoContext;
 

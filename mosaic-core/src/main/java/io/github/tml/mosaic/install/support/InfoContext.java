@@ -33,6 +33,8 @@ public class InfoContext {
 
     private List<CubeInfo> cubeInfoList = new ArrayList<>();
 
+    private String packageName;
+
     /**
      * 类加载器
      */
@@ -135,5 +137,4 @@ public class InfoContext {
             this.setParameterTypes(method.getParameterTypes());
         }
     }
-
 }

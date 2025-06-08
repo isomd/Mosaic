@@ -2,6 +2,7 @@ package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.install.support.JarPluginClassLoader;
 
@@ -17,11 +18,10 @@ import java.util.jar.JarInputStream;
 /**
  * 从jar包中获取所有类信息
  */
-public class JarClassLoaderAllClassCollector implements InfoCollector{
+public class JarClassLoaderAllClassCollector implements InfoCollector {
     
     @Override
     public void collect(InfoContext infoContext) {
-
         Resource resource = infoContext.getResource();
         try {
             try (InputStream inputStream = resource.getInputStream()) {
@@ -30,11 +30,13 @@ public class JarClassLoaderAllClassCollector implements InfoCollector{
         } catch (IOException e) {
             throw new CubeException("IOException reading Jar Cube from " + resource, e);
         }
-
     }
 
     private void doClassLoad(Resource resource, InputStream inputStream, InfoContext infoContext) {
         String jarPath = resource.getPath();
+        if (jarPath.startsWith("file:")) {
+            jarPath = jarPath.substring("file:".length());
+        }
         JarPluginClassLoader classLoader = null;
         try {
             // 1. 创建专用类加载器

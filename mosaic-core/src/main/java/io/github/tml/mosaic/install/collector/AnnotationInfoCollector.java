@@ -3,6 +3,7 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.cube.MCube;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
+import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 
 import java.lang.reflect.Method;
@@ -12,7 +13,7 @@ import java.util.List;
  * cube注解信息收集器
  * 收集：拓展包，cube metaInfo
  */
-public class AnnotationInfoCollector implements CommonInfoCollector{
+public class AnnotationInfoCollector implements CommonInfoCollector {
 
     @Override
     public void collect(InfoContext infoContext) {

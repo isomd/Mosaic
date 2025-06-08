@@ -6,20 +6,21 @@ import io.github.tml.mosaic.util.ClassUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
- * 描述: ClassPath下加载资源
+ * 描述: ClassPath下加载资源，getPath()返回绝对路径
  * @author suifeng
- * 日期: 2025/5/29 
+ * 日期: 2025/5/29
  */
 public class ClassPathResource implements Resource {
 
     private final String path;
-
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
+    private volatile String absolutePath; // 缓存绝对路径
 
     public ClassPathResource(String path) {
-        this(path, (ClassLoader) null);
+        this(path, null);
     }
 
     public ClassPathResource(String path, ClassLoader classLoader) {
@@ -30,16 +31,37 @@ public class ClassPathResource implements Resource {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        InputStream is = classLoader.getResourceAsStream(path);
-        if (is == null) {
-            throw new FileNotFoundException(
-                    this.path + "不能打开此流，应该找不到此资源");
+        URL url = resolveURL();
+        if (url == null) {
+            throw new FileNotFoundException("资源 '" + path + "' 在classpath中不存在");
         }
-        return is;
+        return url.openStream();
     }
 
     @Override
     public String getPath() {
-        return path;
+        if (absolutePath == null) {
+            synchronized (this) {
+                if (absolutePath == null) {
+                    URL url = resolveURL();
+                    absolutePath = (url != null) ? url.toString() : generateFallbackPath();
+                }
+            }
+        }
+        return absolutePath;
+    }
+
+    /**
+     * 解析资源的绝对URL
+     */
+    private URL resolveURL() {
+        return classLoader.getResource(path);
+    }
+
+    /**
+     * 资源不存在时的回退方案
+     */
+    private String generateFallbackPath() {
+        return "classpath:" + path; // 标准回退格式
     }
 }
