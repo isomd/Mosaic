@@ -24,7 +24,7 @@ public interface CubeActuator {
 
         private Cube cube;
 
-        private ExtensionPackage exPackage;
+        private ExtensionPackage<?> exPackage;
 
         private ExtensionPoint exPoint;
 

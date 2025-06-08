@@ -18,5 +18,4 @@ public class MosaicPluginApplication {
     public static void main(String[] args) {
         SpringApplication.run(MosaicPluginApplication.class, args);
     }
-
 }
