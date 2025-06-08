@@ -50,10 +50,15 @@ public class Slot extends UniqueEntity {
         // 方块唯一Id
         private GUID cubeId;
 
-        // 调用的方法名称
+        // 调用的拓展包Id
         @Getter
         @Setter
-        private GUID methodId;
+        private GUID exPackageId;
+
+        // 调用的拓展点Id
+        @Getter
+        @Setter
+        private GUID exPointId;
 
         /**
          * 可靠性校验，校验SetupCubeInfo是否可用

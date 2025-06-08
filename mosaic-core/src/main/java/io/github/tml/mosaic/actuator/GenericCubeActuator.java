@@ -1,23 +1,30 @@
 package io.github.tml.mosaic.actuator;
 
-import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.slot.Slot;
+import lombok.extern.slf4j.Slf4j;
 
-public class GenericCubeActuator implements CubeActuator{
+/**
+ * 通用执行器
+ */
+@Slf4j
+public class GenericCubeActuator extends AbstractCubeActuator{
+
+    protected GenericCubeActuator() {
+
+    }
 
     @Override
-    public Object execute(Slot slot, Object...args) {
-        Slot.SetupCubeInfo setupCubeInfo = slot.getSetupCubeInfo();
-        if(setupCubeInfo != null){
-            GUID cubeId = setupCubeInfo.getCubeId();
+    public <T> T execute(ExecuteContext executeContext) {
+        preExecuteLog(executeContext);
 
-            // TODO 从cube中获取方法
+        return this.execute0(executeContext);
+    }
 
-//            ExtensionPoint extensionPoint = metaData.findExtensionPoint(setupCubeInfo.getMethodId());
-
-            // TODO 反射执行方法
-        }
-        return null;
+    private void preExecuteLog(ExecuteContext executeContext) {
+        log.info(" {} ready execute plugin, cube:{}, slot:{}, exPackage:{}, exPoint:{}",
+                this.getClass().getName(),
+                executeContext.getCube().getCubeId(),
+                executeContext.getSlot().getId(),
+                executeContext.getExPackage().getId(),
+                executeContext.getExPoint().getId());
     }
 }
