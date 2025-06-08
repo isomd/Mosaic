@@ -32,5 +32,4 @@ public class MosaicChunkAgent {
     public static Instrumentation getInstrumentation() {
         return instrumentation;
     }
-
 }

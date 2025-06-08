@@ -46,7 +46,6 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
         }
         InfoContext infoContext = adapter.adapter(item.getLocation());
         getCubeDefinitionInstaller().installCubeDefinition(infoContext);
-
     }
 
     public void setCubeDefinitionInstaller(CubeDefinitionInstaller cubeDefinitionInstaller) {

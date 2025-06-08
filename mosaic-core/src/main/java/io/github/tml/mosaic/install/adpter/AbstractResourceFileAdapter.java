@@ -45,7 +45,7 @@ public abstract class AbstractResourceFileAdapter implements ResourceFileAdapter
             Optional.ofNullable(collectorList)
                     .orElse(Collections.emptyList())
                     .forEach(collector -> collector.collect(infoContext));
-        }catch (Exception e){
+        } catch (Exception e){
             log.error("adapter collect info error :{}",e.getMessage());
             return null;
         }

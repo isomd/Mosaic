@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.factory.io.resource.ClassPathResource;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.install.support.JarPluginClassLoader;
@@ -35,6 +36,9 @@ public class JarClassLoaderAllClassCollector implements InfoCollector{
 
     private void doClassLoad(Resource resource, InputStream inputStream, InfoContext infoContext) {
         String jarPath = resource.getPath();
+        if (jarPath.startsWith("file:")) {
+            jarPath = jarPath.substring("file:".length());
+        }
         JarPluginClassLoader classLoader = null;
         try {
             // 1. 创建专用类加载器
