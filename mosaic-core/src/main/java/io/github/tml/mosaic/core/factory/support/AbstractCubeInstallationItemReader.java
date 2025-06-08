@@ -2,6 +2,7 @@ package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.config.CubeDefinitionRegistry;
+import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
 import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
@@ -11,17 +12,17 @@ import io.github.tml.mosaic.core.factory.io.resource.Resource;
  * @author suifeng
  * 日期: 2025/6/7
  */
-public abstract class AbstractCubeDefinitionReader implements CubeDefinitionReader {
+public abstract class AbstractCubeInstallationItemReader implements CubeInstallationItemReader {
 
     private final CubeDefinitionRegistry registry;
 
     private final ResourceLoader resourceLoader;
 
-    protected AbstractCubeDefinitionReader(CubeDefinitionRegistry registry) {
+    protected AbstractCubeInstallationItemReader(CubeDefinitionRegistry registry) {
         this(registry, new DefaultResourceLoader());
     }
 
-    public AbstractCubeDefinitionReader(CubeDefinitionRegistry registry, ResourceLoader resourceLoader) {
+    public AbstractCubeInstallationItemReader(CubeDefinitionRegistry registry, ResourceLoader resourceLoader) {
         this.registry = registry;
         this.resourceLoader = resourceLoader;
     }
@@ -37,23 +38,23 @@ public abstract class AbstractCubeDefinitionReader implements CubeDefinitionRead
     }
 
     @Override
-    public void loadCubeDefinitions(Resource... resources) throws CubeException {
+    public InstallationConfig loadCubeInstallationItem(Resource... resources) throws CubeException {
         for (Resource resource : resources) {
-            loadCubeDefinitions(resource);
+            loadCubeInstallationItem(resource);
         }
     }
 
     @Override
-    public void loadCubeDefinitions(String location) throws CubeException {
+    public InstallationConfig loadCubeInstallationItem(String location) throws CubeException {
         ResourceLoader resourceLoader = getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
-        loadCubeDefinitions(resource);
+        loadCubeInstallationItem(resource);
     }
 
     @Override
-    public void loadCubeDefinitions(String... locations) throws CubeException {
+    public InstallationConfig loadCubeInstallationItem(String... locations) throws CubeException {
         for (String location : locations) {
-            loadCubeDefinitions(location);
+            loadCubeInstallationItem(location);
         }
     }
 }

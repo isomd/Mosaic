@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.factory.context.support;
 
-import io.github.tml.mosaic.core.factory.context.json.JsonCubeDefinitionReader;
+import io.github.tml.mosaic.core.factory.context.json.JsonCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 
@@ -13,10 +13,10 @@ public abstract class AbstractJsonCubeContext extends AbstractRefreshableCubeCon
 
     @Override
     protected void loadCubeDefinitions(ListableCubeFactory cubeFactory) {
-        JsonCubeDefinitionReader cubeDefinitionReader = new JsonCubeDefinitionReader(cubeFactory, getAdapterRegistry());
+        JsonCubeInstallationItemReader cubeDefinitionReader = new JsonCubeInstallationItemReader(cubeFactory);
         String[] configLocations = getConfigLocations();
         if (null != configLocations){
-            cubeDefinitionReader.loadCubeDefinitions(configLocations);
+            cubeDefinitionReader.loadCubeInstallationItem(configLocations);
         }
     }
     protected abstract String[] getConfigLocations();
