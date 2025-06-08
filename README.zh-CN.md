@@ -1,7 +1,7 @@
 # Mosaic 🧱
 
 <div align="center">
-  <img src="https://geniusnoteimages.oss-cn-hangzhou.aliyuncs.com/20250608173741511.png" alt="Mosaic Logo" width="200" />
+  <img src="https://github.com/user-attachments/assets/b425421b-d3dd-4b6c-b1a7-a944ff63c3e9" alt="Mosaic Logo" width="200" />
   <h3>Mosaic 插件框架</h3>
   <p><em>让插件像Minecraft方块一样融入你的项目世界</em></p>
 </div>
