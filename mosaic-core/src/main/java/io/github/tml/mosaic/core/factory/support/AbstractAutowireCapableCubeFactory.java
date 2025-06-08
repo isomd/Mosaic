@@ -11,6 +11,7 @@ import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
@@ -66,14 +67,17 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
                 // 加载扩展包类
                 Class<?> pkgClass = cubeDefinition.getClassLoader().loadClass(pkgDef.getClassName());
 
-                // 实例化扩展包
-                ExtensionPackage extensionPackage = (ExtensionPackage) pkgClass.getDeclaredConstructor(Cube.class).newInstance(cube);
-
                 // 创建扩展包元数据对象
-                extensionPackage.setName(pkgDef.getName());
-                extensionPackage.setDescription(pkgDef.getDescription());
-                extensionPackage.setVersion(pkgDef.getVersion());
-                extensionPackage.setId(new DotNotationId(pkgDef.getId()));
+                ExtensionPackage.MetaData metaData = new ExtensionPackage.MetaData(
+                        pkgDef.getName(), pkgDef.getDescription(), pkgDef.getVersion()
+                );
+
+                // 实例化扩展包
+                ExtensionPackage<?> extensionPackage = (ExtensionPackage<?>) pkgClass
+                        .getDeclaredConstructor(cube.getClass(), GUID.class)
+                        .newInstance(cube, new DotNotationId(pkgDef.getId()));
+
+                extensionPackage.setMetaData(metaData);
 
                 // 注册扩展包到Cube元数据
                 cube.addExtensionPackage(extensionPackage);
