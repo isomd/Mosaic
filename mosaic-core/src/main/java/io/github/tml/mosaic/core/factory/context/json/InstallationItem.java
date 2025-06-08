@@ -14,6 +14,7 @@ import java.util.Map;
 public class InstallationItem {
 
     private ResourceFileType type;
+    private String packageName;
     private String location;
     private Map<String, Object> properties;
 }

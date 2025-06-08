@@ -5,11 +5,14 @@ import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
 import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
 import io.github.tml.mosaic.core.factory.support.CubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
-import io.github.tml.mosaic.install.adpter.ResourceFileAdapter;
+import io.github.tml.mosaic.install.adpter.core.ResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
 import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述: 上下文中对配置信息的加载
@@ -26,8 +29,12 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
 
     protected CubeInstallationItemReader cubeInstallationItemReader;
 
+    protected List<InstallationItem> installationItems = new ArrayList<>();
+
     @Override
     protected void loadCubeDefinitions(ListableCubeFactory cubeFactory) {
+        // TODO 加载必备项
+        installationItems.forEach(this::processInstallationItem);
         String[] configLocations = getConfigLocations();
         if (null != configLocations) {
             InstallationConfig installationConfig = cubeInstallationItemReader.loadCubeInstallationItem(configLocations);
@@ -44,7 +51,7 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
         if (adapter == null) {
             throw new CubeException("No adapter for type: " + item.getType());
         }
-        InfoContext infoContext = adapter.adapter(item.getLocation());
+        InfoContext infoContext = adapter.adapter(item);
         getCubeDefinitionInstaller().installCubeDefinition(infoContext);
     }
 
@@ -56,6 +63,10 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
 
     public void setResourceFileAdapterRegistry(ResourceFileAdapterRegistry adapterRegistry) {
         this.adapterRegistry = adapterRegistry;
+    }
+
+    public void addInstallationItem(List<InstallationItem> items) {
+        installationItems.addAll(items);
     }
 
     protected ResourceFileAdapterRegistry getAdapterRegistry() {

@@ -3,11 +3,12 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.*;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
+import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 
 import java.util.*;
 
-public class CubeModuleInfoCollector implements CommonInfoCollector{
+public class CubeModuleInfoCollector implements CommonInfoCollector {
 
     @Override
     public void collect(InfoContext infoContext) {
