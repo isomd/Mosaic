@@ -6,6 +6,7 @@ import io.github.tml.mosaic.cube.MCube;
 
 import static io.github.tml.systemLog.config.Constant.PLUGIN_ID;
 
+
 @MCube(value=PLUGIN_ID,
         name="系统日志",
         description = "用于输出系统日志的插件",
