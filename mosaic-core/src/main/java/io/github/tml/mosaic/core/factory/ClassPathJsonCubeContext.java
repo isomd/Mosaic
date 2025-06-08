@@ -18,7 +18,9 @@ public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
 
     private String[] configLocations;
 
-    public ClassPathJsonCubeContext() {}
+    public ClassPathJsonCubeContext() {
+        refresh();
+    }
 
     /**
      * 从 JSON 中加载 CubeDefinition，并刷新上下文
