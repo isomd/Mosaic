@@ -7,6 +7,8 @@ import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.install.adpter.JarResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.DefaultResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
+import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
+import io.github.tml.mosaic.install.install.DefaultCubeDefinitionInstaller;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
@@ -37,21 +39,37 @@ public class MosaicInitConfig {
         return defaultResourceFileAdapterRegistry;
     }
 
+    /**
+     * 启动安装器
+     */
+    @Bean
+    public CubeDefinitionInstaller cubeDefinitionInstaller(){
+        return new DefaultCubeDefinitionInstaller();
+    }
 
     /**
      * cube上下文容器
      * @param resourceFileAdapterRegistry 启动资源文件适配器
-     * @return
      */
     @Bean
     @DependsOn("resourceFileAdapterRegistry")
-    public CubeContext cubeContext(ResourceFileAdapterRegistry resourceFileAdapterRegistry) {
+    public CubeContext cubeContext(ResourceFileAdapterRegistry resourceFileAdapterRegistry, CubeDefinitionInstaller cubeDefinitionInstaller) {
+        ClassPathJsonCubeContext classPathJsonCubeContext = null;
 
-        if(resourcePath != null && resourcePath.length > 0){
-            return new ClassPathJsonCubeContext(resourcePath, resourceFileAdapterRegistry);
+        if (resourcePath != null && resourcePath.length > 0){
+            classPathJsonCubeContext = new ClassPathJsonCubeContext(resourcePath);
+        } else {
+            classPathJsonCubeContext = new ClassPathJsonCubeContext();
         }
 
-       return new ClassPathJsonCubeContext();
+        if (cubeDefinitionInstaller != null){
+            classPathJsonCubeContext.setCubeDefinitionInstaller(cubeDefinitionInstaller);
+        }
+        if (resourceFileAdapterRegistry != null){
+            classPathJsonCubeContext.setResourceFileAdapterRegistry(resourceFileAdapterRegistry);
+        }
+
+        return classPathJsonCubeContext;
     }
 
     /**

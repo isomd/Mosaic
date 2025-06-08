@@ -13,4 +13,5 @@ public interface CubeDefinitionInstaller {
 
     CubeDefinitionRegistry getRegistry();
     void installCubeDefinition(InfoContext infoContext) throws CubeException;
+    void setRegistry(CubeDefinitionRegistry registry);
 }

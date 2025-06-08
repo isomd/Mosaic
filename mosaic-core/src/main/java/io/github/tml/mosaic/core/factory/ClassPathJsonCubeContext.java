@@ -28,14 +28,22 @@ public class ClassPathJsonCubeContext extends AbstractJsonCubeContext {
     /**
      * 从 JSON 中加载 CubeDefinition，并刷新上下文
      */
-    public ClassPathJsonCubeContext(String configLocations, ResourceFileAdapterRegistry adapterRegistry) throws CubeException {
-        this(new String[]{configLocations}, adapterRegistry);
+    public ClassPathJsonCubeContext(String configLocations) throws CubeException {
+        this(new String[]{configLocations});
     }
 
-    public ClassPathJsonCubeContext(String[] configLocations, ResourceFileAdapterRegistry adapterRegistry) throws CubeException {
+    public ClassPathJsonCubeContext(String[] configLocations) throws CubeException {
         this.configLocations = configLocations;
-        this.adapterRegistry = adapterRegistry;
         refresh();
+    }
+
+    public void setCubeDefinitionInstaller(CubeDefinitionInstaller cubeDefinitionInstaller) {
+        this.cubeDefinitionInstaller = cubeDefinitionInstaller;
+        cubeDefinitionInstaller.setRegistry(getBeanFactory());
+    }
+
+    public void setResourceFileAdapterRegistry(ResourceFileAdapterRegistry adapterRegistry) {
+        this.adapterRegistry = adapterRegistry;
     }
 
     @Override

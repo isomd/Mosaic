@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class DefaultCubeDefinitionInstaller extends AbstractCubeDefinitionInstaller {
 
-    public DefaultCubeDefinitionInstaller(CubeDefinitionRegistry registry) {
-        super(registry);
+    public DefaultCubeDefinitionInstaller() {
+        super();
     }
 
     @Override
