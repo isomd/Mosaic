@@ -50,6 +50,7 @@ public class EnvironmentPathFindUtil {
                 return EnvironmentType.SPRING_BOOT;
             }
 
+
             // 3. 检查是否在 Maven/Gradle 依赖中
             if (sourcePath.contains(".m2") || sourcePath.contains(".gradle")) {
                 return EnvironmentType.DEPENDENCY;
