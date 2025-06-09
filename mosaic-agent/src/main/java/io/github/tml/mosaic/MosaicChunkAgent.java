@@ -20,6 +20,7 @@ public class MosaicChunkAgent {
 
         log.info("run java agent...");
         instrumentation = inst;
+        System.out.println(instrumentation);
         new Thread(() -> {
             try {
                 new MosaicAgentSocketServer().start(9999);
