@@ -40,12 +40,6 @@ public abstract class AbstractResourceFileAdapter implements ResourceFileAdapter
         if (item.getLocation() != null && !item.getLocation().isEmpty()) {
             resource = getResourceLoader().getResource(item.getLocation());
         }
-        if (item.getPackageName() != null && !item.getPackageName().isEmpty()) {
-            infoContext.setPackageName(item.getPackageName());
-            if (resource == null) {
-                resource = getResourceLoader().getResource("classpath:");
-            }
-        }
 
         Optional.ofNullable(resource).orElseThrow(()->new CubeException("resource not exist"));
 

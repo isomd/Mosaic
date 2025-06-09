@@ -31,18 +31,17 @@ public class DirectoryClassCollector implements InfoCollector {
             throw new CubeException("无效的代码目录: " + dirPath);
         }
 
-        List<Class<?>> classes = scanClasses(dirPath, infoContext.getPackageName());
+        List<Class<?>> classes = scanClasses(dirPath);
         infoContext.setAllClazz(classes);
     }
 
     /**
      * 使用Java NIO扫描类文件
      */
-    private List<Class<?>> scanClasses(String rootPath, String basePackage) {
+    private List<Class<?>> scanClasses(String rootPath) {
         List<Class<?>> classes = new ArrayList<>();
         Path rootDir = Paths.get(rootPath);
-        String packagePath = basePackage.replace('.', File.separatorChar);
-        Path scanPath = rootDir.resolve(packagePath);
+        Path scanPath = rootDir.resolve("");
 
         if (!Files.exists(scanPath)) {
             throw new CubeException("扫描路径不存在: " + scanPath);
@@ -51,7 +50,7 @@ public class DirectoryClassCollector implements InfoCollector {
         try (Stream<Path> paths = Files.walk(scanPath)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".class"))
-                    .forEach(p -> loadClassFromPath(p, rootDir, basePackage)
+                    .forEach(p -> loadClassFromPath(p, rootDir)
                             .ifPresent(classes::add));
         } catch (IOException e) {
             throw new CubeException("目录扫描失败: " + scanPath, e);
@@ -62,7 +61,7 @@ public class DirectoryClassCollector implements InfoCollector {
     /**
      * 从路径加载类
      */
-    private Optional<Class<?>> loadClassFromPath(Path classPath, Path rootDir, String basePackage) {
+    private Optional<Class<?>> loadClassFromPath(Path classPath, Path rootDir) {
         try {
             // 计算相对路径并转换为类名
             String relativePath = rootDir.relativize(classPath).toString();

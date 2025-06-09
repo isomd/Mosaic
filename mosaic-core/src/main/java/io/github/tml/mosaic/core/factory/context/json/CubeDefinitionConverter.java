@@ -2,13 +2,20 @@ package io.github.tml.mosaic.core.factory.context.json;
 
 import io.github.tml.mosaic.core.factory.definition.*;
 import io.github.tml.mosaic.install.support.InfoContext;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class CubeDefinitionConverter {
 
     public static List<CubeDefinition> convertToCubeDefinitions(InfoContext infoContext) {
         List<CubeDefinition> cubeDefinitions = new ArrayList<>();
+        if (infoContext == null) {
+            log.warn("infoContext is null");
+            return cubeDefinitions;
+        }
         for (InfoContext.CubeInfo cubeInfo : infoContext.getCubeInfoList()) {
             // 构建CubeDefinition
             CubeDefinition cubeDef = new CubeDefinition(

@@ -7,11 +7,11 @@ import io.github.tml.mosaic.core.factory.support.CubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.support.ListableCubeFactory;
 import io.github.tml.mosaic.install.adpter.core.ResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
+import io.github.tml.mosaic.install.enhance.InstallationConfigEnhancer;
 import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
 import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,20 +29,25 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
 
     protected CubeInstallationItemReader cubeInstallationItemReader;
 
-    protected List<InstallationItem> installationItems = new ArrayList<>();
+    protected List<InstallationConfigEnhancer> installationConfigEnhancers;
 
     @Override
     protected void loadCubeDefinitions(ListableCubeFactory cubeFactory) {
-        // TODO 加载必备项
-        installationItems.forEach(this::processInstallationItem);
         String[] configLocations = getConfigLocations();
+        InstallationConfig installationConfig = null;
         if (null != configLocations) {
-            InstallationConfig installationConfig = cubeInstallationItemReader.loadCubeInstallationItem(configLocations);
-            if (null != installationConfig && !installationConfig.getInstallations().isEmpty()) {
-                installationConfig.getInstallations().forEach(this::processInstallationItem);
-            } else {
-                log.warn("您暂未填写配置项，将为您构造一个空的context");
+           installationConfig = getCubeInstallationItemReader().loadCubeInstallationItem(configLocations);
+        }
+        // TODO InstallationConfig 增强处理
+        if (null != installationConfigEnhancers  && !installationConfigEnhancers.isEmpty()) {
+            for (InstallationConfigEnhancer installationConfigEnhancer : installationConfigEnhancers) {
+                installationConfigEnhancer.enhance(installationConfig);
             }
+        }
+        if (null != installationConfig && !installationConfig.getInstallations().isEmpty()) {
+            installationConfig.getInstallations().forEach(this::processInstallationItem);
+        } else {
+            log.warn("您暂未填写配置项，将为您构造一个空的context");
         }
     }
 
@@ -59,22 +64,20 @@ public abstract class AbstractResourcesLoaderCubeContext extends AbstractRefresh
         this.cubeDefinitionInstaller = cubeDefinitionInstaller;
         cubeDefinitionInstaller.setRegistry(getBeanFactory());
     }
-
-
     public void setResourceFileAdapterRegistry(ResourceFileAdapterRegistry adapterRegistry) {
         this.adapterRegistry = adapterRegistry;
     }
-
-    public void addInstallationItem(List<InstallationItem> items) {
-        installationItems.addAll(items);
+    public void setInstallationConfigEnhancers(List<InstallationConfigEnhancer> installationConfigEnhancers) {
+        this.installationConfigEnhancers = installationConfigEnhancers;
     }
-
     protected ResourceFileAdapterRegistry getAdapterRegistry() {
         return adapterRegistry;
     }
-
     protected CubeDefinitionInstaller getCubeDefinitionInstaller() {
         return cubeDefinitionInstaller;
+    }
+    protected CubeInstallationItemReader getCubeInstallationItemReader() {
+        return cubeInstallationItemReader;
     }
 
     protected abstract String[] getConfigLocations();
