@@ -4,7 +4,7 @@ import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.AnnotationInfoCollector;
 import io.github.tml.mosaic.install.collector.CubeModuleInfoCollector;
-import io.github.tml.mosaic.install.collector.DirectoryClassCollector;
+import io.github.tml.mosaic.install.collector.LocalProjectClassCollector;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 
@@ -21,7 +21,7 @@ public class CodeResourceFileAdapter extends AbstractResourceFileAdapter {
 
     private static List<InfoCollector> createCollectorChain() {
         return List.of(
-                new DirectoryClassCollector(),
+                new LocalProjectClassCollector(),
                 new CubeModuleInfoCollector(),
                 new AnnotationInfoCollector()
         );

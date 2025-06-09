@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.install.enhance;
 
-import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
+import io.github.tml.mosaic.install.InstallationConfig;
 
 /**
  * 描述: InstallationConfig的后置增强处理

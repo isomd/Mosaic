@@ -1,8 +1,8 @@
-package io.github.tml.mosaic.core.factory.support;
+package io.github.tml.mosaic.install.reader;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.context.json.InstallationConfig;
-import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
+import io.github.tml.mosaic.install.InstallationConfig;
+import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
