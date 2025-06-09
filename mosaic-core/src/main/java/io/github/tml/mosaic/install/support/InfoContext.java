@@ -33,8 +33,6 @@ public class InfoContext {
 
     private List<CubeInfo> cubeInfoList = new ArrayList<>();
 
-    private String packageName;
-
     /**
      * 类加载器
      */
