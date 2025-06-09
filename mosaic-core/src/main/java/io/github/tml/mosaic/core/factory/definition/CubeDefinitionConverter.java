@@ -1,6 +1,5 @@
-package io.github.tml.mosaic.core.factory.context.json;
+package io.github.tml.mosaic.core.factory.definition;
 
-import io.github.tml.mosaic.core.factory.definition.*;
 import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 

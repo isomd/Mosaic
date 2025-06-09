@@ -1,6 +1,5 @@
 package io.github.tml.controller;
 
-import io.github.tml.config.DynamicResourceRegistrar;
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
@@ -18,16 +17,7 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private DynamicResourceRegistrar dynamicResourceRegistrar;
-
-    @Autowired
     CubeContext context;
-
-    @GetMapping("/hello")
-    public String hello(@RequestParam("name") String pluginName) {
-        dynamicResourceRegistrar.registerPluginResources(pluginName);
-        return String.format("http://localhost:9000/%s/index.html", pluginName);
-    }
 
     @GetMapping("/context")
     public String context() {

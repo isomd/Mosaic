@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.component.enhance;
 
-import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
+import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.install.enhance.AbstractInstallationConfigEnhancer;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import org.springframework.stereotype.Component;
@@ -17,4 +17,6 @@ public class CodeInstallationItemEnhancer extends AbstractInstallationConfigEnha
     protected InstallationItem addInstallationItem() {
         return createInstallationItem(ResourceFileType.CODE, "classpath:");
     }
+
+
 }

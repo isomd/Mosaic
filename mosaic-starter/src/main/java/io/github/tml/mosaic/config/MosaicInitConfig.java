@@ -2,15 +2,20 @@ package io.github.tml.mosaic.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
-import io.github.tml.mosaic.core.factory.ClassPathJsonCubeContext;
+import io.github.tml.mosaic.core.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
+import io.github.tml.mosaic.install.reader.JsonCubeInstallationItemReader;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.install.adpter.CodeResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.JarResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.DefaultResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.enhance.InstallationConfigEnhancer;
-import io.github.tml.mosaic.install.install.CubeDefinitionInstaller;
-import io.github.tml.mosaic.install.install.DefaultCubeDefinitionInstaller;
+import io.github.tml.mosaic.install.install.InfoContextInstaller;
+import io.github.tml.mosaic.install.install.DefaultInfoContextInstaller;
+import io.github.tml.mosaic.install.reader.LocalProjectInstallationItemReader;
+import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
@@ -18,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +43,7 @@ public class MosaicInitConfig {
      * 启动资源文件适配器
      */
     @Bean
-    public ResourceFileAdapterRegistry resourceFileAdapterRegistry(){
+    public ResourceFileAdapterRegistry resourceFileAdapterRegistry() {
         DefaultResourceFileAdapterRegistry defaultResourceFileAdapterRegistry = new DefaultResourceFileAdapterRegistry();
         defaultResourceFileAdapterRegistry.registerAdapter(ResourceFileType.JAR, new JarResourceFileAdapter());
         defaultResourceFileAdapterRegistry.registerAdapter(ResourceFileType.CODE, new CodeResourceFileAdapter());
@@ -44,44 +51,44 @@ public class MosaicInitConfig {
     }
 
     /**
-     * 启动安装器
+     * InfoContext安装器
      */
     @Bean
-    public CubeDefinitionInstaller cubeDefinitionInstaller(){
-        return new DefaultCubeDefinitionInstaller();
+    public InfoContextInstaller infoContextInstaller(ResourceFileAdapterRegistry resourceFileAdapterRegistry, List<InstallationConfigEnhancer> installationConfigEnhancers) {
+        DefaultInfoContextInstaller defaultInfoContextInstaller =
+                new DefaultInfoContextInstaller(
+                        List.of(new JsonCubeInstallationItemReader(), new LocalProjectInstallationItemReader())
+                        , resourceFileAdapterRegistry);
+        defaultInfoContextInstaller.setInstallationConfigEnhancers(installationConfigEnhancers);
+        return defaultInfoContextInstaller;
     }
 
     /**
      * cube上下文容器
-     * @param resourceFileAdapterRegistry 启动资源文件适配器
+     * @param infoContextInstaller 启动资源文件适配器
      */
     @Bean
-    @DependsOn("resourceFileAdapterRegistry")
-    public CubeContext cubeContext(ResourceFileAdapterRegistry resourceFileAdapterRegistry, CubeDefinitionInstaller cubeDefinitionInstaller, List<InstallationConfigEnhancer> installationConfigEnhancers) {
-        ClassPathJsonCubeContext classPathJsonCubeContext = null;
+    @DependsOn("infoContextInstaller")
+    public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
+        ClassPathCubeContext classPathCubeContext = new ClassPathCubeContext(resourcePath);
 
-        if (resourcePath != null && resourcePath.length > 0){
-            classPathJsonCubeContext = new ClassPathJsonCubeContext(resourcePath);
-        } else {
-            classPathJsonCubeContext = new ClassPathJsonCubeContext();
+        List<InfoContext> infoContexts = new ArrayList<>();
+        if (infoContextInstaller != null) {
+            infoContexts = infoContextInstaller.installCubeInfoContext(classPathCubeContext.getConfigLocations());
         }
 
-        if (cubeDefinitionInstaller != null){
-            classPathJsonCubeContext.setCubeDefinitionInstaller(cubeDefinitionInstaller);
+        List<CubeDefinition> cubeDefinitions = new ArrayList<>();
+        if (infoContexts != null && !infoContexts.isEmpty()) {
+            for (InfoContext infoContext : infoContexts) {
+                cubeDefinitions.addAll(CubeDefinitionConverter.convertToCubeDefinitions(infoContext));
+            }
         }
 
-        if (resourceFileAdapterRegistry != null){
-            classPathJsonCubeContext.setResourceFileAdapterRegistry(resourceFileAdapterRegistry);
+        for (CubeDefinition cubeDefinition : cubeDefinitions) {
+            classPathCubeContext.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
         }
 
-        if (installationConfigEnhancers != null){
-            classPathJsonCubeContext.setInstallationConfigEnhancers(installationConfigEnhancers);
-        }
-
-        // 在此处刷新
-        classPathJsonCubeContext.refresh();
-
-        return classPathJsonCubeContext;
+        return classPathCubeContext;
     }
 
     /**
