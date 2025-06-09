@@ -15,7 +15,7 @@ import java.util.Map;
  * 日期: 2025/6/6
  */
 @Slf4j
-public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory{
+public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
 
     private Map<GUID, CubeDefinition> cubeDefinitionMap = new HashMap<>();
 

@@ -29,7 +29,7 @@ public abstract class AbstractCubeContext extends DefaultResourceLoader implemen
         return getBeanFactory().getCube(cubeId, args);
     }
 
-    public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition){
+    public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
         getBeanFactory().registerCubeDefinition(cubeId, cubeDefinition);
     }
 

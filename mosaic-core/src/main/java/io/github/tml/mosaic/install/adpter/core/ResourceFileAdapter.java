@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.install.adpter.core;
 
-import io.github.tml.mosaic.core.factory.context.json.InstallationItem;
+import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;

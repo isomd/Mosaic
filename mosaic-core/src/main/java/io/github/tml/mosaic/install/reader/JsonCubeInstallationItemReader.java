@@ -1,10 +1,12 @@
-package io.github.tml.mosaic.core.factory.context.json;
+package io.github.tml.mosaic.install.reader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.support.AbstractCubeInstallationItemReader;
+import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.install.InstallationConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,7 +20,7 @@ public class JsonCubeInstallationItemReader extends AbstractCubeInstallationItem
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public JsonCubeInstallationItemReader() {
-        super();
+        super(new DefaultResourceLoader());
     }
 
     public JsonCubeInstallationItemReader(ResourceLoader resourceLoader) {

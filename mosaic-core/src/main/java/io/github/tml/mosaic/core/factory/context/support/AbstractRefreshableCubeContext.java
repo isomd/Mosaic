@@ -32,9 +32,7 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
     }
 
     protected void refreshCubeFactory() throws CubeException {
-        DefaultDefinitionListableCubeFactory cubeFactory = createBeanFactory();
         loadCubeDefinitions(cubeFactory);
-        this.cubeFactory = cubeFactory;
     }
 
     private DefaultDefinitionListableCubeFactory createBeanFactory() {
