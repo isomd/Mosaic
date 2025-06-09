@@ -81,7 +81,7 @@ public class EnvironmentPathFindUtil {
      * 获取 JAR 路径（自动环境适配）
      */
     public static String getJarPath(Class<?> anchorClass) {
-        EnvironmentType env = EnvironmentType.PRODUCTION;
+        EnvironmentType env = detectEnvironment(anchorClass);
         log.info("检测到的部署环境："+env);
         switch (env) {
             case DEVELOPMENT:
@@ -237,32 +237,6 @@ public class EnvironmentPathFindUtil {
             return new File(classPath).getAbsolutePath();
         }
         return null;
-    }
-
-
-    /**
-     * 解析 Spring Boot 环境中的模块 JAR 路径
-     */
-    public static String resolveSpringBootJarPath(Class<?> anchorClass) {
-        ProtectionDomain domain = anchorClass.getProtectionDomain();
-        CodeSource source = domain.getCodeSource();
-        if (source == null) {
-            return fallbackToManifest(anchorClass);
-        }
-
-        URL location = source.getLocation();
-        if (location == null) {
-            return fallbackToManifest(anchorClass);
-        }
-
-        String path = location.toString();
-        if (path.startsWith("jar:file:") && path.contains("!/BOOT-INF/lib/")) {
-            return path;
-        } else if (path.startsWith("file:")) {
-            return path;
-        } else {
-            return fallbackToManifest(anchorClass);
-        }
     }
 
     /**
