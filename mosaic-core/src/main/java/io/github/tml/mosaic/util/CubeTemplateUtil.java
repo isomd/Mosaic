@@ -22,7 +22,7 @@ public class CubeTemplateUtil {
     }
 
     public static String getCubeImportPath(){
-        return "com.agentscript.util.TestUtil";
+        return "io.github.tml.mosaic.util.TestUtil";
     }
 
 }

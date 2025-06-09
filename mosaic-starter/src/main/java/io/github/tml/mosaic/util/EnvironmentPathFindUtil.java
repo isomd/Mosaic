@@ -1,12 +1,19 @@
 package io.github.tml.mosaic.util;
 
-import java.io.File;
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -21,14 +28,25 @@ import java.util.jar.Manifest;
  * @description :
  * @date 2025/6/9
  */
+@Slf4j
 public class EnvironmentPathFindUtil {
+
+    private static final Path TEMP_DIR = getCurrentJarParentDir().resolve("mosaic/tmp/jar/");
+
+    private static final String AGENT_JAR = "mosaic-agent-0.0.1-SNAPSHOT.jar";
+    private static final String INSTALL_JAR = "mosaic-starter-1.0-SNAPSHOT.jar";
 
     // 环境类型枚举
     public enum EnvironmentType {
         DEVELOPMENT,  // 开发环境（在 IDE 或 mvn exec 中运行）
         DEPENDENCY,   // 作为依赖被引用
         PRODUCTION,   // 生产环境（打包部署）
-        SPRING_BOOT   // Spring Boot 胖 JAR 环境
+        ;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 
     /**
@@ -45,18 +63,12 @@ public class EnvironmentPathFindUtil {
                 return EnvironmentType.DEVELOPMENT;
             }
 
-            // 2. 检查是否在 Spring Boot 胖 JAR 中
-            if (isSpringBootJar(clazz)) {
-                return EnvironmentType.SPRING_BOOT;
-            }
-
-
-            // 3. 检查是否在 Maven/Gradle 依赖中
+            // 2. 检查是否在 Maven/Gradle 依赖中
             if (sourcePath.contains(".m2") || sourcePath.contains(".gradle")) {
                 return EnvironmentType.DEPENDENCY;
             }
 
-            // 4. 默认视为生产环境
+            // 3. 默认视为生产环境
             return EnvironmentType.PRODUCTION;
 
         } catch (Exception e) {
@@ -66,24 +78,18 @@ public class EnvironmentPathFindUtil {
     }
 
     /**
-     * 智能获取 JAR 路径（全自动环境适配）
+     * 获取 JAR 路径（自动环境适配）
      */
     public static String getJarPath(Class<?> anchorClass) {
-        EnvironmentType env = detectEnvironment(anchorClass);
-
+        EnvironmentType env = EnvironmentType.PRODUCTION;
+        log.info("检测到的部署环境："+env);
         switch (env) {
             case DEVELOPMENT:
                 return resolveDevJarPath(anchorClass);
-
             case DEPENDENCY:
                 return resolveDependencyJarPath(anchorClass);
-
             case PRODUCTION:
                 return resolveProductionJarPath(anchorClass);
-
-            case SPRING_BOOT:
-                return resolveSpringBootJarPath(anchorClass);
-
             default:
                 throw new IllegalStateException("未知环境类型");
         }
@@ -122,8 +128,8 @@ public class EnvironmentPathFindUtil {
                 return latestJar.get().getAbsolutePath();
             }
 
-            // 未找到时尝试构建路径
-            return targetDir.resolve(guessJarName(anchorClass)).toString();
+            // 未找到时抛出异常
+            throw new RuntimeException("未找到对应jar包，请检查路径是否正确");
 
         } catch (Exception e) {
             return fallbackToManifest(anchorClass);
@@ -146,65 +152,117 @@ public class EnvironmentPathFindUtil {
      */
     private static String resolveProductionJarPath(Class<?> anchorClass) {
         try {
-            String path = getClassSourcePath(anchorClass);
+            CodeSource codeSource = anchorClass.getProtectionDomain().getCodeSource();
+            URL location = codeSource != null ? codeSource.getLocation() : null;
 
-            // 处理 Docker 符号链接
-            if (isDockerEnvironment()) {
-                File jarFile = new File(path);
-                if (jarFile.exists() && jarFile.isFile()) {
-                    return jarFile.getAbsolutePath();
-                }
-                // 尝试从环境变量获取
-                String dockerPath = System.getenv("APP_JAR_PATH");
-                if (dockerPath != null) {
-                    return dockerPath;
+            if (location != null && location.getProtocol().equals("jar")) {
+
+                String path = location.toString();
+                if (path.contains("BOOT-INF/lib/") && path.endsWith(".jar!/")) {
+                    return handleSpringBootFatJar(anchorClass);
                 }
             }
 
-            return path;
+            if (location != null && "file".equals(location.getProtocol()) && location.getPath().endsWith(".jar")) {
+                return new File(location.toURI()).getAbsolutePath();
+            }
+
+            return location != null ? location.toString() : fallbackToManifest(anchorClass);
 
         } catch (Exception e) {
             return fallbackToManifest(anchorClass);
         }
     }
+
+    private static String handleSpringBootFatJar(Class<?> targetClass) {
+        ClassLoader cl = targetClass.getClassLoader();
+        if ("org.springframework.boot.loader.LaunchedURLClassLoader".contains(cl.getClass().getName())) {
+            try {
+                if(targetClass.getSimpleName().toLowerCase().contains("agent")){
+                    return extractJarIfNeeded(AGENT_JAR);
+                }else {
+                    return extractJarIfNeeded(INSTALL_JAR);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("无法获取 LaunchedURLClassLoader 的 URLs", e);
+            }
+        }
+        return null;
+    }
+
+    public static String extractJarIfNeeded(String targetJarName) {
+        try {
+            Path targetPath = TEMP_DIR.resolve(targetJarName);
+            log.info("targetPath: {}", targetPath);
+            // 2. 定位 fat jar 本体
+            String fatJarPath = getFatJarPathFromClasspath();
+
+            if(fatJarPath==null){
+                throw new RuntimeException("无法找到当前jar包路径");
+            }
+
+            log.info("fatJarPath :{}",fatJarPath);
+
+            try (JarFile jarFile = new JarFile(fatJarPath)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                log.info("entries :{}",entries);
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String name = entry.getName();
+
+                    if (name.startsWith("BOOT-INF/lib/") && name.endsWith(targetJarName)) {
+                        // 创建输出目录
+                        Files.createDirectories(TEMP_DIR);
+
+                        // 3. 解压 jar 文件到临时目录
+                        try (InputStream is = jarFile.getInputStream(entry)) {
+                            Files.copy(is, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                        }
+
+                        return targetPath.toAbsolutePath().toString();
+                    }
+                }
+            }
+
+            throw new FileNotFoundException("未找到 jar: " + targetJarName + " in fat jar");
+
+        } catch (Exception e) {
+            throw new RuntimeException("提取 jar 时出错：" + targetJarName, e);
+        }
+    }
+
+    public static String getFatJarPathFromClasspath() {
+        String classPath = System.getProperty("java.class.path");
+        if (classPath != null && classPath.endsWith(".jar")) {
+            return new File(classPath).getAbsolutePath();
+        }
+        return null;
+    }
+
 
     /**
      * 解析 Spring Boot 环境中的模块 JAR 路径
      */
-    private static String resolveSpringBootJarPath(Class<?> anchorClass) {
-        try {
-            // 获取主 JAR 路径
-            String mainJarPath = getClassSourcePath(anchorClass);
-
-            try (JarFile jar = new JarFile(mainJarPath)) {
-                // 在 BOOT-INF/lib 中查找包含锚点类的 JAR
-                return jar.stream()
-                        .filter(entry -> entry.getName().startsWith("BOOT-INF/lib/"))
-                        .filter(entry -> entry.getName().endsWith(".jar"))
-                        .map(entry -> "file:" + mainJarPath + "!/" + entry.getName())
-                        .filter(jarUrl -> containsClass(jarUrl, anchorClass))
-                        .findFirst()
-                        .orElse(mainJarPath);
-            }
-
-        } catch (Exception e) {
+    public static String resolveSpringBootJarPath(Class<?> anchorClass) {
+        ProtectionDomain domain = anchorClass.getProtectionDomain();
+        CodeSource source = domain.getCodeSource();
+        if (source == null) {
             return fallbackToManifest(anchorClass);
         }
-    }
 
-    /**
-     * 检查是否为 Spring Boot 环境
-     */
-    private static boolean isSpringBootJar(Class<?> clazz) {
-        return clazz.getResource("/BOOT-INF/classes/") != null;
-    }
+        URL location = source.getLocation();
+        if (location == null) {
+            return fallbackToManifest(anchorClass);
+        }
 
-    /**
-     * 检查是否为 Docker 环境
-     */
-    private static boolean isDockerEnvironment() {
-        return System.getenv().containsKey("DOCKER_CONTAINER") ||
-                Files.exists(Paths.get("/.dockerenv"));
+        String path = location.toString();
+        if (path.startsWith("jar:file:") && path.contains("!/BOOT-INF/lib/")) {
+            return path;
+        } else if (path.startsWith("file:")) {
+            return path;
+        } else {
+            return fallbackToManifest(anchorClass);
+        }
     }
 
     /**
@@ -236,17 +294,6 @@ public class EnvironmentPathFindUtil {
     }
 
     /**
-     * 智能推测 JAR 文件名
-     */
-    private static String guessJarName(Class<?> anchorClass) {
-        String simpleName = anchorClass.getSimpleName();
-        if (simpleName.endsWith("Application") || simpleName.endsWith("Main")) {
-            return simpleName.substring(0, simpleName.length() - 11) + ".jar";
-        }
-        return anchorClass.getPackage().getName() + ".jar";
-    }
-
-    /**
      * 检查 JAR 是否包含锚点类
      */
     private static boolean isAnchorClassInJar(File jarFile, Class<?> anchorClass) {
@@ -258,25 +305,37 @@ public class EnvironmentPathFindUtil {
         }
     }
 
-    /**
-     * 检查 JAR URL 是否包含指定类
-     */
-    private static boolean containsClass(String jarUrl, Class<?> clazz) {
-        // 简化实现 - 实际中需要使用自定义类加载器
-        return jarUrl.contains(clazz.getSimpleName().toLowerCase());
-    }
+    private static Path getCurrentJarParentDir() {
+        try {
+            CodeSource codeSource = EnvironmentPathFindUtil.class.getProtectionDomain().getCodeSource();
+            if (codeSource == null) {
+                throw new IllegalStateException("无法获取当前运行 JAR 的路径");
+            }
 
-    /**
-     * 获取环境类型描述
-     */
-    public static String getEnvironmentDescription(Class<?> anchorClass) {
-        EnvironmentType env = detectEnvironment(anchorClass);
-        switch (env) {
-            case DEVELOPMENT: return "开发环境";
-            case DEPENDENCY: return "依赖引用";
-            case PRODUCTION: return "生产部署";
-            case SPRING_BOOT: return "Spring Boot 胖 JAR";
-            default: return "未知环境";
+            URI location = codeSource.getLocation().toURI();
+            String scheme = location.getScheme();
+
+            if ("jar".equals(scheme)) {
+                String raw = location.toString();
+                int sepIndex = raw.indexOf("!/");
+                if (sepIndex != -1) {
+                    raw = raw.substring(4, sepIndex); // 去掉 jar: 和 !/ 之后的内容
+                    location = URI.create(raw);
+                }
+            }
+
+            Path jarPath = Paths.get(location);
+            Path parentDir = jarPath.getParent();
+
+            if (parentDir == null) {
+                throw new IllegalStateException("JAR 包没有上级目录？！");
+            }
+
+            return parentDir;
+
+        } catch (Exception e) {
+            throw new RuntimeException("获取当前 JAR 所在目录失败", e);
         }
     }
+
 }

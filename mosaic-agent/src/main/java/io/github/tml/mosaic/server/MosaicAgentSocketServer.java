@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassDefinition;
+import java.lang.instrument.Instrumentation;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,19 @@ public class MosaicAgentSocketServer {
 
                 String json = new String(jsonBytes, StandardCharsets.UTF_8);
                 AgentServerRequestDTO req = JSON.parseObject(json, AgentServerRequestDTO.class);
-                Class<?> targetClass = Class.forName(req.getClassName());
+
+                Instrumentation instrumentation = MosaicChunkAgent.getInstrumentation();
+                Class<?> targetClass = null;
+                for (Class<?> allLoadedClass : instrumentation.getAllLoadedClasses()) {
+                    if(allLoadedClass.getName().equals(req.getClassName())){
+                        targetClass = allLoadedClass;
+                    }
+                }
+
+                if(targetClass == null){
+                    System.out.println("shit");
+                    return;
+                }
 
                 log.info("replace className: {}",req.getClassName());
                 log.info("replace code: {}",req.getClassCode());

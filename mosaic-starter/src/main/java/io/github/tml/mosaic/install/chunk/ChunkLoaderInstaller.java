@@ -40,9 +40,6 @@ public class ChunkLoaderInstaller implements CommandLineRunner {
                     agentPath
             );
 
-            log.info("检测到的agent安装器路径:{}",currentPath);
-            log.info("检测到的agent脚本路径:{}",agentPath);
-
             pb.inheritIO();
             Process process = pb.start();
         } catch (IOException e) {
