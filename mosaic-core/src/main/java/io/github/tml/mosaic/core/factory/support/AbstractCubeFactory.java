@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.factory.support.manager.DefaultCubeManager;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
@@ -13,22 +14,21 @@ import java.util.Objects;
  * @author suifeng
  * 日期: 2025/6/6
  */
-public abstract class AbstractCubeFactory extends DefaultSingletonCubeRegistry implements CubeFactory {
+public abstract class AbstractCubeFactory extends DefaultCubeManager implements CubeFactory {
 
     /**
      * 实现getCube方法，定义主流程
-     * @param cubeId id
-     * @return Cube 对象
-     * @throws CubeException e
      */
     @Override
     public Cube getCube(GUID cubeId, Object[] args) throws CubeException {
-        Cube cube = getSingleton(cubeId);
-        if (cube != null) {
-            return cube;
+        // 1. 先尝试获取单例
+        Cube singletonCube = getSingleton(cubeId);
+        if (singletonCube != null) {
+            return singletonCube;
         }
-        CubeDefinition cubeDefinition = getCubeDefinition(cubeId);
 
+        // 2. 创建新实例
+        CubeDefinition cubeDefinition = getCubeDefinition(cubeId);
         if (Objects.isNull(cubeDefinition)) {
             return null;
         }

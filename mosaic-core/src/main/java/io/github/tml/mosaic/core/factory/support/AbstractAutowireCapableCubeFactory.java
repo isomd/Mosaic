@@ -31,13 +31,24 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
             cube = createCubeInstance(cubeDefinition, cubeId, args);
             // 给 Cube 填充属性
             applyPropertyValues(cubeId, cube, cubeDefinition);
-            // 执行 Cube 的初始化方法和 CubePostProcessor 的前置和后置处理方法
+            // 执行 Cube 的初始化方法
             cube = initializeCube(cubeId, cube, cubeDefinition);
         } catch (Exception e) {
             throw new CubeException("Instantiation of cube failed", e);
         }
-        // TODO 加入到单例池中
-        addSingleton(cubeId, cube);
+
+        // 根据Cube模式进行不同的注册策略
+        String model = cubeDefinition.getModel();
+        if ("singleton".equals(model)) {
+            // 单例模式：注册到单例池
+            addSingleton(cubeId, cube);
+            log.debug("✓ 单例Cube注册 | CubeId: {}", cubeId);
+        } else {
+            // 多例模式：注册到管理器
+            GUID instanceId = registerCube(cubeId, cube);
+            log.debug("✓ 多例Cube注册 | CubeId: {} | 实例ID: {}", cubeId, instanceId);
+        }
+
         return cube;
     }
 

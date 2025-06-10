@@ -1,9 +1,6 @@
 package io.github.tml.mosaic.install.reader;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
-import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.InstallationConfig;
 import io.github.tml.mosaic.install.InstallationItem;
@@ -16,14 +13,8 @@ import io.github.tml.mosaic.install.support.ResourceFileType;
  */
 public class LocalProjectInstallationItemReader extends AbstractCubeInstallationItemReader {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     public LocalProjectInstallationItemReader() {
         super(new DefaultResourceLoader());
-    }
-
-    public LocalProjectInstallationItemReader(ResourceLoader resourceLoader) {
-        super(resourceLoader);
     }
 
     @Override
