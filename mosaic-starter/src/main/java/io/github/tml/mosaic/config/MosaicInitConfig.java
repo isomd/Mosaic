@@ -5,9 +5,6 @@ import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.core.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
-import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.install.reader.JsonCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.install.adpter.CodeResourceFileAdapter;
@@ -27,10 +24,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import java.nio.charset.CoderMalfunctionError;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * mosaic框架初始化
@@ -62,7 +58,7 @@ public class MosaicInitConfig {
     public InfoContextInstaller infoContextInstaller(ResourceFileAdapterRegistry resourceFileAdapterRegistry, List<InstallationConfigEnhancer> installationConfigEnhancers) {
         DefaultInfoContextInstaller defaultInfoContextInstaller =
                 new DefaultInfoContextInstaller(
-                        List.of(new JsonCubeInstallationItemReader())
+                        List.of(new JsonCubeInstallationItemReader(), new LocalProjectInstallationItemReader())
                         , resourceFileAdapterRegistry);
         defaultInfoContextInstaller.setInstallationConfigEnhancers(installationConfigEnhancers);
         return defaultInfoContextInstaller;
