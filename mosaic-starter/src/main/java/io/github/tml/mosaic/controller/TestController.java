@@ -26,7 +26,6 @@ public class TestController {
 
     @PostMapping("v1")
     public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO){
-
         String proxy;
         if(requestDTO.getCmd()==1){
             proxy = ASMUtil.modify(requestDTO.getClassCode(), requestDTO.getLine(),
@@ -55,7 +54,5 @@ public class TestController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }

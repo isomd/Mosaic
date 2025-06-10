@@ -73,7 +73,7 @@ public class LocalProjectClassCollector implements InfoCollector {
         if (classLoader instanceof URLClassLoader) {
             URL[] urls = ((URLClassLoader) classLoader).getURLs();
             for (URL url : urls) {
-                processResource(url, packageName, classLoader, classes);
+//                processResource(url, packageName, classLoader, classes);
             }
         }
 
