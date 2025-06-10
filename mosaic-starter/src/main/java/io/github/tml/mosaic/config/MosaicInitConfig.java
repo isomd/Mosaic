@@ -5,6 +5,9 @@ import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.core.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
+import io.github.tml.mosaic.core.tools.guid.GUID;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.install.reader.JsonCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.install.adpter.CodeResourceFileAdapter;
@@ -26,6 +29,8 @@ import org.springframework.context.annotation.DependsOn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * mosaic框架初始化
@@ -57,7 +62,7 @@ public class MosaicInitConfig {
     public InfoContextInstaller infoContextInstaller(ResourceFileAdapterRegistry resourceFileAdapterRegistry, List<InstallationConfigEnhancer> installationConfigEnhancers) {
         DefaultInfoContextInstaller defaultInfoContextInstaller =
                 new DefaultInfoContextInstaller(
-                        List.of(new JsonCubeInstallationItemReader(), new LocalProjectInstallationItemReader())
+                        List.of(new JsonCubeInstallationItemReader())
                         , resourceFileAdapterRegistry);
         defaultInfoContextInstaller.setInstallationConfigEnhancers(installationConfigEnhancers);
         return defaultInfoContextInstaller;
@@ -70,11 +75,11 @@ public class MosaicInitConfig {
     @Bean
     @DependsOn("infoContextInstaller")
     public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
-        ClassPathCubeContext classPathCubeContext = new ClassPathCubeContext(resourcePath);
+        ClassPathCubeContext context = new ClassPathCubeContext(resourcePath);
 
         List<InfoContext> infoContexts = new ArrayList<>();
         if (infoContextInstaller != null) {
-            infoContexts = infoContextInstaller.installCubeInfoContext(classPathCubeContext.getConfigLocations());
+            infoContexts = infoContextInstaller.installCubeInfoContext(context.getConfigLocations());
         }
 
         List<CubeDefinition> cubeDefinitions = new ArrayList<>();
@@ -85,10 +90,10 @@ public class MosaicInitConfig {
         }
 
         for (CubeDefinition cubeDefinition : cubeDefinitions) {
-            classPathCubeContext.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
+            context.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
         }
 
-        return classPathCubeContext;
+        return context;
     }
 
     /**
