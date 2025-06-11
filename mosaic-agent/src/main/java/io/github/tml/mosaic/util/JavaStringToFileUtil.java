@@ -1,10 +1,11 @@
 package io.github.tml.mosaic.util;
 
+import org.codehaus.janino.SimpleCompiler;
+
 import javax.tools.*;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,33 @@ import java.util.Map;
  */
 public class JavaStringToFileUtil {
 
-    public static byte[] compile(String fullClassName, String sourceCode) throws IOException {
+    public static byte[] compile(String fullClassName, String sourceCode, ClassLoader parentLoader) throws Exception {
+        SimpleCompiler compiler = new SimpleCompiler();
+        compiler.setParentClassLoader(parentLoader);
+        compiler.cook(sourceCode);
+
+        // 使用 SimpleCompiler 编译后的类加载器
+        ClassLoader classLoader = compiler.getClassLoader();
+
+        // 获取 class 字节码的资源路径
+        String resourceName = fullClassName.replace('.', '/') + ".class";
+        try (InputStream is = classLoader.getResourceAsStream(resourceName)) {
+            if (is == null) {
+                throw new IOException("无法从 SimpleCompiler 获取 class 字节码: " + resourceName);
+            }
+            return is.readAllBytes();
+        }
+    }
+
+    public static String getFatJarPathFromClasspath() {
+        String classPath = System.getProperty("java.class.path");
+        if (classPath != null && classPath.endsWith(".jar")) {
+            return new File(classPath).getAbsolutePath();
+        }
+        return null;
+    }
+
+    public static byte[] compile(String fullClassName, String sourceCode,String classPath) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         JavaFileObject javaFileObject = new JavaSourceFromString(fullClassName, sourceCode);
 
@@ -36,7 +63,7 @@ public class JavaStringToFileUtil {
             }
         };
 
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null, null, List.of(javaFileObject));
+        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, Arrays.asList("-classpath",classPath), null, List.of(javaFileObject));
         if (!task.call()) {
             throw new RuntimeException("编译失败");
         }
