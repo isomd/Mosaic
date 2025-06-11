@@ -1,17 +1,22 @@
 package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 /**
  * 描述: 本地项目类收集器
@@ -21,24 +26,15 @@ import java.util.jar.JarFile;
 @Slf4j
 public class LocalProjectClassCollector implements InfoCollector {
 
-    private String basePackage;
-    private String basePackagePath;
-
     @Override
     public void collect(InfoContext infoContext) {
-        long startTime = System.currentTimeMillis();
+        String mainClassPackage = getMainClassPackage();
         try {
-            basePackage = getMainClassPackage();
-            basePackagePath = basePackage.replace('.', '/');
-            Set<Class<?>> classes = scanProjectClasses();
-            log.info("collect local project class :{} time: {}ms", classes.size(), System.currentTimeMillis() - startTime);
-            for (Class<?> aClass : classes) {
-                System.out.println(aClass);
-            }
-            infoContext.setAllClazz(new ArrayList<>(classes));
+            scanAllClass(mainClassPackage, infoContext);
         }catch (Exception e){
             throw new CubeException(String.format("%s collect error: %s", this.getClass().getName(), e.getMessage()));
         }
+
     }
 
     /**
@@ -62,113 +58,113 @@ public class LocalProjectClassCollector implements InfoCollector {
         throw new CubeException("cannot find main class");
     }
 
-    private Set<Class<?>> scanProjectClasses() throws Exception {
-        Set<Class<?>> classes = new LinkedHashSet<>();
+    private void scanAllClass(String packageName, InfoContext infoContext) throws Exception{
+        Set<Class<?>> classes = new HashSet<>();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        infoContext.setClassLoader(classLoader);
+        String path = packageName.replace(".", "/");
 
-        // 扫描主项目（当前模块）
-        scanPackage(basePackage, classLoader, classes);
-
-        return classes;
-    }
-
-    private void scanPackage(String packageName, ClassLoader classLoader, Set<Class<?>> classes) throws Exception {
-        String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-
-        while (resources.hasMoreElements()) {
+        while(resources.hasMoreElements()){
             URL resource = resources.nextElement();
-            if (isJarURL(resource)) {
-                processJarResource(resource, packageName, classes);
-            } else {
-                processFileResource(resource, packageName, classes);
+            processResource(resource, packageName, classLoader, classes);
+        }
+
+        if (classLoader instanceof URLClassLoader) {
+            URL[] urls = ((URLClassLoader) classLoader).getURLs();
+            for (URL url : urls) {
+//                processResource(url, packageName, classLoader, classes);
             }
         }
+
+        infoContext.setAllClazz(new ArrayList<>(classes));
     }
 
-    private void processJarResource(URL resource, String packageName, Set<Class<?>> classes) throws Exception {
-        JarFile jarFile =  getJarFile(resource);
-        try {
-            String prefix = packageName.replace('.', '/') + "/";
-            Enumeration<JarEntry> entries = jarFile.entries();
-
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-
-                // 检查是否是类文件且在基础包路径下
-                if (entryName.endsWith(".class") &&
-                        entryName.startsWith(basePackagePath) &&
-                        !entryName.contains("$")) { // 排除内部类
-
-                    String className = entryName.replace('/', '.')
-                            .substring(0, entryName.length() - 6);
-                    loadClass(className, classes);
-                }
+    private void processResource(URL resource, String basePackage,
+                                        ClassLoader classLoader, Set<Class<?>> classes) throws Exception {
+        if ("file".equals(resource.getProtocol())) {
+            File file = new File(resource.toURI());
+            if (file.isDirectory()) {
+                scanDirectory(file, basePackage, classLoader, classes);
+            } else if (file.getName().endsWith(".jar")) {
+                scanJar(file, basePackage, classLoader, classes);
             }
-        } finally {
-            jarFile.close();
+        } else if ("jar".equals(resource.getProtocol())) {
+            String jarPath = resource.getPath().substring(5, resource.getPath().indexOf("!"));
+            scanJar(new File(jarPath), basePackage, classLoader, classes);
         }
     }
 
-    private void processFileResource(URL resource, String packageName, Set<Class<?>> classes) {
-        File directory = new File(resource.getFile());
-        if (directory.exists() && directory.isDirectory()) {
-            scanDirectory(directory, packageName, classes);
-        }
-    }
-
-    private void scanDirectory(File directory, String packageName, Set<Class<?>> classes) {
+    private void scanDirectory(File directory, String basePackage,
+                                      ClassLoader classLoader, Set<Class<?>> classes) {
         File[] files = directory.listFiles();
         if (files == null) return;
 
         for (File file : files) {
             if (file.isDirectory()) {
-                // 递归扫描子目录
-                String subPackage = packageName + '.' + file.getName();
-                scanDirectory(file, subPackage, classes);
+                scanDirectory(file, basePackage + "." + file.getName(), classLoader, classes);
             } else if (file.getName().endsWith(".class")) {
-                // 转换文件路径为类名
-                String className = packageName + '.' +
-                        file.getName().replace(".class", "");
-                loadClass(className, classes);
+                String className = basePackage + '.' + file.getName().substring(0, file.getName().length() - 6);
+                addClass(className, classLoader, classes);
             }
         }
     }
 
-    private void loadClass(String className, Set<Class<?>> classes) {
+    private void scanJar(File jarFile, String basePackage,
+                                ClassLoader classLoader, Set<Class<?>> classes) throws Exception {
+        try (JarFile jar = new JarFile(jarFile)) {
+            String packagePath = basePackage.replace('.', '/');
+            Enumeration<JarEntry> entries = jar.entries();
+
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+
+                // 处理普通类文件
+                if (entryName.endsWith(".class") && entryName.startsWith(packagePath)) {
+                    String className = entryName.replace('/', '.')
+                            .substring(0, entryName.length() - 6);
+                    addClass(className, classLoader, classes);
+                }
+                // 处理Spring Boot嵌套JAR
+                else if (isSpringBootJar(entryName)) {
+                    processNestedJar(jar, entry, basePackage, classLoader, classes);
+                }
+            }
+        }
+    }
+
+    private void addClass(String className, ClassLoader classLoader, Set<Class<?>> classes) {
         try {
-            // 只加载属于基础包或其子包的类
-            if (className.startsWith(basePackage)) {
-                Class<?> clazz = Class.forName(className);
-                classes.add(clazz);
-            }
-        } catch (ClassNotFoundException e) {
-            System.err.println("Failed to load class: " + className);
+            Class<?> clazz = classLoader.loadClass(className);
+            classes.add(clazz);
+        } catch (ClassNotFoundException | NoClassDefFoundError |
+                 UnsupportedClassVersionError e) {
+            System.err.println("无法加载类: " + className + " | 原因: " + e.getMessage());
         }
     }
 
-    private boolean isJarURL(URL url) {
-        String protocol = url.getProtocol();
-        return "jar".equals(protocol) || "war".equals(protocol) || url.toString().contains(".jar!");
+    private boolean isSpringBootJar(String entryName) {
+        return entryName.startsWith("BOOT-INF/lib/") && entryName.endsWith(".jar");
     }
 
-    private JarFile getJarFile(URL url) throws IOException {
-        if ("jar".equals(url.getProtocol())) {
-            // 处理标准jar: URL
-            JarURLConnection jarConn = (JarURLConnection) url.openConnection();
-            jarConn.setUseCaches(false);
-            return jarConn.getJarFile();
-        } else {
-            // 处理其他类型的URL（如IDE环境）
-            String filePath = url.getPath();
-            if (filePath.contains("!")) {
-                filePath = filePath.substring(0, filePath.indexOf("!"));
+    private void processNestedJar(JarFile outerJar, JarEntry nestedEntry,
+                                         String basePackage, ClassLoader classLoader,
+                                         Set<Class<?>> classes) throws Exception {
+        // 创建嵌套JAR的临时副本
+        File tempFile = File.createTempFile("nested-", ".jar");
+        try (InputStream in = outerJar.getInputStream(nestedEntry);
+             FileOutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
             }
-            if (filePath.startsWith("file:")) {
-                filePath = filePath.substring(5);
-            }
-            return new JarFile(filePath);
         }
+
+        // 扫描嵌套JAR
+        scanJar(tempFile, basePackage, classLoader, classes);
+        tempFile.delete(); // 清理临时文件
     }
+
 }
