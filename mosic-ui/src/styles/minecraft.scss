@@ -1,0 +1,838 @@
+// src/styles/minecraft.scss
+@use 'sass:color';
+@use 'sass:math';
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+// ===== 高级色彩系统 =====
+:root {
+  // 主题色彩 - 精心调配的现代Minecraft调色板
+  --mc-primary: #8B4513;          // 橡木主色
+  --mc-primary-light: #CD853F;    // 橡木亮色
+  --mc-primary-dark: #654321;     // 橡木暗色
+  --mc-primary-alpha: rgba(139, 69, 19, 0.1);
+
+  --mc-secondary: #228B22;        // 森林绿
+  --mc-secondary-light: #32CD32;  // 亮绿
+  --mc-secondary-dark: #006400;   // 暗绿
+  --mc-secondary-alpha: rgba(34, 139, 34, 0.1);
+
+  --mc-accent: #FFD700;           // 金色强调
+  --mc-accent-light: #FFFF99;    // 亮金
+  --mc-accent-dark: #DAA520;     // 暗金
+  --mc-accent-alpha: rgba(255, 215, 0, 0.15);
+
+  // 功能色彩
+  --mc-success: #50C878;          // 绿宝石绿
+  --mc-warning: #FF8C00;          // 岩浆橙
+  --mc-error: #DC143C;            // 红石红
+  --mc-info: #4682B4;             // 青金石蓝
+
+  // 中性色彩 - 现代化灰度系统
+  --mc-neutral-50: #FAFAFA;       // 雪白
+  --mc-neutral-100: #F5F5F5;      // 浅灰
+  --mc-neutral-200: #EEEEEE;      // 中浅灰
+  --mc-neutral-300: #E0E0E0;      // 中灰
+  --mc-neutral-400: #BDBDBD;      // 深中灰
+  --mc-neutral-500: #9E9E9E;      // 深灰
+  --mc-neutral-600: #757575;      // 更深灰
+  --mc-neutral-700: #616161;      // 暗灰
+  --mc-neutral-800: #424242;      // 深暗灰
+  --mc-neutral-900: #212121;      // 最深灰
+
+  // 材质色彩 - 高级材质系统
+  --mc-diamond: linear-gradient(135deg, #B9F2FF 0%, #87CEEB 50%, #4682B4 100%);
+  --mc-emerald: linear-gradient(135deg, #50C878 0%, #32CD32 50%, #228B22 100%);
+  --mc-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #DAA520 100%);
+  --mc-iron: linear-gradient(135deg, #E6E6E6 0%, #C0C0C0 50%, #A9A9A9 100%);
+  --mc-redstone: linear-gradient(135deg, #FF6B6B 0%, #DC143C 50%, #B22222 100%);
+
+  // 高级阴影系统
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  // Minecraft特效
+  --mc-glow: 0 0 20px var(--mc-accent-alpha);
+  --mc-glow-strong: 0 0 30px rgba(255, 215, 0, 0.4);
+  --mc-pixel-border: 3px;
+  --mc-border-radius: 8px;
+
+  // 动画缓动
+  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+// ===== 现代化基础样式 =====
+* {
+  box-sizing: border-box;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background:
+          radial-gradient(circle at 25% 25%, var(--mc-secondary-alpha) 0%, transparent 50%),
+          radial-gradient(circle at 75% 75%, var(--mc-accent-alpha) 0%, transparent 50%),
+          linear-gradient(135deg, var(--mc-neutral-50) 0%, var(--mc-neutral-100) 100%);
+  background-attachment: fixed;
+  color: var(--mc-neutral-800);
+}
+
+// ===== 高级Minecraft组件系统 =====
+@mixin modern-minecraft-surface($color: var(--mc-neutral-50), $elevation: 1) {
+  background: $color;
+  border: var(--mc-pixel-border) solid;
+  border-image: linear-gradient(45deg,
+          rgba(255, 255, 255, 0.8) 0%,
+          rgba(255, 255, 255, 0.4) 25%,
+          rgba(0, 0, 0, 0.1) 75%,
+          rgba(0, 0, 0, 0.3) 100%
+  ) 1;
+  border-radius: var(--mc-border-radius);
+  position: relative;
+
+  @if $elevation == 1 {
+    box-shadow: var(--shadow-sm);
+  } @else if $elevation == 2 {
+    box-shadow: var(--shadow-md);
+  } @else if $elevation == 3 {
+    box-shadow: var(--shadow-lg);
+  } @else if $elevation == 4 {
+    box-shadow: var(--shadow-xl);
+  } @else if $elevation == 5 {
+    box-shadow: var(--shadow-2xl);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.05) 100%
+    );
+    border-radius: calc(var(--mc-border-radius) - var(--mc-pixel-border));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out-cubic);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+@mixin modern-minecraft-button($variant: 'primary', $size: 'medium') {
+  @include modern-minecraft-surface(var(--mc-neutral-100), 2);
+
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.2s var(--ease-out-cubic);
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+
+  @if $size == 'small' {
+    padding: 8px 16px;
+    font-size: 10px;
+    min-height: 32px;
+  } @else if $size == 'medium' {
+    padding: 12px 24px;
+    font-size: 11px;
+    min-height: 40px;
+  } @else if $size == 'large' {
+    padding: 16px 32px;
+    font-size: 12px;
+    min-height: 48px;
+  }
+
+  @if $variant == 'primary' {
+    background: var(--mc-primary);
+    color: white;
+
+    &:hover {
+      background: var(--mc-primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), var(--mc-glow);
+    }
+  } @else if $variant == 'secondary' {
+    background: var(--mc-secondary);
+    color: white;
+
+    &:hover {
+      background: var(--mc-secondary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+  } @else if $variant == 'accent' {
+    background: var(--mc-accent);
+    color: var(--mc-neutral-900);
+
+    &:hover {
+      background: var(--mc-accent-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), var(--mc-glow-strong);
+    }
+  } @else if $variant == 'ghost' {
+    background: transparent;
+    color: var(--mc-neutral-700);
+    border: 2px solid var(--mc-neutral-300);
+
+    &:hover {
+      background: var(--mc-neutral-100);
+      border-color: var(--mc-primary);
+      color: var(--mc-primary);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease-out-cubic), height 0.3s var(--ease-out-cubic);
+  }
+
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@mixin modern-minecraft-card($elevation: 2) {
+  @include modern-minecraft-surface(var(--mc-neutral-50), $elevation);
+  padding: 24px;
+  transition: all 0.3s var(--ease-out-cubic);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+}
+
+@mixin modern-minecraft-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--mc-border-radius);
+  box-shadow: var(--shadow-lg);
+}
+
+// ===== Vuetify组件现代化重写 =====
+.v-application {
+  font-family: 'JetBrains Mono', 'Press Start 2P', monospace !important;
+
+  .v-app-bar {
+    @include modern-minecraft-glass;
+    height: 72px !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    background: rgba(139, 69, 19, 0.9) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+    .v-toolbar__content {
+      padding: 0 32px;
+      height: 100% !important;
+    }
+
+    .v-toolbar-title {
+      font-family: 'Press Start 2P', monospace !important;
+      font-size: 18px !important;
+      font-weight: 400 !important;
+      color: white !important;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      &::before {
+        content: '⛏️';
+        font-size: 24px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      }
+    }
+
+    .v-btn {
+      @include modern-minecraft-button('ghost', 'medium');
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      margin: 0 4px;
+      min-width: 48px !important;
+      height: 48px !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md) !important;
+      }
+
+      .v-icon {
+        font-size: 20px !important;
+      }
+    }
+  }
+
+  .v-navigation-drawer {
+    @include modern-minecraft-glass;
+    width: 320px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+
+    .v-list {
+      background: transparent !important;
+      padding: 24px 16px;
+
+      .v-list-item {
+        @include modern-minecraft-button('ghost', 'medium');
+        margin: 6px 0;
+        border-radius: 12px !important;
+        min-height: 56px !important;
+        padding: 12px 20px !important;
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+
+        .v-list-item-title {
+          font-family: 'JetBrains Mono', monospace !important;
+          font-size: 13px !important;
+          font-weight: 500 !important;
+          color: var(--mc-neutral-700) !important;
+        }
+
+        .v-icon {
+          font-size: 20px !important;
+          margin-right: 16px !important;
+          color: var(--mc-primary) !important;
+        }
+
+        &--active {
+          background: var(--mc-accent) !important;
+          border-color: var(--mc-accent-dark) !important;
+          box-shadow: var(--mc-glow) !important;
+
+          .v-list-item-title {
+            color: var(--mc-neutral-900) !important;
+            font-weight: 700 !important;
+          }
+
+          .v-icon {
+            color: var(--mc-neutral-900) !important;
+          }
+        }
+
+        &:hover:not(.v-list-item--active) {
+          background: rgba(139, 69, 19, 0.1) !important;
+          border-color: var(--mc-primary) !important;
+          transform: translateX(4px);
+
+          .v-list-item-title {
+            color: var(--mc-primary) !important;
+          }
+        }
+      }
+    }
+  }
+
+  .v-main {
+    padding-top: 72px !important;
+
+    .v-container {
+      @include modern-minecraft-card(1);
+      margin: 24px;
+      padding: 32px;
+      min-height: calc(100vh - 120px);
+      max-width: none !important;
+      background: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+
+  .v-card {
+    @include modern-minecraft-card(2);
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: white !important;
+
+    .v-card-title {
+      background: var(--mc-primary) !important;
+      color: white !important;
+      font-family: 'Press Start 2P', monospace !important;
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      padding: 20px 24px !important;
+      text-align: center;
+      margin: -24px -24px 24px -24px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--mc-accent);
+        box-shadow: var(--mc-glow);
+      }
+    }
+
+    .v-card-text {
+      padding: 24px !important;
+      color: var(--mc-neutral-700) !important;
+      font-size: 14px !important;
+      line-height: 1.6;
+    }
+  }
+
+  .v-btn {
+    @include modern-minecraft-button('primary', 'medium');
+    border-radius: 8px !important;
+    font-family: 'Press Start 2P', monospace !important;
+    text-transform: none !important;
+    letter-spacing: 0.5px;
+
+    &.v-btn--size-large {
+      @include modern-minecraft-button('primary', 'large');
+    }
+
+    &.v-btn--size-small {
+      @include modern-minecraft-button('primary', 'small');
+    }
+  }
+
+  .v-footer {
+    @include modern-minecraft-glass;
+    height: 64px !important;
+    background: rgba(47, 47, 47, 0.9) !important;
+    color: white !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+    .minecraft-footer-text {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 12px !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      opacity: 0.9;
+    }
+  }
+}
+
+// ===== 现代化自定义组件 =====
+.minecraft-header {
+  @include modern-minecraft-card(3);
+  background: var(--mc-primary) !important;
+  color: white;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 32px;
+  border-radius: 20px !important;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  h1, h2, h3 {
+    margin: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-weight: 400;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      margin-right: 16px;
+      font-size: 1.2em;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  h1 {
+    font-size: 24px;
+    &::before { content: '🏰'; }
+  }
+
+  h2 {
+    font-size: 20px;
+    &::before { content: '🗺️'; }
+  }
+
+  h3 {
+    font-size: 16px;
+    &::before { content: '📊'; }
+  }
+}
+
+.minecraft-stat-card {
+  @include modern-minecraft-card(2);
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--ease-out-cubic);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--mc-accent);
+    box-shadow: var(--mc-glow);
+  }
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-2xl), var(--mc-glow-strong);
+
+    .minecraft-stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .minecraft-stat-number {
+      color: var(--mc-primary);
+    }
+  }
+
+  .minecraft-stat-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    transition: all 0.3s var(--ease-elastic);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  }
+
+  .minecraft-stat-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--mc-neutral-800);
+    margin-bottom: 8px;
+    transition: all 0.3s var(--ease-out-cubic);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .minecraft-stat-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mc-neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .v-progress-linear {
+    margin-top: 16px;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 6px !important;
+    background: var(--mc-neutral-200) !important;
+
+    .v-progress-linear__determinate {
+      border-radius: 4px;
+      background: var(--mc-accent) !important;
+      box-shadow: var(--mc-glow);
+    }
+  }
+}
+
+.minecraft-section {
+  @include modern-minecraft-card(2);
+  background: white !important;
+  border-radius: 16px !important;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--mc-success);
+
+  h3 {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--mc-neutral-800);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.minecraft-status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--mc-neutral-200);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  transition: all 0.2s var(--ease-out-cubic);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--mc-accent-alpha);
+    margin: 0 -16px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  span {
+    color: var(--mc-neutral-600);
+    font-weight: 400;
+  }
+
+  strong {
+    color: var(--mc-neutral-900);
+    font-weight: 700;
+    font-family: 'Orbitron', monospace;
+  }
+}
+
+.minecraft-action-btn {
+  @include modern-minecraft-button('accent', 'large');
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  padding: 20px 40px !important;
+  min-height: 64px !important;
+  box-shadow: var(--shadow-lg), var(--mc-glow) !important;
+
+  &:hover {
+    box-shadow: var(--shadow-2xl), var(--mc-glow-strong) !important;
+  }
+}
+
+.minecraft-drawer-header {
+  @include modern-minecraft-glass;
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--mc-primary) !important;
+  color: white;
+  margin: -16px -16px 24px -16px;
+  border-radius: 0 0 20px 20px;
+  position: relative;
+
+  .minecraft-logo {
+    font-size: 72px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .minecraft-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .minecraft-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: 0.8;
+    color: var(--mc-accent-light);
+  }
+}
+
+.minecraft-drawer-footer {
+  padding: 20px 16px;
+
+  .minecraft-footer-btn {
+    @include modern-minecraft-button('secondary', 'large');
+    width: 100%;
+    border-radius: 12px !important;
+    font-size: 12px !important;
+    background: var(--mc-error) !important;
+
+    &:hover {
+      background: #FF6B6B !important;
+      box-shadow: var(--shadow-lg), 0 0 20px rgba(220, 20, 60, 0.4) !important;
+    }
+  }
+}
+
+// ===== 高级动画系统 =====
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: var(--shadow-lg), var(--mc-glow); }
+  50% { box-shadow: var(--shadow-xl), var(--mc-glow-strong); }
+}
+
+.minecraft-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+// ===== 现代化响应式设计 =====
+@media (max-width: 1400px) {
+  .v-navigation-drawer {
+    width: 280px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .v-app-bar {
+    height: 64px !important;
+
+    .v-toolbar-title {
+      font-size: 14px !important;
+    }
+  }
+
+  .v-main {
+    padding-top: 64px !important;
+
+    .v-container {
+      margin: 16px 8px;
+      padding: 20px;
+    }
+  }
+
+  .minecraft-stat-card {
+    .minecraft-stat-icon {
+      font-size: 48px !important;
+    }
+
+    .minecraft-stat-number {
+      font-size: 24px !important;
+    }
+  }
+
+  .minecraft-header {
+    padding: 24px 20px;
+
+    h1 {
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .minecraft-drawer-header .minecraft-logo {
+    font-size: 56px;
+  }
+
+  .v-btn {
+    font-size: 10px !important;
+    min-height: 36px !important;
+    padding: 8px 16px !important;
+  }
+
+  .minecraft-action-btn {
+    font-size: 12px !important;
+    padding: 16px 24px !important;
+    min-height: 48px !important;
+  }
+}
+
+// ===== 高级滚动条设计 =====
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--mc-neutral-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--mc-primary), var(--mc-primary-light));
+  border-radius: 4px;
+  transition: all 0.2s var(--ease-out-cubic);
+
+  &:hover {
+    background: linear-gradient(135deg, var(--mc-accent), var(--mc-accent-light));
+    box-shadow: var(--mc-glow);
+  }
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--mc-neutral-100);
+}
+
+// ===== 高级加载和过渡效果 =====
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s var(--ease-out-cubic);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.4s var(--ease-out-cubic);
+}
+
+.slide-enter-from {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
