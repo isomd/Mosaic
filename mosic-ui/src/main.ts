@@ -11,7 +11,7 @@ import { mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
 
 // 自定义Minecraft样式
-import './styles/minecraft.scss'
+import './styles/minecraft1.scss'
 
 const vuetify = createVuetify({
     components,

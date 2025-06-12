@@ -1,0 +1,590 @@
+// src/styles/minecraft2.scss
+@use 'sass:color';
+@use 'sass:math';
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+
+// ===== Minecraft 色彩变量 =====
+:root {
+  // 主色调 - 基于Minecraft方块
+  --mc-oak: #8B4513;           // 橡木
+  --mc-dark-oak: #654321;      // 深色橡木
+  --mc-spruce: #8FBC8F;        // 云杉绿
+  --mc-birch: #F5DEB3;         // 桦木
+  --mc-jungle: #228B22;        // 丛林绿
+  --mc-acacia: #DAA520;        // 金合欢金
+
+  // 矿物色彩
+  --mc-iron: #C0C0C0;          // 铁
+  --mc-gold: #FFD700;          // 金
+  --mc-diamond: #B9F2FF;       // 钻石蓝
+  --mc-emerald: #50C878;       // 绿宝石
+  --mc-redstone: #DC143C;      // 红石
+  --mc-lapis: #4682B4;         // 青金石
+
+  // 环境色彩
+  --mc-stone: #808080;         // 石头
+  --mc-cobble: #696969;        // 圆石
+  --mc-obsidian: #2F2F2F;      // 黑曜石
+  --mc-snow: #FFFAFA;          // 雪
+  --mc-grass: #90EE90;         // 草地
+  --mc-dirt: #8B4513;          // 泥土
+  --mc-sand: #F4A460;          // 沙子
+
+  // 特效
+  --mc-glow: #FFFF99;          // 发光效果
+  --mc-shadow: rgba(0, 0, 0, 0.4);
+  --mc-highlight: rgba(255, 255, 255, 0.3);
+
+  // 像素化参数
+  --pixel-size: 4px;
+  --pixel-shadow: 0 4px 0 var(--mc-shadow);
+  --pixel-glow: 0 0 8px var(--mc-glow);
+
+  // 预计算的颜色变体（解决CSS变量限制）
+  --mc-oak-light: #CD853F;
+  --mc-oak-dark: #654321;
+  --mc-spruce-light: #98FB98;
+  --mc-spruce-dark: #556B2F;
+  --mc-birch-light: #FFFACD;
+  --mc-birch-dark: #DEB887;
+  --mc-iron-light: #E6E6E6;
+  --mc-iron-dark: #A9A9A9;
+  --mc-stone-light: #A9A9A9;
+  --mc-stone-dark: #696969;
+}
+
+// ===== 全局基础样式 =====
+* {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Press Start 2P', 'Orbitron', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+
+  // 动态草地背景
+  background:
+          linear-gradient(45deg, var(--mc-grass) 25%, transparent 25%),
+          linear-gradient(-45deg, var(--mc-grass) 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, var(--mc-spruce) 75%),
+          linear-gradient(-45deg, transparent 75%, var(--mc-spruce) 75%);
+  background-size: 32px 32px;
+  background-position: 0 0, 0 16px, 16px -16px, -16px 0px;
+  animation: grassMove 20s linear infinite;
+}
+
+@keyframes grassMove {
+  0% { background-position: 0 0, 0 16px, 16px -16px, -16px 0px; }
+  100% { background-position: 32px 32px, 32px 48px, 48px 16px, 16px 32px; }
+}
+
+// ===== Minecraft 风格 Mixins（修复版本）=====
+@mixin minecraft-block($base-color: #8B4513) {
+  position: relative;
+  border: var(--pixel-size) solid;
+
+  // 使用具体颜色值而不是CSS变量进行计算
+  @if $base-color == #8B4513 { // oak
+    border-color: #CD853F #654321 #654321 #CD853F;
+    background: linear-gradient(145deg, #A0522D, #8B4513, #654321);
+  } @else if $base-color == #8FBC8F { // spruce
+    border-color: #98FB98 #556B2F #556B2F #98FB98;
+    background: linear-gradient(145deg, #90EE90, #8FBC8F, #556B2F);
+  } @else if $base-color == #F5DEB3 { // birch
+    border-color: #FFFACD #DEB887 #DEB887 #FFFACD;
+    background: linear-gradient(145deg, #FFFAF0, #F5DEB3, #DEB887);
+  } @else if $base-color == #C0C0C0 { // iron
+    border-color: #E6E6E6 #A9A9A9 #A9A9A9 #E6E6E6;
+    background: linear-gradient(145deg, #D3D3D3, #C0C0C0, #A9A9A9);
+  } @else if $base-color == #808080 { // stone
+    border-color: #A9A9A9 #696969 #696969 #A9A9A9;
+    background: linear-gradient(145deg, #909090, #808080, #696969);
+  } @else {
+    // 默认处理：使用Sass color函数
+    border-color:
+            #{color.adjust($base-color, $lightness: 25%)}
+            #{color.adjust($base-color, $lightness: -15%)}
+            #{color.adjust($base-color, $lightness: -25%)}
+            #{color.adjust($base-color, $lightness: 15%)};
+    background: linear-gradient(145deg,
+            #{color.adjust($base-color, $lightness: 10%)},
+            $base-color,
+            #{color.adjust($base-color, $lightness: -10%)}
+    );
+  }
+
+  box-shadow:
+          inset 2px 2px 0 var(--mc-highlight),
+          inset -2px -2px 0 var(--mc-shadow),
+          var(--pixel-shadow);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 70%
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+@mixin minecraft-button($base-color: #C0C0C0) {
+  @include minecraft-block($base-color);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+            inset 2px 2px 0 var(--mc-highlight),
+            inset -2px -2px 0 var(--mc-shadow),
+            0 6px 0 var(--mc-shadow),
+            var(--pixel-glow);
+  }
+
+  &:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow:
+            inset -2px -2px 0 var(--mc-highlight),
+            inset 2px 2px 0 var(--mc-shadow),
+            0 2px 0 var(--mc-shadow);
+  }
+}
+
+@mixin minecraft-panel($base-color: #F5DEB3) {
+  @include minecraft-block($base-color);
+  backdrop-filter: blur(8px);
+  border-radius: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+  }
+}
+
+// ===== Vuetify 组件重写 =====
+.v-application {
+  font-family: 'Press Start 2P', monospace !important;
+
+  .v-app-bar {
+    @include minecraft-panel(#8B4513); // oak
+    height: 80px !important;
+
+    .v-toolbar__content {
+      padding: 0 24px;
+      height: 100% !important;
+    }
+
+    .v-toolbar-title {
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      color: var(--mc-snow) !important;
+      text-shadow: 2px 2px 0 var(--mc-shadow);
+
+      &::before {
+        content: '⛏️ ';
+        margin-right: 8px;
+      }
+    }
+
+    .v-btn {
+      @include minecraft-button(#C0C0C0); // iron
+      margin: 0 4px;
+      min-width: 48px !important;
+      height: 48px !important;
+      border-radius: 0 !important;
+
+      .v-icon {
+        font-size: 20px !important;
+      }
+    }
+  }
+
+  .v-navigation-drawer {
+    @include minecraft-panel(#8FBC8F); // spruce
+    width: 300px !important;
+
+    .v-list {
+      background: transparent !important;
+      padding: 16px;
+
+      .v-list-item {
+        @include minecraft-button(#F5DEB3); // birch
+        margin: 8px 0;
+        border-radius: 0 !important;
+        min-height: 56px !important;
+        padding: 12px 16px !important;
+
+        .v-list-item-title {
+          font-size: 11px !important;
+          font-weight: 400 !important;
+          color: var(--mc-obsidian) !important;
+        }
+
+        .v-icon {
+          font-size: 18px !important;
+          margin-right: 12px !important;
+          color: var(--mc-oak) !important;
+        }
+
+        &--active {
+          @include minecraft-button(#DAA520); // gold
+
+          .v-list-item-title {
+            color: var(--mc-obsidian) !important;
+            font-weight: 700 !important;
+          }
+
+          .v-icon {
+            color: var(--mc-obsidian) !important;
+          }
+        }
+
+        &:hover {
+          .v-list-item-title {
+            color: var(--mc-obsidian) !important;
+          }
+        }
+      }
+    }
+  }
+
+  .v-main {
+    padding-top: 80px !important;
+
+    .v-container {
+      @include minecraft-panel(#F5DEB3); // birch
+      margin: 20px;
+      padding: 24px;
+      min-height: calc(100vh - 140px);
+      max-width: none !important;
+    }
+  }
+
+  .v-card {
+    @include minecraft-panel(#FFFAFA); // snow
+    border-radius: 0 !important;
+    overflow: visible !important;
+
+    .v-card-title {
+      @include minecraft-panel(#8B4513); // oak
+      color: var(--mc-snow) !important;
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      padding: 16px 20px !important;
+      text-align: center;
+      margin: -4px -4px 16px -4px;
+      text-shadow: 2px 2px 0 var(--mc-shadow);
+    }
+
+    .v-card-text {
+      padding: 20px !important;
+      color: var(--mc-obsidian) !important;
+      font-size: 10px !important;
+      line-height: 1.6;
+    }
+  }
+
+  .v-btn {
+    @include minecraft-button();
+    border-radius: 0 !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-size: 10px !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+    letter-spacing: 1px;
+    min-height: 40px !important;
+    padding: 0 16px !important;
+
+    &.v-btn--size-large {
+      min-height: 56px !important;
+      font-size: 12px !important;
+      padding: 0 24px !important;
+    }
+
+    &.v-btn--variant-elevated {
+      box-shadow: var(--pixel-shadow) !important;
+    }
+  }
+
+  .v-footer {
+    @include minecraft-panel(#2F2F2F); // obsidian
+    height: 60px !important;
+    color: var(--mc-snow) !important;
+
+    .minecraft-footer-text {
+      font-size: 9px !important;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      opacity: 0.9;
+    }
+  }
+}
+
+// ===== 自定义组件样式 =====
+.minecraft-header {
+  @include minecraft-panel(#8B4513); // oak
+  color: var(--mc-snow);
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+
+  h1, h2, h3 {
+    margin: 0;
+    font-weight: 400;
+    text-shadow: 3px 3px 0 var(--mc-shadow);
+
+    &::before {
+      margin-right: 12px;
+    }
+  }
+
+  h1::before { content: '🏰'; }
+  h2::before { content: '🗺️'; }
+  h3::before { content: '📊'; }
+}
+
+.minecraft-stat-card {
+  @include minecraft-panel(#B9F2FF); // diamond
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow:
+            inset 2px 2px 0 var(--mc-highlight),
+            inset -2px -2px 0 var(--mc-shadow),
+            0 12px 0 var(--mc-shadow),
+            var(--pixel-glow);
+  }
+
+  .minecraft-stat-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    filter: drop-shadow(2px 2px 0 var(--mc-shadow));
+  }
+
+  .minecraft-stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--mc-oak);
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 0 var(--mc-highlight);
+  }
+
+  .minecraft-stat-title {
+    font-size: 9px;
+    color: var(--mc-cobble);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.minecraft-section {
+  @include minecraft-panel(#50C878); // emerald
+  padding: 20px;
+  margin-bottom: 20px;
+
+  h3 {
+    color: var(--mc-obsidian);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 12px;
+    text-shadow: 1px 1px 0 var(--mc-highlight);
+  }
+}
+
+.minecraft-status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 2px dashed rgba(139, 69, 19, 0.3);
+  font-size: 10px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span {
+    color: var(--mc-cobble);
+  }
+
+  strong {
+    color: var(--mc-obsidian);
+    font-weight: 700;
+  }
+}
+
+.minecraft-action-btn {
+  @include minecraft-button(#50C878); // emerald
+  font-size: 12px !important;
+  padding: 0 32px !important;
+  min-height: 64px !important;
+
+  &:hover {
+    background: linear-gradient(145deg, var(--mc-grass), var(--mc-jungle)) !important;
+  }
+}
+
+.minecraft-drawer-header {
+  @include minecraft-panel(#654321); // dark oak
+  padding: 24px;
+  text-align: center;
+  color: var(--mc-snow);
+  margin: -4px -4px 20px -4px;
+
+  .minecraft-logo {
+    font-size: 64px;
+    margin-bottom: 16px;
+    filter: drop-shadow(3px 3px 0 var(--mc-shadow));
+  }
+
+  .minecraft-version {
+    font-size: 9px;
+    opacity: 0.8;
+    color: var(--mc-iron);
+  }
+}
+
+.minecraft-drawer-footer {
+  padding: 16px;
+
+  .minecraft-footer-btn {
+    @include minecraft-button(#DC143C); // redstone
+    width: 100%;
+    min-height: 56px !important;
+    font-size: 11px !important;
+
+    &:hover {
+      background: linear-gradient(145deg, #FF6B6B, var(--mc-redstone)) !important;
+    }
+  }
+}
+
+// ===== 响应式设计 =====
+@media (max-width: 1200px) {
+  .v-navigation-drawer {
+    width: 280px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 10px;
+  }
+
+  .v-app-bar {
+    height: 64px !important;
+
+    .v-toolbar-title {
+      font-size: 12px !important;
+    }
+  }
+
+  .v-main {
+    padding-top: 64px !important;
+
+    .v-container {
+      margin: 8px;
+      padding: 16px;
+    }
+  }
+
+  .minecraft-stat-icon {
+    font-size: 40px !important;
+  }
+
+  .minecraft-stat-number {
+    font-size: 20px !important;
+  }
+
+  .minecraft-header {
+    padding: 16px;
+
+    h1 {
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 8px;
+  }
+
+  .minecraft-drawer-header .minecraft-logo {
+    font-size: 48px;
+  }
+
+  .v-btn {
+    font-size: 8px !important;
+    min-height: 32px !important;
+  }
+}
+
+// ===== 动画效果 =====
+@keyframes pixelGlow {
+  0%, 100% {
+    box-shadow:
+            inset 2px 2px 0 var(--mc-highlight),
+            inset -2px -2px 0 var(--mc-shadow),
+            var(--pixel-shadow);
+  }
+  50% {
+    box-shadow:
+            inset 2px 2px 0 var(--mc-highlight),
+            inset -2px -2px 0 var(--mc-shadow),
+            var(--pixel-shadow),
+            0 0 16px var(--mc-glow);
+  }
+}
+
+.minecraft-glow {
+  animation: pixelGlow 2s ease-in-out infinite;
+}
+
+// ===== 滚动条样式 =====
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  @include minecraft-block(#808080); // stone
+}
+
+::-webkit-scrollbar-thumb {
+  @include minecraft-block(#C0C0C0); // iron
+
+  &:hover {
+    background: linear-gradient(145deg, var(--mc-gold), var(--mc-acacia));
+  }
+}
