@@ -1,5 +1,8 @@
 package io.github.tml.mosaic.util;
 
+import io.github.tml.mosaic.GoldenShovel;
+import org.springframework.util.StringUtils;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,19 +13,31 @@ import java.util.stream.Collectors;
  */
 public class CubeTemplateUtil {
 
+    public static String buildCodeTemplate(String slotId, List<String> params){
+        StringBuilder sb = new StringBuilder("GoldenShovel");
+        sb.append(".executeBootStrap()")
+                .append(".slotId(\""+slotId+"\")")
+                .append(".run("+buildParamsStr(params)+");");
+
+        return sb.toString();
+    }
+
     public static String generateCubeTemplateBySlotName(String slotName){
         return "TestUtil.setSlotName(\""+slotName+"\")";
     }
 
     public static String generateCubeTemplateByParams(List<String> params){
-        String joined = params.stream()
-                .map(p -> "\"" + p + "\"") // 确保加引号
-                .collect(Collectors.joining(", "));
+        String joined = buildParamsStr(params);
         return "TestUtil.execute(new String[]{" + joined + "})";
     }
 
+    private static String buildParamsStr(List<String> params) {
+        // 确保加引号
+        return String.join(", ", params);
+    }
+
     public static String getCubeImportPath(){
-        return "io.github.tml.mosaic.util.TestUtil";
+        return "io.github.tml.mosaic.GoldenShovel";
     }
 
 }

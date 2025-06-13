@@ -6,13 +6,14 @@ import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
 import io.github.tml.plugin.systemLog.cube.PropertySystemLogCube;
 
+import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_P;
 import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_S;
 
 @MExtensionPackage(value = "system.log",
         name = "系统日志输出扩展包",
         description = "用于系统日志输出",
         version = "1.0.1",
-        cubeId = PLUGIN_ID_S)
+        cubeId = PLUGIN_ID_P)
 public class SystemLogCubeApi extends ExtensionPackage<PropertySystemLogCube> {
 
 
