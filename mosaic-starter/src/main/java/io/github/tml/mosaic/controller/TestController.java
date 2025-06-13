@@ -1,12 +1,18 @@
 package io.github.tml.mosaic.controller;
 
 import com.alibaba.fastjson.JSON;
+import io.github.tml.mosaic.GoldenShovel;
+import io.github.tml.mosaic.core.tools.guid.DotNotationId;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.DTO.HotSwapRequestDTO;
 import io.github.tml.mosaic.entity.dto.AgentSocketRequestDTO;
+import io.github.tml.mosaic.slot.Slot;
+import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import io.github.tml.mosaic.util.ASMUtil;
 import io.github.tml.mosaic.util.ChunkHotSwapUtil;
 import io.github.tml.mosaic.util.CubeTemplateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.DataOutputStream;
@@ -27,6 +33,9 @@ import java.util.Set;
 @RequestMapping("/test/mosaic")
 public class TestController {
 
+    @Autowired
+    SlotManager slotManager;
+
     @PostMapping("v1")
     public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO) throws Exception {
         String proxy;
@@ -39,9 +48,18 @@ public class TestController {
                     () -> CubeTemplateUtil.generateCubeTemplateBySlotName(requestDTO.getSlotName())
                     , Set.of(CubeTemplateUtil.getCubeImportPath()));
         }else{
+            String slotId = requestDTO.getSlotId();
+
+            GoldenShovel.slotBootStrap().slotId(slotId)
+                    .exPackageId(requestDTO.getExPackageId())
+                    .exPointId(requestDTO.getExPointId())
+                    .cubeId(new GUUID(requestDTO.getPluginId()))
+                    .build();
+
+
             proxy = ASMUtil.modify(code, requestDTO.getLine(),
                     ASMUtil.CodeOp.INSERT_AFTER,
-                    () -> CubeTemplateUtil.generateCubeTemplateByParams(requestDTO.getArgs())
+                    () -> CubeTemplateUtil.buildCodeTemplate(slotId, requestDTO.getArgs())
                     , Set.of(CubeTemplateUtil.getCubeImportPath()));
         }
         AgentSocketRequestDTO send = new AgentSocketRequestDTO();
