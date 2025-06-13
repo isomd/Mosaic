@@ -9,3 +9,4 @@ spring:
 mosaic:
   startup:
     resource-path: classpath:start1.json
+

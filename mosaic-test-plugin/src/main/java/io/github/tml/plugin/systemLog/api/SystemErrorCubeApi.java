@@ -5,6 +5,7 @@ import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
 import io.github.tml.plugin.systemLog.cube.PropertySystemLogCube;
+import io.github.tml.plugin.systemLog.cube.SingletonSystemLogCube;
 
 import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_S;
 
@@ -12,10 +13,9 @@ import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_S;
         name = "系统日志错误输出包",
         version = "1.0.1",
         cubeId = PLUGIN_ID_S)
-public class SystemErrorCubeApi extends ExtensionPackage<PropertySystemLogCube> {
+public class SystemErrorCubeApi extends ExtensionPackage<SingletonSystemLogCube> {
 
-
-    public SystemErrorCubeApi(PropertySystemLogCube cube, GUID guid) {
+    public SystemErrorCubeApi(SingletonSystemLogCube cube, GUID guid) {
         super(cube, guid);
     }
 
