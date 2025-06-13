@@ -1,19 +1,11 @@
-// src/main.ts
-import { createApp } from 'vue'
-import App from './App.vue'
-
-// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import {mdi} from "vuetify/lib/iconsets/mdi";
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { mdi } from 'vuetify/iconsets/mdi'
-import '@mdi/font/css/materialdesignicons.css'
 
-// 自定义Minecraft样式
-import './styles/minecraft1.scss'
-
-const vuetify = createVuetify({
+export default createVuetify({
     components,
     directives,
     icons: {
@@ -44,5 +36,3 @@ const vuetify = createVuetify({
         },
     },
 })
-
-createApp(App).use(vuetify).mount('#app')
