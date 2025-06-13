@@ -95,45 +95,7 @@ public class MosaicAgentSocketServer {
                         realJarPaths.add(new File(uri).getAbsolutePath());
                     } else if (s.startsWith("jar:file:")) {
 
-                        String fatJarPathFromClasspath = JavaStringToFileUtil.getFatJarPathFromClasspath();
-
-                        File fatJarFile = null;
-                        if (fatJarPathFromClasspath == null) {
-                            throw new RuntimeException("无法获取fat jar 路径");
-                        }
-                        fatJarFile = new File(fatJarPathFromClasspath);
-                        File parentDir = fatJarFile.getParentFile();
-                        File outputDir = new File(parentDir, "mosaic/lib/");
-
-                        if (!outputDir.exists()) {
-                            outputDir.mkdirs();
-                        }
-
-                        List<String> jarPaths = new ArrayList<>();
-
-                        try (JarFile jarFile = new JarFile(fatJarFile)) {
-                            Enumeration<JarEntry> entries = jarFile.entries();
-                            while (entries.hasMoreElements()) {
-                                JarEntry entry = entries.nextElement();
-                                String name = entry.getName();
-
-                                // 只解压 BOOT-INF/lib/*.jar
-                                if (name.startsWith("BOOT-INF/lib/") && name.endsWith(".jar")) {
-                                    String jarName = name.substring(name.lastIndexOf('/') + 1);
-                                    File outFile = new File(outputDir, jarName);
-
-                                    // 避免重复解压
-                                    if (!outFile.exists()) {
-                                        try (InputStream is = jarFile.getInputStream(entry);
-                                             OutputStream os = new FileOutputStream(outFile)) {
-                                            is.transferTo(os);
-                                        }
-                                    }
-
-                                    jarPaths.add(outFile.getAbsolutePath());
-                                }
-                            }
-                        }
+                        List<String> jarPaths = getJarPaths();
 
                         realJarPaths.addAll(jarPaths);
                     } else {
@@ -153,6 +115,49 @@ public class MosaicAgentSocketServer {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static List<String> getJarPaths() throws IOException {
+        String fatJarPathFromClasspath = JavaStringToFileUtil.getFatJarPathFromClasspath();
+
+        File fatJarFile;
+        if (fatJarPathFromClasspath == null) {
+            throw new RuntimeException("无法获取fat jar 路径");
+        }
+        fatJarFile = new File(fatJarPathFromClasspath);
+        File parentDir = fatJarFile.getParentFile();
+        File outputDir = new File(parentDir, "mosaic/lib/");
+
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        List<String> jarPaths = new ArrayList<>();
+
+        try (JarFile jarFile = new JarFile(fatJarFile)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+
+                // 只解压 BOOT-INF/lib/*.jar
+                if (name.startsWith("BOOT-INF/lib/") && name.endsWith(".jar")) {
+                    String jarName = name.substring(name.lastIndexOf('/') + 1);
+                    File outFile = new File(outputDir, jarName);
+
+                    // 避免重复解压
+                    if (!outFile.exists()) {
+                        try (InputStream is = jarFile.getInputStream(entry);
+                             OutputStream os = new FileOutputStream(outFile)) {
+                            is.transferTo(os);
+                        }
+                    }
+
+                    jarPaths.add(outFile.getAbsolutePath());
+                }
+            }
+        }
+        return jarPaths;
     }
 
     private Class<?> findLoadedClass(String className) {
