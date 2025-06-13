@@ -32,10 +32,8 @@ public class LocalProjectClassCollector implements InfoCollector {
             basePackagePath = basePackage.replace('.', '/');
             Set<Class<?>> classes = scanProjectClasses();
             log.info("collect local project class :{} time: {}ms", classes.size(), System.currentTimeMillis() - startTime);
-            for (Class<?> aClass : classes) {
-                System.out.println(aClass);
-            }
             infoContext.setAllClazz(new ArrayList<>(classes));
+            infoContext.setClassLoader(this.getClass().getClassLoader());
         }catch (Exception e){
             throw new CubeException(String.format("%s collect error: %s", this.getClass().getName(), e.getMessage()));
         }
