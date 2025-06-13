@@ -1,10 +1,18 @@
 package io.github.tml.mosaic.controller;
 
 import com.alibaba.fastjson.JSON;
+import io.github.tml.mosaic.GoldenShovel;
+import io.github.tml.mosaic.core.tools.guid.DotNotationId;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.DTO.HotSwapRequestDTO;
 import io.github.tml.mosaic.entity.dto.AgentSocketRequestDTO;
+import io.github.tml.mosaic.slot.Slot;
+import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import io.github.tml.mosaic.util.ASMUtil;
+import io.github.tml.mosaic.util.ChunkHotSwapUtil;
 import io.github.tml.mosaic.util.CubeTemplateUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.DataOutputStream;
@@ -19,23 +27,39 @@ import java.util.Set;
  * @description :
  * @date 2025/6/8
  */
+@Slf4j
 @RestController
 @ResponseBody
 @RequestMapping("/test/mosaic")
 public class TestController {
 
+    @Autowired
+    SlotManager slotManager;
+
     @PostMapping("v1")
-    public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO){
+    public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO) throws Exception {
         String proxy;
+
+        String className = requestDTO.getClassName();
+        String code = ChunkHotSwapUtil.decompileClassFromClassName(className);
         if(requestDTO.getCmd()==1){
-            proxy = ASMUtil.modify(requestDTO.getClassCode(), requestDTO.getLine(),
+            proxy = ASMUtil.modify(code, requestDTO.getLine(),
                     ASMUtil.CodeOp.REPLACE_ASSIGN_RIGHT,
                     () -> CubeTemplateUtil.generateCubeTemplateBySlotName(requestDTO.getSlotName())
                     , Set.of(CubeTemplateUtil.getCubeImportPath()));
         }else{
-            proxy = ASMUtil.modify(requestDTO.getClassCode(), requestDTO.getLine(),
+            String slotId = requestDTO.getSlotId();
+
+            GoldenShovel.slotBootStrap().slotId(slotId)
+                    .exPackageId(requestDTO.getExPackageId())
+                    .exPointId(requestDTO.getExPointId())
+                    .cubeId(new GUUID(requestDTO.getPluginId()))
+                    .build();
+
+
+            proxy = ASMUtil.modify(code, requestDTO.getLine(),
                     ASMUtil.CodeOp.INSERT_AFTER,
-                    () -> CubeTemplateUtil.generateCubeTemplateByParams(requestDTO.getArgs())
+                    () -> CubeTemplateUtil.buildCodeTemplate(slotId, requestDTO.getArgs())
                     , Set.of(CubeTemplateUtil.getCubeImportPath()));
         }
         AgentSocketRequestDTO send = new AgentSocketRequestDTO();
@@ -54,5 +78,10 @@ public class TestController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("classString/{className}")
+    public String classString(@PathVariable String className){
+        return ChunkHotSwapUtil.decompileClassFromClassName(className);
     }
 }
