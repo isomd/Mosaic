@@ -20,7 +20,6 @@ public class HotSwapRequestDTO {
     private String exPackageId;
     private String exPointId;
     private List<String> args;
-    private String classCode;
     private int cmd;
 
 }
