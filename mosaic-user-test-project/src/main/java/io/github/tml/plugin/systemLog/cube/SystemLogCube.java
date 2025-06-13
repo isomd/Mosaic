@@ -4,15 +4,18 @@ import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.MCube;
 
-import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_S;
+import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID;
 
-@MCube(value = PLUGIN_ID_S,
-        name="系统日志（单例测试）",
+
+@MCube(value=PLUGIN_ID,
+        name="系统日志",
         description = "用于输出系统日志的插件",
-        version = "1.0.1")
-public class SingletonSystemLogCube extends Cube {
+        version = "1.0.1",
+        model = "property"
+)
+public class SystemLogCube extends Cube {
 
-    public SingletonSystemLogCube(GUID id) {
+    public SystemLogCube(GUID id) {
         super(id);
     }
 

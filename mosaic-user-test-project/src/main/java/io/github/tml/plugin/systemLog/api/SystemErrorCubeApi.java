@@ -1,12 +1,12 @@
-package io.github.tml.systemLog.api;
+package io.github.tml.plugin.systemLog.api;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
-import io.github.tml.systemLog.cube.SystemLogCube;
+import io.github.tml.plugin.systemLog.cube.SystemLogCube;
 
-import static io.github.tml.systemLog.config.Constant.PLUGIN_ID;
+import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID;
 
 @MExtensionPackage(value = "system.error",
         name = "系统日志错误输出包",
