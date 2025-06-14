@@ -22,6 +22,7 @@ public abstract class AbstractCubeContext implements CubeContext {
 
     protected abstract ListableCubeFactory getBeanFactory();
 
+
     @Override
     public Cube getCube(GUID cubeId) throws CubeException {
         return getBeanFactory().getCube(cubeId);

@@ -15,10 +15,10 @@ public class WelsirTestController {
 
     @GetMapping("/v1")
     public String welsir() {
-
-        String params = "";
-        System.out.println(params);
-        return "welsir";
+        String params = "welsir big stupid pig";
+        String params2 = "twj big stupid fuck pig";
+        String params3 = "Genius is good good";
+        return "success";
     }
 
 }

@@ -2,9 +2,12 @@ package io.github.tml.mosaic.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
+import io.github.tml.mosaic.core.event.CubeEventBroadcaster;
 import io.github.tml.mosaic.core.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.install.reader.JsonCubeInstallationItemReader;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.install.adpter.CodeResourceFileAdapter;
@@ -24,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import java.nio.charset.CoderMalfunctionError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class MosaicInitConfig {
      * @param infoContextInstaller 启动资源文件适配器
      */
     @Bean
-    @DependsOn("infoContextInstaller")
+    @DependsOn({"infoContextInstaller", "cubeEventBroadcaster"})
     public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
         ClassPathCubeContext context = new ClassPathCubeContext(resourcePath);
 
@@ -88,6 +90,8 @@ public class MosaicInitConfig {
         for (CubeDefinition cubeDefinition : cubeDefinitions) {
             context.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
         }
+
+        Cube cube = context.getCube(new GUUID("system.log.cube.s"));
 
         return context;
     }

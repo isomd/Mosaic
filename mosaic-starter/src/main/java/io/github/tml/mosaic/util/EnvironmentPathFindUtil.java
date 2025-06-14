@@ -31,7 +31,7 @@ import java.util.jar.Manifest;
 @Slf4j
 public class EnvironmentPathFindUtil {
 
-    private static final Path TEMP_DIR = getCurrentJarParentDir().resolve("mosaic/tmp/jar/");
+    private static final Path TEMP_DIR = getCurrentJarParentDir().resolve("mosaic/lib/");
 
     private static final String AGENT_JAR = "mosaic-agent-0.0.1-SNAPSHOT.jar";
     private static final String INSTALL_JAR = "mosaic-starter-1.0-SNAPSHOT.jar";

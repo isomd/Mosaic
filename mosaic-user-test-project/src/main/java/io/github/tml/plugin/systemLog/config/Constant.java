@@ -1,4 +1,4 @@
-package io.github.tml.systemLog.config;
+package io.github.tml.plugin.systemLog.config;
 
 public class Constant {
 
