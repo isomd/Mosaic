@@ -1,5 +1,11 @@
 {
   "welcome": "Welcome to Mosaic",
   "toggle_theme": "Toggle Theme",
-  "toggle_lang": "切换语言"
+  "toggle_lang": "切换语言",
+  "menu": {
+    "craftingTable": "Crafting Table",
+    "dashboard": "Dashboard",
+    "plugins": "Plugins",
+    "settings": "Settings"
+  }
 }

@@ -1,10 +1,9 @@
 // src/styles/minecraft2.scss
 @use 'sass:color';
 @use 'sass:math';
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
 
 // ===== Minecraft 色彩变量 =====
-:root {
+.root {
   // 主色调 - 基于Minecraft方块
   --mc-oak: #8B4513;           // 橡木
   --mc-dark-oak: #654321;      // 深色橡木
@@ -51,6 +50,12 @@
   --mc-iron-dark: #A9A9A9;
   --mc-stone-light: #A9A9A9;
   --mc-stone-dark: #696969;
+
+  // 英文使用像素字体，中文不使用像素字体
+  //--minecraft-font-family: 'Press Start 2P', 'Orbitron', monospace;
+
+  // 中英文都使用像素字体
+  --minecraft-font-family: 'Press Start 2P','Pixel-zh', 'Orbitron', monospace;
 }
 
 // ===== 全局基础样式 =====
@@ -66,7 +71,7 @@ html {
 }
 
 body {
-  font-family: 'Press Start 2P', 'Orbitron', monospace;
+  font-family: var(--minecraft-font-family);
   font-size: 12px;
   line-height: 1.8;
   margin: 0;
@@ -194,7 +199,7 @@ body {
 
 // ===== Vuetify 组件重写 =====
 .v-application {
-  font-family: 'Press Start 2P', monospace !important;
+  font-family: var(--minecraft-font-family) !important;
 
   .v-app-bar {
     @include minecraft-panel(#8B4513); // oak
@@ -211,10 +216,10 @@ body {
       color: var(--mc-snow) !important;
       text-shadow: 2px 2px 0 var(--mc-shadow);
 
-      &::before {
-        content: '⛏️ ';
-        margin-right: 8px;
-      }
+      //&::before {
+      //  content: '⛏️ ';
+      //  margin-right: 8px;
+      //}
     }
 
     .v-btn {
@@ -232,7 +237,7 @@ body {
 
   .v-navigation-drawer {
     @include minecraft-panel(#8FBC8F); // spruce
-    width: 300px !important;
+    width: 320px !important;
 
     .v-list {
       background: transparent !important;
@@ -284,7 +289,7 @@ body {
 
     .v-container {
       @include minecraft-panel(#F5DEB3); // birch
-      margin: 20px;
+      //margin: 20px;
       padding: 24px;
       min-height: calc(100vh - 140px);
       max-width: none !important;
@@ -318,7 +323,7 @@ body {
   .v-btn {
     @include minecraft-button();
     border-radius: 0 !important;
-    font-family: 'Press Start 2P', monospace !important;
+    font-family: var(--minecraft-font-family) !important;
     font-size: 10px !important;
     font-weight: 400 !important;
     text-transform: none !important;
@@ -463,6 +468,7 @@ body {
   margin: -4px -4px 20px -4px;
 
   .minecraft-logo {
+    user-select: none;
     font-size: 64px;
     margin-bottom: 16px;
     filter: drop-shadow(3px 3px 0 var(--mc-shadow));

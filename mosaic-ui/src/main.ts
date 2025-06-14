@@ -1,10 +1,10 @@
 // src/main.ts
 import { createApp } from 'vue'
-import { createI18n } from 'vue-i18n'
-import { createPinia } from 'pinia'
 
 import { registerPlugins } from '@/plugins'
 
+import '@/styles/minecraft1.scss'
+import '@/styles/main.scss'
 import App from './App.vue'
 
 const app = createApp(App)

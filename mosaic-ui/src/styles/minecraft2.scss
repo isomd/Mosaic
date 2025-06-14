@@ -1,7 +1,6 @@
 // src/styles/minecraft2.scss
 @use 'sass:color';
 @use 'sass:math';
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
 // ===== 高级色彩系统 =====
 :root {
@@ -58,13 +57,20 @@
   // Minecraft特效
   --mc-glow: 0 0 20px var(--mc-accent-alpha);
   --mc-glow-strong: 0 0 30px rgba(255, 215, 0, 0.4);
-  --mc-pixel-border: 3px;
+  //--mc-pixel-border: 3px;
   --mc-border-radius: 8px;
 
   // 动画缓动
   --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  // 英文使用像素字体，中文不使用像素字体
+  //--minecraft-font-family: 'Press Start 2P', 'Orbitron', monospace;
+
+  // 中英文都使用像素字体
+  --minecraft-font-family: 'Press Start 2P','Pixel-zh', 'Orbitron', monospace;
+
 }
 
 // ===== 现代化基础样式 =====
@@ -81,7 +87,7 @@ html {
 }
 
 body {
-  font-family: 'JetBrains Mono', 'Press Start 2P', monospace;
+  font-family: var(--minecraft-font-family);
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
@@ -152,7 +158,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: 'Press Start 2P', monospace;
+  font-family: var(--minecraft-font-family);
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0.5px;
@@ -260,7 +266,7 @@ body {
 
 // ===== Vuetify组件现代化重写 =====
 .v-application {
-  font-family: 'JetBrains Mono', 'Press Start 2P', monospace !important;
+  font-family: var(--minecraft-font-family) !important;
 
   .v-app-bar {
     @include modern-minecraft-glass;
@@ -275,7 +281,7 @@ body {
     }
 
     .v-toolbar-title {
-      font-family: 'Press Start 2P', monospace !important;
+      font-family: var(--minecraft-font-family) !important;
       font-size: 18px !important;
       font-weight: 400 !important;
       color: white !important;
@@ -283,12 +289,6 @@ body {
       display: flex;
       align-items: center;
       gap: 12px;
-
-      &::before {
-        content: '⛏️';
-        font-size: 24px;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-      }
     }
 
     .v-btn {
@@ -314,7 +314,7 @@ body {
 
   .v-navigation-drawer {
     @include modern-minecraft-glass;
-    width: 320px !important;
+    //width: 320px !important;
     background: rgba(255, 255, 255, 0.95) !important;
     border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
 
@@ -328,13 +328,16 @@ body {
         border-radius: 12px !important;
         min-height: 56px !important;
         padding: 12px 20px !important;
+        display: flex !important;justify-content: start !important;
+
         background: rgba(255, 255, 255, 0.5) !important;
         border: 1px solid rgba(0, 0, 0, 0.05) !important;
 
         .v-list-item-title {
-          font-family: 'JetBrains Mono', monospace !important;
+          font-family: var(--minecraft-font-family) !important;
           font-size: 13px !important;
           font-weight: 500 !important;
+          margin-right: 50px !important;
           color: var(--mc-neutral-700) !important;
         }
 
@@ -377,10 +380,10 @@ body {
 
     .v-container {
       @include modern-minecraft-card(1);
-      margin: 24px;
+      //margin: 24px;
       padding: 32px;
       min-height: calc(100vh - 120px);
-      max-width: none !important;
+      //max-width: none !important;
       background: rgba(255, 255, 255, 0.8) !important;
     }
   }
@@ -394,7 +397,7 @@ body {
     .v-card-title {
       background: var(--mc-primary) !important;
       color: white !important;
-      font-family: 'Press Start 2P', monospace !important;
+      font-family: var(--minecraft-font-family) !important;
       font-size: 14px !important;
       font-weight: 400 !important;
       padding: 20px 24px !important;
@@ -426,7 +429,7 @@ body {
   .v-btn {
     @include modern-minecraft-button('primary', 'medium');
     border-radius: 8px !important;
-    font-family: 'Press Start 2P', monospace !important;
+    font-family: var(--minecraft-font-family) !important;
     text-transform: none !important;
     letter-spacing: 0.5px;
 
@@ -447,7 +450,7 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 
     .minecraft-footer-text {
-      font-family: 'JetBrains Mono', monospace !important;
+      font-family: var(--minecraft-font-family) !important;
       font-size: 12px !important;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       opacity: 0.9;
@@ -480,7 +483,7 @@ body {
 
   h1, h2, h3 {
     margin: 0;
-    font-family: 'Press Start 2P', monospace;
+    font-family: var(--minecraft-font-family);
     font-weight: 400;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -551,7 +554,7 @@ body {
   }
 
   .minecraft-stat-number {
-    font-family: 'Orbitron', monospace;
+    font-family: var(--minecraft-font-family);
     font-size: 32px;
     font-weight: 900;
     color: var(--mc-neutral-800);
@@ -561,7 +564,7 @@ body {
   }
 
   .minecraft-stat-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--minecraft-font-family);
     font-size: 12px;
     font-weight: 500;
     color: var(--mc-neutral-600);
@@ -593,7 +596,7 @@ body {
   border-left: 4px solid var(--mc-success);
 
   h3 {
-    font-family: 'Press Start 2P', monospace;
+    font-family: var(--minecraft-font-family);
     color: var(--mc-neutral-800);
     margin-bottom: 20px;
     text-align: center;
@@ -608,7 +611,7 @@ body {
   align-items: center;
   padding: 16px 0;
   border-bottom: 1px solid var(--mc-neutral-200);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--minecraft-font-family);
   font-size: 13px;
   transition: all 0.2s var(--ease-out-cubic);
 
@@ -631,7 +634,7 @@ body {
   strong {
     color: var(--mc-neutral-900);
     font-weight: 700;
-    font-family: 'Orbitron', monospace;
+    font-family: var(--minecraft-font-family);
   }
 }
 
@@ -663,17 +666,18 @@ body {
     margin-bottom: 16px;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     animation: float 3s ease-in-out infinite;
+    user-select: none;
   }
 
   .minecraft-title {
-    font-family: 'Press Start 2P', monospace;
+    font-family: var(--minecraft-font-family);
     font-size: 16px;
     margin-bottom: 8px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .minecraft-version {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--minecraft-font-family);
     font-size: 11px;
     opacity: 0.8;
     color: var(--mc-accent-light);
