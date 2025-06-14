@@ -5,9 +5,10 @@
 </template>
 <script lang="ts" setup>
 </script>
-<style scoped>
+<style scoped lang="scss">
 .default-app{
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 </style>

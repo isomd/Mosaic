@@ -1,5 +1,11 @@
 {
   "welcome": "欢迎使用Mosaic",
   "toggle_theme": "切换主题",
-  "toggle_lang": "Switch Language"
+  "toggle_lang": "Switch Language",
+  "menu": {
+    "craftingTable": "工作台",
+    "dashboard": "控制台",
+    "plugins": "插件",
+    "settings": "设置"
+  }
 }
