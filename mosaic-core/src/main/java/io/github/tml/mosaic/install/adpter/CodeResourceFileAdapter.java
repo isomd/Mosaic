@@ -2,10 +2,7 @@ package io.github.tml.mosaic.install.adpter;
 
 import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
-import io.github.tml.mosaic.install.collector.AnnotationInfoCollector;
-import io.github.tml.mosaic.install.collector.CubeIdInfoCollector;
-import io.github.tml.mosaic.install.collector.CubeModuleInfoCollector;
-import io.github.tml.mosaic.install.collector.LocalProjectClassCollector;
+import io.github.tml.mosaic.install.collector.*;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 
@@ -25,6 +22,7 @@ public class CodeResourceFileAdapter extends AbstractResourceFileAdapter {
                 new LocalProjectClassCollector(),
                 new CubeModuleInfoCollector(),
                 new CubeIdInfoCollector(),
+                new CubeConfigInfoCollector(),
                 new AnnotationInfoCollector()
         );
     }
