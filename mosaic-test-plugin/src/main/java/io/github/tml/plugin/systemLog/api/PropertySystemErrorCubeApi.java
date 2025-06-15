@@ -1,7 +1,5 @@
 package io.github.tml.plugin.systemLog.api;
 
-import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;

@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.install.collector;
 
-import io.github.tml.mosaic.core.tools.guid.DotNotationId;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
@@ -9,7 +7,6 @@ import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 

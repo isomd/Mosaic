@@ -3,7 +3,6 @@ package io.github.tml.mosaic.controller;
 import io.github.tml.mosaic.entity.DTO.JarPackageInfo;
 import io.github.tml.mosaic.service.JarPackageService;
 import io.github.tml.mosaic.util.R;
-import io.github.tml.mosaic.util.RCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,7 @@ public class JarPackageController {
     /**
      * 上传JAR包
      */
-    @PostMapping("/upload")
+    @PostMapping("/uploadJar")
     public R<String> uploadJarPackage(@RequestParam("file") MultipartFile file) {
         try {
             String filename = jarPackageService.uploadJarPackage(file);
@@ -47,7 +46,7 @@ public class JarPackageController {
     /**
      * 获取JAR包列表
      */
-    @GetMapping("/list")
+    @PostMapping("/getJarList")
     public R<List<JarPackageInfo>> listJarPackages() {
         try {
             List<JarPackageInfo> jarPackages = jarPackageService.listJarPackages();
@@ -63,10 +62,8 @@ public class JarPackageController {
     /**
      * 重命名JAR包
      */
-    @PutMapping("/rename")
-    public R<Void> renameJarPackage(
-            @RequestParam String oldFilename,
-            @RequestParam String newFilename) {
+    @PostMapping("/renameJar")
+    public R<Void> renameJarPackage(@RequestParam String oldFilename, @RequestParam String newFilename) {
         try {
             jarPackageService.renameJarPackage(oldFilename, newFilename);
             log.info("JAR包重命名成功: {} -> {}", oldFilename, newFilename);
@@ -85,7 +82,7 @@ public class JarPackageController {
     /**
      * 删除JAR包
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/deleteJar")
     public R<Void> deleteJarPackage(@RequestParam String filename) {
         try {
             jarPackageService.deleteJarPackage(filename);

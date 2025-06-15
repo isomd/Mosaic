@@ -5,6 +5,7 @@ import io.github.tml.mosaic.entity.DTO.JarPackageInfo;
 import io.github.tml.mosaic.service.JarPackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class JarPackageServiceImpl implements JarPackageService {
 
     private final MosaicPluginProperties properties;
+    private final ResourceLoader resourceLoader;
 
     private static final String JAR_EXTENSION = ".jar";
     private static final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -33,12 +35,12 @@ public class JarPackageServiceImpl implements JarPackageService {
     @PostConstruct
     public void initDirectory() {
         try {
-            Path storageDir = Paths.get(properties.getStoragePath());
+            Path storageDir = resolveStoragePath();
             Files.createDirectories(storageDir);
-            log.info("JAR包存储目录初始化完成: {}", properties.getStoragePath());
-        } catch (IOException e) {
+            log.info("JAR包存储目录初始化完成: {}", storageDir.toAbsolutePath());
+        } catch (Exception e) {
             log.error("JAR包存储目录初始化失败", e);
-            throw new RuntimeException("JAR包存储目录初始化失败", e);
+            throw new RuntimeException("JAR包存储目录初始化失败: " + e.getMessage(), e);
         }
     }
 
@@ -47,7 +49,7 @@ public class JarPackageServiceImpl implements JarPackageService {
         validateUploadFile(file);
 
         String filename = file.getOriginalFilename();
-        Path targetPath = Paths.get(properties.getStoragePath(), filename);
+        Path targetPath = resolveStoragePath().resolve(filename);
 
         try {
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
@@ -61,7 +63,7 @@ public class JarPackageServiceImpl implements JarPackageService {
 
     @Override
     public List<JarPackageInfo> listJarPackages() throws IOException {
-        Path storageDir = Paths.get(properties.getStoragePath());
+        Path storageDir = resolveStoragePath();
 
         if (!Files.exists(storageDir)) {
             log.warn("JAR包存储目录不存在: {}", storageDir);
@@ -84,8 +86,9 @@ public class JarPackageServiceImpl implements JarPackageService {
         validateFilename(oldFilename, "原文件名");
         validateFilename(newFilename, "新文件名");
 
-        Path oldPath = Paths.get(properties.getStoragePath(), oldFilename);
-        Path newPath = Paths.get(properties.getStoragePath(), ensureJarExtension(newFilename));
+        Path storageDir = resolveStoragePath();
+        Path oldPath = storageDir.resolve(oldFilename);
+        Path newPath = storageDir.resolve(ensureJarExtension(newFilename));
 
         if (!Files.exists(oldPath)) {
             throw new IllegalArgumentException("源文件不存在: " + oldFilename);
@@ -108,7 +111,7 @@ public class JarPackageServiceImpl implements JarPackageService {
     public void deleteJarPackage(String filename) throws IOException {
         validateFilename(filename, "文件名");
 
-        Path filePath = Paths.get(properties.getStoragePath(), filename);
+        Path filePath = resolveStoragePath().resolve(filename);
 
         if (!Files.exists(filePath)) {
             throw new IllegalArgumentException("文件不存在: " + filename);
@@ -120,6 +123,41 @@ public class JarPackageServiceImpl implements JarPackageService {
         } catch (IOException e) {
             log.error("JAR包删除失败: {}", filename, e);
             throw new RuntimeException("JAR包删除失败：文件系统错误");
+        }
+    }
+
+    /**
+     * 解析存储路径
+     * 支持classpath:、file:等Spring资源路径格式
+     */
+    private Path resolveStoragePath() throws IOException {
+        String storagePath = properties.getStoragePath();
+
+        if (storagePath.startsWith("classpath:")) {
+            // 处理classpath路径
+            try {
+                String classPathLocation = storagePath.substring("classpath:".length());
+                if (classPathLocation.startsWith("/")) {
+                    classPathLocation = classPathLocation.substring(1);
+                }
+
+                // 获取classpath根目录
+                String classPath = this.getClass().getClassLoader().getResource("").getPath();
+                if (classPath.startsWith("/") && System.getProperty("os.name").toLowerCase().contains("windows")) {
+                    classPath = classPath.substring(1);
+                }
+
+                return Paths.get(classPath, classPathLocation);
+            } catch (Exception e) {
+                log.warn("解析classpath路径失败，使用默认路径: {}", e.getMessage());
+                return Paths.get(System.getProperty("java.io.tmpdir"), "mosaic", "plugins");
+            }
+        } else if (storagePath.startsWith("file:")) {
+            // 处理file路径
+            return Paths.get(storagePath.substring("file:".length()));
+        } else {
+            // 处理普通文件系统路径
+            return Paths.get(storagePath);
         }
     }
 

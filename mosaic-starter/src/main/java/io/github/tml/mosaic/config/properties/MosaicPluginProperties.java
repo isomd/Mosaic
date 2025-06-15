@@ -13,9 +13,10 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "mosaic.plugin")
 public class MosaicPluginProperties {
-    
+
     /**
      * 插件存储目录
+     * 默认使用系统临时目录下的mosaic/plugins子目录
      */
-    private String storagePath = "classpath:";
+    private String storagePath = System.getProperty("java.io.tmpdir") + "/mosaic/plugins";
 }
