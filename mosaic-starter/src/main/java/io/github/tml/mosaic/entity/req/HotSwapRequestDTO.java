@@ -19,6 +19,7 @@ public class HotSwapRequestDTO {
     private String slotName;
     private String exPackageId;
     private String exPointId;
+    private String resName;
     private List<String> args;
     private int cmd;
 

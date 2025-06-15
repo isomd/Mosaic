@@ -8,6 +8,8 @@ import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import java.util.Objects;
 import java.util.Optional;
 
+import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
+
 /**
  * 槽构建器
  */
@@ -26,6 +28,7 @@ public class SlotBuilder {
 
         protected BuilderContext(SlotManager manager) {
             this.setupCubeInfo = new Slot.SetupCubeInfo();
+            this.setupCubeInfo.setResName(DEFAULT_RETURN_NAME);
             this.manager = manager;
         }
 
@@ -49,6 +52,12 @@ public class SlotBuilder {
             return this;
         }
 
+        public BuilderContext resName(String resName) {
+            if(resName != null){
+                this.setupCubeInfo.setResName(resName);
+            }
+            return this;
+        }
 
         public Optional<Slot> build() {
            Slot slot = null;

@@ -5,7 +5,7 @@ import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.*;
-import io.github.tml.mosaic.install.support.InfoContext;
+import io.github.tml.mosaic.install.support.info.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.extern.slf4j.Slf4j;
 

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -42,11 +44,13 @@ public class MosaicInstallerConfig {
      */
     @Bean
     public InfoContextInstaller infoContextInstaller(ResourceFileAdapterRegistry resourceFileAdapterRegistry, List<InstallationConfigEnhancer> installationConfigEnhancers) {
+        List<String> resourceList = new ArrayList<>(Arrays.asList(resourcePath));
+        resourceList.add("[CODE]");
         DefaultInfoContextInstaller defaultInfoContextInstaller =
                 new DefaultInfoContextInstaller(
                         List.of(new JsonCubeInstallationItemReader(), new LocalProjectInstallationItemReader(), new FileCubeInstallationItemReader())
                         , resourceFileAdapterRegistry
-                        , resourcePath
+                        , resourceList.toArray(new String[]{})
                 );
         defaultInfoContextInstaller.setInstallationConfigEnhancers(installationConfigEnhancers);
         return defaultInfoContextInstaller;

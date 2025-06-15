@@ -1,10 +1,9 @@
 package io.github.tml.mosaic.install.collector;
 
-import io.github.tml.mosaic.cube.external.MCube;
-import io.github.tml.mosaic.cube.external.MExtension;
-import io.github.tml.mosaic.cube.external.MExtensionPackage;
+import io.github.tml.mosaic.cube.external.*;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.InfoContext;
+import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.support.info.PointsResultInfo;
 
 import java.lang.reflect.Method;
 import java.util.List;

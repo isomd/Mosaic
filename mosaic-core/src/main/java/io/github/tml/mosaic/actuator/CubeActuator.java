@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.actuator;
 
+import io.github.tml.mosaic.cube.ExtPointResult;
 import io.github.tml.mosaic.cube.ExtensionPoint;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
@@ -29,5 +30,6 @@ public interface CubeActuator {
         private ExtensionPoint exPoint;
 
         private Object[] args;
+
     }
 }

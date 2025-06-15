@@ -2,6 +2,7 @@ package io.github.tml.mosaic.core.factory.definition;
 
 import io.github.tml.mosaic.install.support.CubeConfigInfo;
 import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 /**

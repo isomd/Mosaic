@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.factory.definition.PointResultDefinition;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
@@ -11,9 +12,12 @@ import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 描述: 用于实例化Cube的类
@@ -102,15 +106,26 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
 
                 // 注册扩展包到Cube元数据
                 cube.addExtensionPackage(extensionPackage);
-
+                List<ExtensionPointDefinition> extensionPoints = pkgDef.getExtensionPoints();
+                if(CollectionUtils.isEmpty(extensionPoints)){
+                    return;
+                }
                 // 注册扩展点
-                for (ExtensionPointDefinition epd : pkgDef.getExtensionPoints()) {
-                    ExtensionPoint extensionPoint = new ExtensionPoint(new DotNotationId(epd.getId()));
-                    extensionPoint.setExtensionName(epd.getExtensionName());
-                    extensionPoint.setDescription(epd.getDescription());
-                    extensionPoint.setMethodName(epd.getMethodName());
-                    extensionPoint.setParameterTypes(epd.getParameterTypes());
-                    extensionPoint.setReturnType(epd.getReturnType());
+                for (ExtensionPointDefinition epd : extensionPoints) {
+                    ExtensionPoint extensionPoint = ExtensionPoint.convertByDefinition(epd);
+
+                    // 注册出参说明
+                    ExtPointResult extPointResult = new ExtPointResult();
+                    extensionPoint.setReturnResult(extPointResult);
+
+                    PointResultDefinition pointResultDefinitions = epd.getPointResultDefinitions();
+                    if(pointResultDefinitions != null){
+                        for (PointResultDefinition.PointResultItemDefinition itemDefinition : pointResultDefinitions.getPointsResultInfoList()) {
+                            ExtPointResult.ExtPointResultItem item = ExtPointResult.ExtPointResultItem.convertByDefinition(itemDefinition);
+                            extPointResult.addResultItem(item);
+                        }
+                    }
+
                     // 注册扩展点到扩展包
                     extensionPackage.addExtensionPoint(extensionPoint);
                 }

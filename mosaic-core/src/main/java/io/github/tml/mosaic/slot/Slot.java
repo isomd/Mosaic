@@ -60,6 +60,11 @@ public class Slot extends UniqueEntity {
         @Setter
         private GUID exPointId;
 
+        // 需要的返回名称
+        @Getter
+        @Setter
+        private String resName;
+
         /**
          * 可靠性校验，校验SetupCubeInfo是否可用
          */
