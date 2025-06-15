@@ -35,6 +35,11 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
             throw new IllegalArgumentException("CubeDefinition cannot be null");
         }
 
+        if (cubeDefinitionMap.containsKey(cubeId)) {
+            log.warn("CubeDefinition {} is already registered", cubeId);
+            return;
+        }
+
         // 注册CubeDefinition
         CubeDefinition previousDefinition = cubeDefinitionMap.put(cubeId, cubeDefinition);
 

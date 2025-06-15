@@ -103,6 +103,7 @@ public abstract class AbstractCubeContext implements CubeContext {
         getBeanFactory().clear();
     }
 
+    @Override
     public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
         getBeanFactory().registerCubeDefinition(cubeId, cubeDefinition);
     }

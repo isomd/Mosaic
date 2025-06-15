@@ -19,4 +19,7 @@ public class MosaicPluginProperties {
      * 默认使用系统临时目录下的mosaic/plugins子目录
      */
     private String storagePath = System.getProperty("java.io.tmpdir") + "/mosaic/plugins";
+
+
+
 }

@@ -16,3 +16,5 @@ mosaic:
     storage-path: E:/plugins           # Windows绝对路径
     # storage-path: ./plugins                   # 相对路径
     # storage-path: ${user.home}/mosaic/plugins # 用户主目录
+
+
