@@ -18,7 +18,7 @@ public class MosaicChunkAgent {
     private static Instrumentation instrumentation;
     public static void agentmain(String args, Instrumentation inst) {
 
-        log.info("run java agent...");
+        log.info("run mosaic agent...");
         instrumentation = inst;
         System.out.println(instrumentation);
         new Thread(() -> {

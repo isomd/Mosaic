@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.DTO;
+package io.github.tml.mosaic.entity.req;
 
 import lombok.Data;
 
