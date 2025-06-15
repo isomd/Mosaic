@@ -7,5 +7,17 @@
     "dashboard": "控制台",
     "plugins": "插件",
     "settings": "设置"
+  },
+  "plugins": {
+    "upload": "上传",
+    "details": "详情",
+    "remove": "移除",
+    "author": "作者"
+  },
+  "dashboard": {
+    "slotNum": "已有槽",
+    "worldNum": "已有世界",
+    "pluginNum": "已有插件",
+    "runningTime": "运行时间"
   }
 }
