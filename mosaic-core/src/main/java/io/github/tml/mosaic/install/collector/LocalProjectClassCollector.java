@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.execption.InfoCollectException;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,10 @@ public class LocalProjectClassCollector implements InfoCollector {
             basePackage = getMainClassPackage();
             basePackagePath = basePackage.replace('.', '/');
             Set<Class<?>> classes = scanProjectClasses();
-            log.info("collect local project class :{} time: {}ms", classes.size(), System.currentTimeMillis() - startTime);
+            if(classes.isEmpty()){
+                throw new InfoCollectException("class info collect fail, no class found in local project");
+            }
+            log.info("collect class from local project ,classNum :{} time: {}ms", classes.size(), System.currentTimeMillis() - startTime);
             infoContext.setAllClazz(new ArrayList<>(classes));
             infoContext.setClassLoader(this.getClass().getClassLoader());
         }catch (Exception e){

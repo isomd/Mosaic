@@ -2,19 +2,30 @@ package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.*;
+import io.github.tml.mosaic.cube.external.MosaicCube;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 
+/**
+ * 收集 Cube类和MosaicExtension信息
+ */
+@Slf4j
 public class CubeModuleInfoCollector implements CommonInfoCollector {
 
     @Override
     public void collect(InfoContext infoContext) {
         List<Class<?>> allClazz = infoContext.getAllClazz();
+        if(CollectionUtils.isEmpty(allClazz)){
+            log.error("CubeModuleInfoCollector need class list, but it is empty");
+            return;
+        }
 
-        Optional.ofNullable(allClazz).orElseThrow(()->new CubeException("not find cube class list"));
         Map<String, InfoContext.CubeInfo> cubeInfoMap = new HashMap<>();
         Map<String, List<InfoContext.ExtensionPackageInfo>> extensionPackageInfoHashMap = new HashMap<>();
         for (Class<?> clazz : allClazz) {
@@ -55,12 +66,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
      */
     private boolean isValidCubeClass(Class<?> clazz) {
         // 1. 必须实现Cube接口
-        if (!Cube.class.isAssignableFrom(clazz)) {
-            return false;
-        }
-
-        // 2. 必须有@MCube注解
-        if (!clazz.isAnnotationPresent(MCube.class)) {
+        if (!MosaicCube.class.isAssignableFrom(clazz)) {
             return false;
         }
 
@@ -77,12 +83,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
      */
     private boolean isValidExtensionPackageApiClass(Class<?> clazz) {
         // 1. 必须实现Cube接口
-        if (!ExtensionPackage.class.isAssignableFrom(clazz)) {
-            return false;
-        }
-
-        // 2. 必须有@MCube注解
-        if (!clazz.isAnnotationPresent(MExtensionPackage.class)) {
+        if (!MosaicExtPackage.class.isAssignableFrom(clazz)) {
             return false;
         }
 

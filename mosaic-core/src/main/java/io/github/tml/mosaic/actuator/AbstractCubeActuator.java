@@ -1,8 +1,8 @@
 package io.github.tml.mosaic.actuator;
 
 import io.github.tml.mosaic.core.execption.ActuatorException;
-import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.ExtensionPoint;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,12 +16,12 @@ public abstract class AbstractCubeActuator implements CubeActuator{
 
     protected <T> T execute0(ExecuteContext executeContext) throws ActuatorException{
 
-        ExtensionPackage extensionPackage = executeContext.getExPackage();
+        MosaicExtPackage<?> mosaicExtPackage = executeContext.getExPackage();
         ExtensionPoint exPoint = executeContext.getExPoint();
 
         try {
-            Method method = extensionPackage.getClass().getMethod(exPoint.getMethodName(), exPoint.getParameterTypes());
-            Object invoke = method.invoke(extensionPackage, executeContext.getArgs());
+            Method method = mosaicExtPackage.getClass().getMethod(exPoint.getMethodName(), exPoint.getParameterTypes());
+            Object invoke = method.invoke(mosaicExtPackage, executeContext.getArgs());
             return (T) exPoint.getReturnType().cast(invoke);
         } catch (NoSuchMethodException e) {
             throw new ActuatorException("no such method error:" + e.getMessage());

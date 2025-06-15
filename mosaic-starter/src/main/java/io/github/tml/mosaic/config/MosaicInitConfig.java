@@ -49,7 +49,7 @@ public class MosaicInitConfig {
 
         // 注册进context容器
         for (CubeDefinition cubeDefinition : cubeDefinitions) {
-            context.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
+            context.registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
         }
 
         return context;

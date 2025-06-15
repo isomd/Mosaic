@@ -1,10 +1,12 @@
 package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.execption.InfoCollectException;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.install.support.JarPluginClassLoader;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.jar.JarInputStream;
 /**
  * 从jar包中获取所有类信息
  */
+@Slf4j
 public class JarClassLoaderAllClassCollector implements InfoCollector {
     
     @Override
@@ -28,7 +31,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
                  doClassLoad(resource, inputStream, infoContext);
             }
         } catch (IOException e) {
-            throw new CubeException("IOException reading Jar Cube from " + resource, e);
+            throw new InfoCollectException("IOException reading Jar Cube from " + resource, e);
         }
     }
 
@@ -44,7 +47,9 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
 
             // 2. 扫描Cube定义
             List<Class<?>> allClasses = getAllClassesByJar(inputStream, classLoader);
-
+            if(allClasses.isEmpty()){
+                throw new InfoCollectException("class info collect fail, no class found in " + resource);
+            }
             infoContext.setClassLoader(classLoader);
             infoContext.setAllClazz(allClasses);
 
@@ -53,7 +58,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
             if (classLoader != null) {
                 classLoader.close();
             }
-            throw new CubeException("安装JAR包失败: " + jarPath, e);
+            throw new InfoCollectException("install JAR fail!: " + jarPath, e);
         }
     }
 
@@ -73,7 +78,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
                         Class<?> clazz = classLoader.loadClass(className);
                         classList.add(clazz);
                     } catch (ClassNotFoundException e) {
-                        System.out.println("类加载失败: " + className);
+                        log.error("{} class loader error: {}", className, e.getMessage());
                     }
                 }
             }
@@ -88,7 +93,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
         try {
             File jarFile = new File(jarPath);
             if (!jarFile.exists() || !jarFile.isFile()) {
-                throw new CubeException("JAR文件不存在或不是有效文件: " + jarPath);
+                throw new InfoCollectException("JAR file not exist or invalid: " + jarPath);
             }
 
             URL jarUrl = jarFile.toURI().toURL();
@@ -99,7 +104,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
             );
 
         } catch (Exception e) {
-            throw new CubeException("创建JAR类加载器失败: " + jarPath, e);
+            throw new InfoCollectException("JAR classloader create fail: " + jarPath, e);
         }
     }
 

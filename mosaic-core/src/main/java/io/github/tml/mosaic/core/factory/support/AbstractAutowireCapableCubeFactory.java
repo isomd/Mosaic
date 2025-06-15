@@ -9,6 +9,7 @@ import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.definition.ExtensionPackageDefinition;
 import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
@@ -30,9 +31,9 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         try {
             cube = createCubeInstance(cubeDefinition, cubeId, args);
             // 给 Cube 填充属性
-            applyPropertyValues(cubeId, cube, cubeDefinition);
+            applyPropertyValues(cube, cubeDefinition);
             // 执行 Cube 的初始化方法
-            cube = initializeCube(cubeId, cube, cubeDefinition);
+            cube = initializeCube(cube, cubeDefinition);
         } catch (Exception e) {
             throw new CubeException("Instantiation of cube failed", e);
         }
@@ -42,18 +43,27 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         if ("singleton".equals(model)) {
             // 单例模式：注册到单例池
             addSingleton(cubeId, cube);
-            log.debug("✓ 单例Cube注册 | CubeId: {}", cubeId);
+            log.info("✓ singleton Cube register | CubeId: {}", cubeId);
         } else {
             // 多例模式：注册到管理器
             GUID instanceId = registerCube(cubeId, cube);
-            log.debug("✓ 多例Cube注册 | CubeId: {} | 实例ID: {}", cubeId, instanceId);
+            log.info("✓ property Cube register | CubeId: {} | instanceId: {}", cubeId, instanceId);
         }
 
         return cube;
     }
 
-    private Cube initializeCube(GUID cubeId, Cube cube, CubeDefinition cubeDefinition) {
-        return cube;
+    private Cube initializeCube(Cube cube, CubeDefinition cubeDefinition) {
+        try {
+            if (cube.init()) {
+                log.info("✓ Cube init success | CubeId: {}, CubeName:{}", cube.getCubeId(), cube.getMetaData().getName());
+                return cube;
+            }else {
+                throw new CubeException("Cube init failed, cubeId:" + cube.getCubeId());
+            }
+        }catch (Exception e){
+            throw new CubeException("Cube init failed, error:" + e.getMessage());
+        }
     }
 
     // 内部实例化方法
@@ -64,7 +74,7 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
     /**
      * Cube 属性填充
      */
-    protected void applyPropertyValues(GUID cubeId, Cube cube, CubeDefinition cubeDefinition) {
+    protected void applyPropertyValues(Cube cube, CubeDefinition cubeDefinition) {
         // 填充Cube核心元数据
         populateCubeMetadata(cube, cubeDefinition);
 
@@ -76,7 +86,7 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         for (ExtensionPackageDefinition pkgDef : cubeDefinition.getExtensionPackages()) {
             try {
                 // 加载扩展包类
-                Class<?> pkgClass = cubeDefinition.getClassLoader().loadClass(pkgDef.getClassName());
+                Class<?> mosaicExtPkgClazz = cubeDefinition.getClassLoader().loadClass(pkgDef.getClassName());
 
                 // 创建扩展包元数据对象
                 ExtensionPackage.MetaData metaData = new ExtensionPackage.MetaData(
@@ -84,10 +94,10 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
                 );
 
                 // 实例化扩展包
-                ExtensionPackage<?> extensionPackage = (ExtensionPackage<?>) pkgClass
-                        .getDeclaredConstructor(cube.getClass(), GUID.class)
-                        .newInstance(cube, new DotNotationId(pkgDef.getId()));
-
+                ExtensionPackage extensionPackage = new ExtensionPackage(new DotNotationId(pkgDef.getId()));
+                MosaicExtPackage<?> mosaicExtPackage = (MosaicExtPackage<?>) mosaicExtPkgClazz.getDeclaredConstructor().newInstance();
+                mosaicExtPackage.initCube(cube.getMosaicCube());
+                extensionPackage.setMosaicExtPackage(mosaicExtPackage);
                 extensionPackage.setMetaData(metaData);
 
                 // 注册扩展包到Cube元数据
@@ -104,10 +114,10 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
                     // 注册扩展点到扩展包
                     extensionPackage.addExtensionPoint(extensionPoint);
                 }
-
+                log.info("extPackage init success | Cube: {} | extPackage: {} | extPointNum: {}", cube.getCubeId(), pkgDef.getName(), extensionPackage.getExtensionPoints().size());
             } catch (Exception e) {
-                log.error("扩展包初始化失败 | Cube: {} | 扩展包: {} | 错误: {}",
-                        cube.getCubeId(), pkgDef.getClassName(), e.getMessage());
+                log.error("extPackage init fail | Cube: {} | extPackage: {} | error: {}",
+                        cube.getCubeId(), pkgDef.getName(), e.getMessage());
             }
         }
     }
