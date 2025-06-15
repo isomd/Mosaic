@@ -2,6 +2,9 @@ package io.github.tml.mosaic.cube;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
+import io.github.tml.mosaic.cube.api.ExtensionPackageApi;
+import io.github.tml.mosaic.cube.external.MosaicCube;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -9,6 +12,7 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,17 +21,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author suifeng
  * 日期: 2025/6/7
  */
-public abstract class ExtensionPackage<T extends Cube> extends UniqueEntity {
+public class ExtensionPackage extends UniqueEntity implements ExtensionPackageApi {
 
-    protected T cube; // 关联的Cube实例
-
+    // 关联的Cube实例
     @Getter
     private MetaData exPackageMetaData;
 
+    @Getter
+    @Setter
+    private MosaicExtPackage<?> mosaicExtPackage;
 
-    public ExtensionPackage(T cube, GUID guid) {
+    public ExtensionPackage(GUID guid) {
         super(guid);
-        this.cube = cube;
     }
 
     public void addExtensionPoint(ExtensionPoint extensionPoint) {
@@ -35,8 +40,22 @@ public abstract class ExtensionPackage<T extends Cube> extends UniqueEntity {
         this.exPackageMetaData.extensionPointMap.put(extensionPoint.getExtensionId(), extensionPoint);
     }
 
+    public List<ExtensionPoint> getExtensionPoints(){
+        return this.exPackageMetaData.extensionPoints;
+    }
+
     public ExtensionPoint findExPoint(GUID extensionPointId) {
         return this.exPackageMetaData.extensionPointMap.get(extensionPointId);
+    }
+
+    @Override
+    public String extPackageId() {
+        return Optional.ofNullable(this.getId()).map(GUID::toString).orElse("");
+    }
+
+    @Override
+    public void initCube(MosaicCube mosaicCube) {
+        this.mosaicExtPackage.initCube(mosaicCube);
     }
 
 
