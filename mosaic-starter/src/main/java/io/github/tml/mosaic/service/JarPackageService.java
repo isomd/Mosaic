@@ -1,6 +1,5 @@
 package io.github.tml.mosaic.service;
-
-import io.github.tml.mosaic.entity.DTO.JarPackageInfo;
+import io.github.tml.mosaic.entity.JarPackageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.config.properties.MosaicPluginProperties;
-import io.github.tml.mosaic.entity.DTO.JarPackageInfo;
+import io.github.tml.mosaic.entity.JarPackageInfo;
 import io.github.tml.mosaic.service.JarPackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

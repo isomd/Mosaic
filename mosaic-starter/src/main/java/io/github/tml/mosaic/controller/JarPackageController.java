@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.controller;
 
-import io.github.tml.mosaic.entity.DTO.JarPackageInfo;
+
+import io.github.tml.mosaic.entity.JarPackageInfo;
 import io.github.tml.mosaic.service.JarPackageService;
 import io.github.tml.mosaic.util.R;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
 
 /**
  * JAR包管理控制器
