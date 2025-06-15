@@ -1,6 +1,6 @@
-import axios, {CreateAxiosDefaults} from 'axios'
-const request = axios.create(<CreateAxiosDefaults>{
-    baseURL: '/api',
+import axios from 'axios'
+const request = axios.create(<any>{
+    baseURL: '/mosaic',
     timeout: 60000,
 })
 
