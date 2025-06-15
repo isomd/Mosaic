@@ -2,7 +2,7 @@ package io.github.tml.mosaic.install.install;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.install.InstallationConfig;
-import io.github.tml.mosaic.install.support.InfoContext;
+import io.github.tml.mosaic.install.support.info.InfoContext;
 import lombok.Data;
 import java.util.List;
 

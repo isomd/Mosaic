@@ -1,7 +1,6 @@
 package io.github.tml.mosaic.core.factory.definition;
-
-import io.github.tml.mosaic.core.tools.guid.GUID;
 import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 /**

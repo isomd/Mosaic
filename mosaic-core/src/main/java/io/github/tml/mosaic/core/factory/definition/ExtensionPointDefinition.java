@@ -1,6 +1,8 @@
 package io.github.tml.mosaic.core.factory.definition;
 
+import io.github.tml.mosaic.install.support.info.InfoContext;
 import lombok.Data;
+import org.modelmapper.ModelMapper;
 
 @Data
 public class ExtensionPointDefinition {
@@ -13,6 +15,7 @@ public class ExtensionPointDefinition {
     private final boolean asyncFlag;
     private final Class<?> returnType;
     private final Class<?>[] parameterTypes;
+    private PointResultDefinition pointResultDefinitions;
     
     @Override
     public String toString() {
@@ -23,4 +26,11 @@ public class ExtensionPointDefinition {
                 ", priority=" + priority +
                 '}';
     }
+
+    public static ExtensionPointDefinition convertByInfoContext(InfoContext.ExtensionPointInfo extensionPackageInfo){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.createTypeMap(extensionPackageInfo, ExtensionPointDefinition.class)
+                .map(extensionPackageInfo);
+    }
+
 }

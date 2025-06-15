@@ -52,6 +52,7 @@ public class TestController {
                     .exPackageId(requestDTO.getExPackageId())
                     .exPointId(requestDTO.getExPointId())
                     .cubeId(new GUUID(requestDTO.getPluginId()))
+                    .resName(requestDTO.getResName())
                     .build();
 
 

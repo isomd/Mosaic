@@ -8,7 +8,7 @@ import io.github.tml.mosaic.install.collector.AnnotationInfoCollector;
 import io.github.tml.mosaic.install.collector.CubeIdInfoCollector;
 import io.github.tml.mosaic.install.collector.CubeModuleInfoCollector;
 import io.github.tml.mosaic.install.collector.JarClassLoaderAllClassCollector;
-import io.github.tml.mosaic.install.support.InfoContext;
+import io.github.tml.mosaic.install.support.info.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.extern.slf4j.Slf4j;
 

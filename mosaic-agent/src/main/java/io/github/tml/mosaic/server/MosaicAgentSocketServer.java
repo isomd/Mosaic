@@ -7,6 +7,7 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.github.tml.mosaic.MosaicChunkAgent;
+import io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO;
 import io.github.tml.mosaic.util.AgentUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,18 +43,9 @@ public class MosaicAgentSocketServer {
 
                 Instrumentation instrumentation = MosaicChunkAgent.getInstrumentation();
 
-                ClassLoader targetClassLoader = null;
-                Class<?> dtoClazz = null;
-                for (Class<?> clazz : instrumentation.getAllLoadedClasses()) {
-                    if ("io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO".equals(clazz.getName())) {
-                        dtoClazz = clazz;
-                        targetClassLoader = clazz.getClassLoader();
-                        break;
-                    }
-                }
-                if (targetClassLoader == null) {
-                    throw new RuntimeException("类加载器无法找到转换对象: io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO");
-                }
+
+                Class<?> dtoClazz = AgentServerRequestDTO.class;
+                ClassLoader targetClassLoader = dtoClazz.getClassLoader();
 
                 Thread.currentThread().setContextClassLoader(targetClassLoader);
 

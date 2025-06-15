@@ -1,9 +1,11 @@
-package io.github.tml.mosaic.install.support;
+package io.github.tml.mosaic.install.support.info;
 
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.cube.external.MCube;
 import io.github.tml.mosaic.cube.external.MExtension;
 import io.github.tml.mosaic.cube.external.MExtensionPackage;
+import io.github.tml.mosaic.cube.external.MResultItem;
+import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -113,6 +115,7 @@ public class InfoContext {
         private boolean asyncFlag;
         private Class<?> returnType;
         private Class<?>[] parameterTypes;
+        private PointsResultInfo pointsResultInfo;
 
         public void setInfoByMExtensionPoint(MExtension anno){
             this.setAsyncFlag(false);
@@ -126,6 +129,16 @@ public class InfoContext {
             this.setMethodName(method.getName());
             this.setReturnType(method.getReturnType());
             this.setParameterTypes(method.getParameterTypes());
+
+            Class<?> returnType = method.getReturnType();
+            PointsResultInfo pointsResultInfo = new PointsResultInfo();
+            MResultItem mResultItem = method.getAnnotation(MResultItem.class);
+            if (mResultItem != null) {
+                pointsResultInfo.addByMResultItemAnno(mResultItem);
+            }else{
+                pointsResultInfo.addByReturnType(returnType);
+            }
+            this.setPointsResultInfo(pointsResultInfo);
         }
     }
 }

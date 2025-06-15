@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.cube;
 
+import io.github.tml.mosaic.core.factory.definition.PointResultDefinition;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -10,6 +11,8 @@ import java.util.Optional;
  * 多参数适配器
  */
 public class ExtPointResult {
+
+    public final static String DEFAULT_RETURN_NAME = "default";
 
     private final Map<String, ExtPointResultItem> items = new HashMap<>();
 
@@ -23,10 +26,22 @@ public class ExtPointResult {
         return items.get(itemName);
     }
 
+    public boolean containsResultItem(String itemName){
+        return items.containsKey(itemName);
+    }
+
     @Data
-    public class ExtPointResultItem{
+    public static class ExtPointResultItem{
         private String itemName;
         private Class<?> itemClass;
         private String description;
+
+        public static ExtPointResultItem convertByDefinition(PointResultDefinition.PointResultItemDefinition itemDefinition) {
+            ExtPointResult.ExtPointResultItem item = new ExtPointResult.ExtPointResultItem();
+            item.setItemName(itemDefinition.getItemName());
+            item.setDescription(itemDefinition.getDescription());
+            item.setItemClass(itemDefinition.getItemClass());
+            return item;
+        }
     }
 }

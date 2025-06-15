@@ -4,7 +4,7 @@ import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.InfoContext;
+import io.github.tml.mosaic.install.support.info.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 

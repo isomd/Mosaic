@@ -90,6 +90,10 @@ public class GoldenShovel {
             return this;
         }
 
+        public SlotBootStrap resName(String resName) {
+            builder.resName(resName);
+            return this;
+        }
 
         public SlotBootStrap build() {
             slotId = builder.build()
