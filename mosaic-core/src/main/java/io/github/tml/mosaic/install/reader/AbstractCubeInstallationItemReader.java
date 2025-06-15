@@ -52,6 +52,11 @@ public abstract class AbstractCubeInstallationItemReader implements CubeInstalla
     }
 
     @Override
+    public InstallationConfig loadCubeInstallationItem(Resource resource) throws CubeException {
+        return new InstallationConfig();
+    }
+
+    @Override
     public InstallationConfig loadCubeInstallationItem(String... locations) throws CubeException {
         InstallationConfig installationConfig = new InstallationConfig();
         List<InstallationItem> installations = new ArrayList<InstallationItem>();

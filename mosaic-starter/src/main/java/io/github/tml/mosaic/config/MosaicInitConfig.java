@@ -61,7 +61,9 @@ public class MosaicInitConfig {
         DefaultInfoContextInstaller defaultInfoContextInstaller =
                 new DefaultInfoContextInstaller(
                         List.of(new JsonCubeInstallationItemReader(), new LocalProjectInstallationItemReader())
-                        , resourceFileAdapterRegistry);
+                        , resourceFileAdapterRegistry
+                        , resourcePath
+                );
         defaultInfoContextInstaller.setInstallationConfigEnhancers(installationConfigEnhancers);
         return defaultInfoContextInstaller;
     }
@@ -73,11 +75,11 @@ public class MosaicInitConfig {
     @Bean
     @DependsOn({"infoContextInstaller", "cubeEventBroadcaster"})
     public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
-        ClassPathCubeContext context = new ClassPathCubeContext(resourcePath);
+        ClassPathCubeContext context = new ClassPathCubeContext();
 
         List<InfoContext> infoContexts = new ArrayList<>();
         if (infoContextInstaller != null) {
-            infoContexts = infoContextInstaller.installCubeInfoContext(context.getConfigLocations());
+            infoContexts = infoContextInstaller.installCubeInfoContext();
         }
 
         List<CubeDefinition> cubeDefinitions = new ArrayList<>();
@@ -90,8 +92,6 @@ public class MosaicInitConfig {
         for (CubeDefinition cubeDefinition : cubeDefinitions) {
             context.registerCubeDefinition(cubeDefinition.getId(), cubeDefinition);
         }
-
-        Cube cube = context.getCube(new GUUID("system.log.cube.s"));
 
         return context;
     }
