@@ -2,11 +2,9 @@ package io.github.tml.mosaic.controller;
 
 import com.alibaba.fastjson.JSON;
 import io.github.tml.mosaic.GoldenShovel;
-import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.entity.DTO.HotSwapRequestDTO;
-import io.github.tml.mosaic.entity.dto.AgentSocketRequestDTO;
-import io.github.tml.mosaic.slot.Slot;
+import io.github.tml.mosaic.entity.req.HotSwapRequestDTO;
+import io.github.tml.mosaic.entity.req.AgentSocketRequestDTO;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import io.github.tml.mosaic.util.ASMUtil;
 import io.github.tml.mosaic.util.ChunkHotSwapUtil;
@@ -37,7 +35,7 @@ public class TestController {
     SlotManager slotManager;
 
     @PostMapping("v1")
-    public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO) throws Exception {
+    public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO) {
         String proxy;
 
         String className = requestDTO.getClassName();
