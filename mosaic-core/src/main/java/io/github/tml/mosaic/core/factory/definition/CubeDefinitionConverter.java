@@ -33,9 +33,8 @@ public class CubeDefinitionConverter {
                     epInfo.getId(),
                     epInfo.getName(),
                     epInfo.getDescription(),
-                    epInfo.getVersion(),
                     epInfo.getClassName(),
-                    cubeInfo.getId().toString()
+                    cubeInfo.getId()
                 );
                 
                 // 处理扩展点

@@ -1,13 +1,9 @@
 package io.github.tml.mosaic.install.support;
 
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
-import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.cube.MCube;
-import io.github.tml.mosaic.cube.MExtension;
-import io.github.tml.mosaic.cube.MExtensionPackage;
-import io.github.tml.mosaic.cube.external.MosaicCube;
-import io.github.tml.mosaic.cube.external.MosaicExtPackage;
+import io.github.tml.mosaic.cube.external.MCube;
+import io.github.tml.mosaic.cube.external.MExtension;
+import io.github.tml.mosaic.cube.external.MExtensionPackage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -63,9 +59,7 @@ public class InfoContext {
         }
 
         public void setInfoByMCube(MCube mCube){
-            String id = mCube.value();
             String name = mCube.name().isEmpty() ? this.getClass().getSimpleName() : mCube.name();
-            this.setId(id);
             this.setName(name);
             this.setVersion(mCube.version());
             this.setDescription(mCube.description());
@@ -81,16 +75,14 @@ public class InfoContext {
         private String id;
         private String name;
         private String description;
-        private String version;
         private String className;
         private Class<?> clazz;
         private String cubeId;
         private List<ExtensionPointInfo> extensionPoints = new ArrayList<>();
 
-        public ExtensionPackageInfo(String cubeId, List<ExtensionPointInfo> extensionPoints, String version, String description, String name, String id) {
+        public ExtensionPackageInfo(String cubeId, List<ExtensionPointInfo> extensionPoints, String description, String name, String id) {
             this.cubeId = cubeId;
             this.extensionPoints = extensionPoints;
-            this.version = version;
             this.description = description;
             this.name = name;
             this.id = id;
@@ -102,10 +94,8 @@ public class InfoContext {
 
         public void setInfoByMExtensionPackage(MExtensionPackage pkgAnno){
             this.setCubeId(pkgAnno.cubeId());
-            this.setVersion(pkgAnno.version());
             this.setDescription(pkgAnno.description());
             this.setName(pkgAnno.name());
-            this.setId(pkgAnno.value());
             this.setExtensionPoints(new ArrayList<>());
         }
     }
@@ -126,7 +116,7 @@ public class InfoContext {
 
         public void setInfoByMExtensionPoint(MExtension anno){
             this.setAsyncFlag(false);
-            this.setId(anno.value());
+            this.setId(anno.extPointId());
             this.setExtensionName(anno.name());
             this.setPriority(anno.priority());
             this.setDescription(anno.description());

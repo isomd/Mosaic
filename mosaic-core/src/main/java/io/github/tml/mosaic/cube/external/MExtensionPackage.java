@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.cube;
+package io.github.tml.mosaic.cube.external;
 
 import java.lang.annotation.*;
 
@@ -8,11 +8,6 @@ import java.lang.annotation.*;
 public @interface MExtensionPackage {
 
     /**
-     * 扩展包ID
-     */
-    String value();
-    
-    /**
      * 扩展包名称
      */
     String name() default "";
@@ -21,12 +16,7 @@ public @interface MExtensionPackage {
      * 扩展包描述
      */
     String description() default "";
-    
-    /**
-     * 扩展包版本
-     */
-    String version() default "1.0.0";
-    
+
     /**
      * 关联的Cube ID
      */

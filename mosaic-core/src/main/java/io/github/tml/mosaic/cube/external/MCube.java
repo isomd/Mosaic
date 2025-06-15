@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.cube;
+package io.github.tml.mosaic.cube.external;
 
 import java.lang.annotation.*;
 
@@ -11,11 +11,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface MCube {
-
-    /**
-     * Cube的ID，如果不指定则使用类名
-     */
-    String value() default "";
 
     /**
      * Cube的name

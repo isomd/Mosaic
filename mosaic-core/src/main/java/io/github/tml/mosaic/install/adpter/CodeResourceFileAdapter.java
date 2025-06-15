@@ -24,8 +24,8 @@ public class CodeResourceFileAdapter extends AbstractResourceFileAdapter {
         return List.of(
                 new LocalProjectClassCollector(),
                 new CubeModuleInfoCollector(),
-                new AnnotationInfoCollector(),
-                new CubeIdInfoCollector()
+                new CubeIdInfoCollector(),
+                new AnnotationInfoCollector()
         );
     }
 

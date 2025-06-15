@@ -30,8 +30,8 @@ public class JarResourceFileAdapter extends AbstractResourceFileAdapter {
                 List.of(
                         new JarClassLoaderAllClassCollector(),
                         new CubeModuleInfoCollector(),
-                        new AnnotationInfoCollector(),
-                        new CubeIdInfoCollector()
+                        new CubeIdInfoCollector(),
+                        new AnnotationInfoCollector()
                 ), new DefaultResourceLoader()
         );
     }
