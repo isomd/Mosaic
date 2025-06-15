@@ -8,5 +8,5 @@ spring:
 
 mosaic:
   startup:
-    resource-path: classpath:start1.json
+    resource-path: "[JSON]classpath:start1.json"
 
