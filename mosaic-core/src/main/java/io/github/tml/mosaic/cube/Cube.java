@@ -1,15 +1,17 @@
 package io.github.tml.mosaic.cube;
 
-import io.github.tml.mosaic.core.infrastructure.CommonComponent;
-import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
+import io.github.tml.mosaic.cube.api.CubeApi;
+import io.github.tml.mosaic.cube.external.MosaicCube;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,10 +19,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 方块抽象基类 - 所有插件必须继承此类
  */
 @Slf4j
-public abstract class Cube extends UniqueEntity {
+public class Cube extends UniqueEntity implements CubeApi {
 
     @Getter
     private MetaData metaData;
+
+    @Getter
+    @Setter
+    private MosaicCube mosaicCube;
 
     protected volatile boolean initialized = false;
 
@@ -29,24 +35,20 @@ public abstract class Cube extends UniqueEntity {
         this.metaData = new MetaData();
     }
 
-    public void initialize() {
-        if (!initialized) {
-            doInitialize();
-            initialized = true;
-            log.info("✓ 方块初始化 | ID: {} | 名称: {}", getId(), metaData.getName());
-        }
+    @Override
+    public boolean init() {
+        return mosaicCube.init();
     }
 
-    public void destroy() {
-        if (initialized) {
-            doDestroy();
-            initialized = false;
-            log.info("✓ 方块销毁 | ID: {} | 名称: {}", getId(), metaData.getName());
-        }
+    @Override
+    public boolean destroy() {
+       return mosaicCube.destroy();
     }
 
-    protected void doInitialize() {}
-    protected void doDestroy() {}
+    @Override
+    public String cubeId() {
+        return Optional.ofNullable(this.id).map(GUID::toString).orElse(null);
+    }
 
     public GUID getCubeId() {
         return getId();

@@ -1,9 +1,8 @@
 package io.github.tml.plugin.systemLog.api;
 
-import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.plugin.systemLog.cube.SystemLogCube;
 
 import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID;
@@ -14,15 +13,15 @@ import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID;
         description = "用于系统日志输出",
         version = "1.0.1",
         cubeId = PLUGIN_ID)
-public class SystemLogCubeApi extends ExtensionPackage<SystemLogCube> {
-
-
-    public SystemLogCubeApi(SystemLogCube cube, GUID guid) {
-        super(cube, guid);
-    }
+public class SystemLogCubeApi extends MosaicExtPackage<SystemLogCube> {
 
     @MExtension(value = "log", name = "日志输出", description = "输出日志", priority = 1)
     public void log(String msg) {
-        cube.log(msg);
+        mosaicCube.log(msg);
+    }
+
+    @Override
+    public String extPackageId() {
+        return "system.log";
     }
 }

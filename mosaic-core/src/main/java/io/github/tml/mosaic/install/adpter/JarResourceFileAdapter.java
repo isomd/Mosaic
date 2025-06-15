@@ -5,6 +5,7 @@ import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.AnnotationInfoCollector;
+import io.github.tml.mosaic.install.collector.CubeIdInfoCollector;
 import io.github.tml.mosaic.install.collector.CubeModuleInfoCollector;
 import io.github.tml.mosaic.install.collector.JarClassLoaderAllClassCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
@@ -29,7 +30,8 @@ public class JarResourceFileAdapter extends AbstractResourceFileAdapter {
                 List.of(
                         new JarClassLoaderAllClassCollector(),
                         new CubeModuleInfoCollector(),
-                        new AnnotationInfoCollector()
+                        new AnnotationInfoCollector(),
+                        new CubeIdInfoCollector()
                 ), new DefaultResourceLoader()
         );
     }

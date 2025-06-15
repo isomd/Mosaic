@@ -1,8 +1,8 @@
 package io.github.tml.mosaic.actuator;
 
-import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.ExtensionPoint;
+import io.github.tml.mosaic.cube.external.MosaicCube;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.slot.Slot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,9 +22,9 @@ public interface CubeActuator {
 
         private Slot slot;
 
-        private Cube cube;
+        private MosaicCube cube;
 
-        private ExtensionPackage<?> exPackage;
+        private MosaicExtPackage<? extends MosaicCube> exPackage;
 
         private ExtensionPoint exPoint;
 
