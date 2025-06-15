@@ -90,7 +90,7 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
 
                 // 创建扩展包元数据对象
                 ExtensionPackage.MetaData metaData = new ExtensionPackage.MetaData(
-                        pkgDef.getName(), pkgDef.getDescription(), pkgDef.getVersion()
+                        pkgDef.getName(), pkgDef.getDescription()
                 );
 
                 // 实例化扩展包

@@ -63,7 +63,6 @@ public class ExtensionPackage extends UniqueEntity implements ExtensionPackageAp
     public static class MetaData{
         private final String name;
         private final String description;
-        private final String version;
 
         // 扩展点元数据
         private final List<ExtensionPoint> extensionPoints = new CopyOnWriteArrayList<>();

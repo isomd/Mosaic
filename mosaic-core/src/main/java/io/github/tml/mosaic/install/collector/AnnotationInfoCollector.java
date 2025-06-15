@@ -1,8 +1,8 @@
 package io.github.tml.mosaic.install.collector;
 
-import io.github.tml.mosaic.cube.MCube;
-import io.github.tml.mosaic.cube.MExtension;
-import io.github.tml.mosaic.cube.MExtensionPackage;
+import io.github.tml.mosaic.cube.external.MCube;
+import io.github.tml.mosaic.cube.external.MExtension;
+import io.github.tml.mosaic.cube.external.MExtensionPackage;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.support.InfoContext;
 

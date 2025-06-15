@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.cube;
+package io.github.tml.mosaic.cube.external;
 
 import java.lang.annotation.*;
 
@@ -15,7 +15,7 @@ public @interface MExtension {
     /**
      * 扩展点ID
      */
-    String value();
+    String extPointId();
 
     /**
      * 扩展点名称

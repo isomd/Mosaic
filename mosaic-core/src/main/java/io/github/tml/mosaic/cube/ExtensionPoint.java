@@ -33,6 +33,9 @@ public class ExtensionPoint extends UniqueEntity {
     @Getter @Setter
     private int priority = 100;
 
+    @Getter @Setter
+    private ExtPointResult result;
+
     public ExtensionPoint(String id, String name, String description) {
         super(new DotNotationId(id));
         this.methodName = name;
