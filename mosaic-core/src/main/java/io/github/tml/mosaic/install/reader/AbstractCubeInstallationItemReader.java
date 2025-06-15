@@ -11,9 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 描述: Cube定义读取抽象类
- * @author suifeng
- * 日期: 2025/6/7
+ * Cube定义读取抽象类
+ * 基于ReaderType枚举进行前缀路由
  */
 public abstract class AbstractCubeInstallationItemReader implements CubeInstallationItemReader {
 
@@ -32,34 +31,70 @@ public abstract class AbstractCubeInstallationItemReader implements CubeInstalla
         return resourceLoader;
     }
 
-    @Override
-    public InstallationConfig loadCubeInstallationItem(Resource... resources) throws CubeException {
-        InstallationConfig installationConfig = new InstallationConfig();
-        List<InstallationItem> installations = new ArrayList<InstallationItem>();
-        for (Resource resource : resources) {
-            InstallationConfig temp = loadCubeInstallationItem(resource);
-            installations.addAll(temp.getInstallations());
-        }
-        installationConfig.setInstallations(installations);
-        return installationConfig;
-    }
+    /**
+     * 子类实现，返回支持的Reader类型
+     */
+    public abstract ReaderType getReaderType();
 
     @Override
     public InstallationConfig loadCubeInstallationItem(String location) throws CubeException {
-        ResourceLoader resourceLoader = getResourceLoader();
-        Resource resource = resourceLoader.getResource(location);
-        return loadCubeInstallationItem(resource);
+        // 检查前缀是否匹配当前Reader类型
+        ReaderType readerType = getReaderType();
+        if (!readerType.matches(location)) {
+            return new InstallationConfig(); // 不匹配返回空配置
+        }
+
+        // 去掉前缀，交给子类处理
+        String actualLocation = readerType.removePrefix(location);
+        return doLoadCubeInstallationItem(actualLocation);
+    }
+
+    @Override
+    public InstallationConfig loadCubeInstallationItem(Resource resource) throws CubeException {
+        return doLoadCubeInstallationItem(resource);
+    }
+
+    @Override
+    public InstallationConfig loadCubeInstallationItem(Resource... resources) throws CubeException {
+        InstallationConfig installationConfig = new InstallationConfig();
+        List<InstallationItem> installations = new ArrayList<>();
+        for (Resource resource : resources) {
+            InstallationConfig temp = loadCubeInstallationItem(resource);
+            if (temp != null && temp.getInstallations() != null) {
+                installations.addAll(temp.getInstallations());
+            }
+        }
+        installationConfig.setInstallations(installations);
+        return installationConfig;
     }
 
     @Override
     public InstallationConfig loadCubeInstallationItem(String... locations) throws CubeException {
         InstallationConfig installationConfig = new InstallationConfig();
-        List<InstallationItem> installations = new ArrayList<InstallationItem>();
+        List<InstallationItem> installations = new ArrayList<>();
         for (String location : locations) {
             InstallationConfig temp = loadCubeInstallationItem(location);
-            installations.addAll(temp.getInstallations());
+            if (temp != null && temp.getInstallations() != null) {
+                installations.addAll(temp.getInstallations());
+            }
         }
         installationConfig.setInstallations(installations);
         return installationConfig;
+    }
+
+    /**
+     * 子类实现具体的加载逻辑（基于location）
+     */
+    protected InstallationConfig doLoadCubeInstallationItem(String actualLocation) throws CubeException {
+        ResourceLoader resourceLoader = getResourceLoader();
+        Resource resource = resourceLoader.getResource(actualLocation);
+        return doLoadCubeInstallationItem(resource);
+    }
+
+    /**
+     * 子类实现具体的加载逻辑（基于Resource）
+     */
+    protected InstallationConfig doLoadCubeInstallationItem(Resource resource) throws CubeException {
+        return new InstallationConfig();
     }
 }

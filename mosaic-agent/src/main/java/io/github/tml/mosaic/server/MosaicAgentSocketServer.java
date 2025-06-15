@@ -7,7 +7,7 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.github.tml.mosaic.MosaicChunkAgent;
-import io.github.tml.mosaic.util.JavaStringToFileUtil;
+import io.github.tml.mosaic.util.AgentUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -52,7 +52,7 @@ public class MosaicAgentSocketServer {
                     }
                 }
                 if (targetClassLoader == null) {
-                    throw new RuntimeException("Cannot find class loader for AgentServerRequestDTO");
+                    throw new RuntimeException("类加载器无法找到转换对象: io.github.tml.mosaic.entity.DTO.AgentServerRequestDTO");
                 }
 
                 Thread.currentThread().setContextClassLoader(targetClassLoader);
@@ -72,14 +72,15 @@ public class MosaicAgentSocketServer {
                 for (Class<?> allLoadedClass : instrumentation.getAllLoadedClasses()) {
                     if(allLoadedClass.getName().equals(className)){
                         targetClass = allLoadedClass;
+                        break;
                     }
                 }
 
                 if(targetClass == null){
-                    System.out.println("shit");
-                    return;
+                    throw new RuntimeException("无法从对应类加载器加载class: "+targetClassLoader+" : "+className);
                 }
 
+                //解析当前classloader下所有依赖
                 ScanResult scanResult = new ClassGraph()
                         .enableAllInfo()
                         .overrideClassLoaders(targetClassLoader)
@@ -99,18 +100,18 @@ public class MosaicAgentSocketServer {
 
                         realJarPaths.addAll(jarPaths);
                     } else {
-                        System.out.println("Unsupported URI scheme: " + s);
+                        throw new RuntimeException("不支持的URI类型");
                     }
                 }
 
                 String classpath = String.join(File.pathSeparator, realJarPaths);
 
                 //内存中 编译class
-                byte[] replace = JavaStringToFileUtil.compile(className,classCode,classpath);
+                byte[] replace = AgentUtil.compile(className,classCode,classpath);
                 //热替换
                 instrumentation
                         .redefineClasses(new ClassDefinition(targetClass,replace));
-
+                log.info("Mosaic agent proxy finished...");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -118,11 +119,11 @@ public class MosaicAgentSocketServer {
     }
 
     private static List<String> getJarPaths() throws IOException {
-        String fatJarPathFromClasspath = JavaStringToFileUtil.getFatJarPathFromClasspath();
+        String fatJarPathFromClasspath = AgentUtil.getFatJarPathFromClasspath();
 
         File fatJarFile;
         if (fatJarPathFromClasspath == null) {
-            throw new RuntimeException("无法获取fat jar 路径");
+            throw new RuntimeException("无法获取fat jar路径");
         }
         fatJarFile = new File(fatJarPathFromClasspath);
         File parentDir = fatJarFile.getParentFile();
@@ -158,14 +159,5 @@ public class MosaicAgentSocketServer {
             }
         }
         return jarPaths;
-    }
-
-    private Class<?> findLoadedClass(String className) {
-        for (Class<?> clazz : MosaicChunkAgent.getInstrumentation().getAllLoadedClasses()) {
-            if (clazz.getName().equals(className)) {
-                return clazz;
-            }
-        }
-        return null;
     }
 }

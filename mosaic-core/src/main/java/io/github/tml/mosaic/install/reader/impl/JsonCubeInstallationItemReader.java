@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.reader;
+package io.github.tml.mosaic.install.reader.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
@@ -6,6 +6,8 @@ import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.core.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.InstallationConfig;
+import io.github.tml.mosaic.install.reader.AbstractCubeInstallationItemReader;
+import io.github.tml.mosaic.install.reader.ReaderType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,22 +30,16 @@ public class JsonCubeInstallationItemReader extends AbstractCubeInstallationItem
     }
 
     @Override
-    public InstallationConfig loadCubeInstallationItem(Resource resource) throws CubeException {
-        try {
-            try (InputStream inputStream = resource.getInputStream()) {
-                return doLoadCubeInstallationItem(inputStream);
-            }
-        } catch (IOException e) {
-            throw new CubeException("IOException parsing JSON document from " + resource, e);
-        }
+    public ReaderType getReaderType() {
+        return ReaderType.JSON;
     }
 
-    private InstallationConfig doLoadCubeInstallationItem(InputStream inputStream) throws CubeException {
-        try {
-            // 解析JSON配置
+    @Override
+    protected InstallationConfig doLoadCubeInstallationItem(Resource resource) throws CubeException {
+        try (InputStream inputStream = resource.getInputStream()) {
             return objectMapper.readValue(inputStream, InstallationConfig.class);
         } catch (IOException e) {
-            throw new CubeException("Failed to parse installation config", e);
+            throw new CubeException("Failed to parse JSON document from " + resource, e);
         }
     }
 }

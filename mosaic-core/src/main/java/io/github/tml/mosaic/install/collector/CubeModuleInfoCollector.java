@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.install.collector;
 
-import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.cube.*;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
