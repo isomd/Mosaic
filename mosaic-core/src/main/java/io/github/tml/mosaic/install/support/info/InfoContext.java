@@ -46,6 +46,7 @@ public class InfoContext {
     @NoArgsConstructor
     @Data
     public static class CubeInfo{
+
         private String id;
         private String name;
         private String version;
@@ -55,6 +56,11 @@ public class InfoContext {
         private Class<?> clazz;
 
         private List<ExtensionPackageInfo> extensionPackages = new ArrayList<>();
+
+        /**
+         * Cube配置信息
+         */
+        private CubeConfigInfo cubeConfigInfo;
 
         public void addExtensionPackage(ExtensionPackageInfo extensionPackageInfo){
             extensionPackages.add(extensionPackageInfo);

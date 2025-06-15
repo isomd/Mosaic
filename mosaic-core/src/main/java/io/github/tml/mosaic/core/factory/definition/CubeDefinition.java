@@ -1,4 +1,6 @@
 package io.github.tml.mosaic.core.factory.definition;
+
+import io.github.tml.mosaic.install.support.CubeConfigInfo;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -18,6 +20,11 @@ public class CubeDefinition {
     private String className;
     private transient ClassLoader classLoader;
     private final List<ExtensionPackageDefinition> extensionPackages = new ArrayList<>();
+
+    /**
+     * Cube配置信息
+     */
+    private CubeConfigInfo cubeConfigInfo;
 
     public CubeDefinition(String id, String name, String version,
                           String description, String model,

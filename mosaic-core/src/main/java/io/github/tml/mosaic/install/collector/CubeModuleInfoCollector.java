@@ -35,7 +35,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
                 cubeInfo.setClassName(clazz.getName());
 
                 cubeInfoMap.put(getRootPackageName(clazz, ModuleFileName.CUBE.getPackageName()), cubeInfo);
-            }else if(isValidExtensionPackageApiClass(clazz)){
+            } else if(isValidExtensionPackageApiClass(clazz)){
 
                 InfoContext.ExtensionPackageInfo extensionPackageInfo = new InfoContext.ExtensionPackageInfo();
 

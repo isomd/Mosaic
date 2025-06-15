@@ -1,0 +1,50 @@
+[
+  {
+    "cubeId": "system.log.cube.s",
+    "config": [
+      {
+        "name": "logLevel",
+        "type": "string",
+        "desc": "日志级别设置",
+        "required": true,
+        "defaultValue": "INFO",
+        "validation": {
+          "allowedValues": ["DEBUG", "INFO", "WARN", "ERROR"]
+        }
+      },
+      {
+        "name": "maxFileSize",
+        "type": "integer",
+        "desc": "最大文件大小(字节)",
+        "required": false,
+        "defaultValue": 10485760
+      },
+      {
+        "name": "enableConsoleOutput",
+        "type": "boolean",
+        "desc": "是否启用控制台输出",
+        "required": false,
+        "defaultValue": true
+      }
+    ]
+  },
+  {
+    "cubeId": "system.log.cube.p",
+    "config": [
+      {
+        "name": "outputFormat",
+        "type": "string",
+        "desc": "输出格式模板",
+        "required": true,
+        "defaultValue": "[%date] %level - %message"
+      },
+      {
+        "name": "retentionDays",
+        "type": "integer",
+        "desc": "日志保留天数",
+        "required": false,
+        "defaultValue": 30
+      }
+    ]
+  }
+]

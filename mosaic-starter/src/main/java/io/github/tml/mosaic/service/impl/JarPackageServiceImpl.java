@@ -1,11 +1,19 @@
 package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.config.properties.MosaicPluginProperties;
+import io.github.tml.mosaic.core.factory.context.CubeContext;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
+import io.github.tml.mosaic.core.infrastructure.CommonComponent;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.core.tools.guid.GuuidAllocator;
 import io.github.tml.mosaic.entity.JarPackageInfo;
+import io.github.tml.mosaic.install.install.InfoContextInstaller;
+import io.github.tml.mosaic.install.reader.ReaderType;
+import io.github.tml.mosaic.install.support.InfoContext;
 import io.github.tml.mosaic.service.JarPackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +36,8 @@ import java.util.stream.Collectors;
 public class JarPackageServiceImpl implements JarPackageService {
 
     private final MosaicPluginProperties properties;
-    private final ResourceLoader resourceLoader;
+    private final InfoContextInstaller installer;
+    private final CubeContext cubeContext;
 
     private static final String JAR_EXTENSION = ".jar";
     private static final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -48,11 +58,31 @@ public class JarPackageServiceImpl implements JarPackageService {
     public String uploadJarPackage(MultipartFile file) throws IOException {
         validateUploadFile(file);
 
-        String filename = file.getOriginalFilename();
-        Path targetPath = resolveStoragePath().resolve(filename);
+        String filename = CommonComponent.GuidAllocator().nextGUID().toString() + JAR_EXTENSION;
+        Path targetPath = null;
+        targetPath = resolveStoragePath().resolve(filename);
 
         try {
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 直接调用安装器安装
+            String[] strings = new String[1];
+            strings[0] = ReaderType.FILE.getPrefix() + targetPath;
+            List<InfoContext> infoContexts = installer.installCubeInfoContext(strings);
+
+            // 将安装项转换成CubeDefinition列表
+            List<CubeDefinition> cubeDefinitions = new ArrayList<>();
+            if (infoContexts != null && !infoContexts.isEmpty()) {
+                for (InfoContext infoContext : infoContexts) {
+                    cubeDefinitions.addAll(CubeDefinitionConverter.convertToCubeDefinitions(infoContext));
+                }
+            }
+
+            // 注册进context容器
+            for (CubeDefinition cubeDefinition : cubeDefinitions) {
+                cubeContext.registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
+            }
+
             log.info("JAR包上传成功: filename={}, size={}KB", filename, file.getSize() / 1024);
             return filename;
         } catch (IOException e) {

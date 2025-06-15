@@ -7,5 +7,17 @@
     "dashboard": "Dashboard",
     "plugins": "Plugins",
     "settings": "Settings"
+  },
+  "plugins": {
+    "upload": "upload",
+    "details": "details",
+    "remove": "remove",
+    "author": "Author"
+  },
+  "dashboard": {
+    "slotNum": "SLOT LOADED",
+    "worldNum": "ACTIVE WORLD",
+    "pluginNum": "PLUGIN LOADED",
+    "runningTime": "RUNNING TIME"
   }
 }

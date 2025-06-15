@@ -49,8 +49,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api":{
-        target: "http://localhost:8080/",
+      "/mosaic":{
+        target: "http://localhost:9000/",
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, "/"),
       },
