@@ -5,6 +5,7 @@ import io.github.tml.mosaic.cube.external.MCube;
 import io.github.tml.mosaic.cube.external.MExtension;
 import io.github.tml.mosaic.cube.external.MExtensionPackage;
 import io.github.tml.mosaic.cube.external.MResultItem;
+import io.github.tml.mosaic.install.support.CubeConfigInfo;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
