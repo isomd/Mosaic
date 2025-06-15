@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class CubeDefinition {
-    private GUID id;
+    private String id;
     private String name;
     private String version;
     private String description;
@@ -20,7 +20,7 @@ public class CubeDefinition {
     private transient ClassLoader classLoader;
     private final List<ExtensionPackageDefinition> extensionPackages = new ArrayList<>();
 
-    public CubeDefinition(GUID id, String name, String version,
+    public CubeDefinition(String id, String name, String version,
                           String description, String model,
                           String className, ClassLoader classLoader) {
         this.id = id;

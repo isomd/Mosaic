@@ -6,6 +6,8 @@ import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.MCube;
 import io.github.tml.mosaic.cube.MExtension;
 import io.github.tml.mosaic.cube.MExtensionPackage;
+import io.github.tml.mosaic.cube.external.MosaicCube;
+import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,13 +48,14 @@ public class InfoContext {
     @NoArgsConstructor
     @Data
     public static class CubeInfo{
-        private GUID id;
+        private String id;
         private String name;
         private String version;
         private String description;
         private String model;
         private String className;
         private Class<?> clazz;
+
         private List<ExtensionPackageInfo> extensionPackages = new ArrayList<>();
 
         public void addExtensionPackage(ExtensionPackageInfo extensionPackageInfo){
@@ -62,7 +65,7 @@ public class InfoContext {
         public void setInfoByMCube(MCube mCube){
             String id = mCube.value();
             String name = mCube.name().isEmpty() ? this.getClass().getSimpleName() : mCube.name();
-            this.setId(new GUUID(id));
+            this.setId(id);
             this.setName(name);
             this.setVersion(mCube.version());
             this.setDescription(mCube.description());

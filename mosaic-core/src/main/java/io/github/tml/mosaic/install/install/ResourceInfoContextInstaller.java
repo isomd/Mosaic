@@ -28,7 +28,6 @@ public abstract class ResourceInfoContextInstaller extends AbstractInfoContextIn
 
     @Override
     protected InstallationConfig readInstallationConfigForResource(String[] configLocations) throws CubeException {
-
         List<InstallationItem> itemList = new ArrayList<>();
         for (CubeInstallationItemReader reader : cubeInstallationItemReaderList) {
             InstallationConfig installationConfig = reader.loadCubeInstallationItem(configLocations);

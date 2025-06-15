@@ -26,8 +26,10 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
 
     private void scanCubeInfo(InfoContext.CubeInfo cubeInfo){
         Class<?> clazz = cubeInfo.getClazz();
-        MCube mCube = clazz.getAnnotation(MCube.class);
-        cubeInfo.setInfoByMCube(mCube);
+        if (clazz.isAnnotationPresent(MCube.class)) {
+            MCube mCube = clazz.getAnnotation(MCube.class);
+            cubeInfo.setInfoByMCube(mCube);
+        }
     }
 
     private void scanExtensionPackages(InfoContext.CubeInfo cubeInfo) {
@@ -36,8 +38,11 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
 
         for (InfoContext.ExtensionPackageInfo extensionPackage : extensionPackages) {
             Class<?> clazz = extensionPackage.getClazz();
+            if (!clazz.isAnnotationPresent(MExtensionPackage.class)) {
+                continue;
+            }
             MExtensionPackage pkgAnno = clazz.getAnnotation(MExtensionPackage.class);
-            if (pkgAnno != null && pkgAnno.cubeId().equals(cubeInfo.getId().toString())) {
+            if (pkgAnno != null && pkgAnno.cubeId().equals(cubeInfo.getId())) {
                 extensionPackage.setInfoByMExtensionPackage(pkgAnno);
                 // 扫描扩展点
                 scanExtensionPoints(clazz, extensionPackage);

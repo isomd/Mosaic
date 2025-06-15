@@ -13,4 +13,5 @@ public interface CubeDefinitionRegisteredEventListener extends CubeEventListener
     default Class<CubeDefinitionRegisteredEvent> getEventType() {
         return CubeDefinitionRegisteredEvent.class;
     }
+
 }

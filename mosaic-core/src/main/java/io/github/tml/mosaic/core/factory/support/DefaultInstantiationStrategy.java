@@ -5,6 +5,7 @@ import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.factory.config.InstantiationStrategy;
+import io.github.tml.mosaic.cube.external.MosaicCube;
 
 import java.lang.reflect.Constructor;
 
@@ -18,14 +19,16 @@ public class DefaultInstantiationStrategy implements InstantiationStrategy {
     @Override
     public Cube instantiate(CubeDefinition cubeDefinition, GUID cubeId, Object[] args) throws CubeException {
         try {
-            // 使用CubeDefinition的类加载器
+            Cube cube = new Cube(cubeId);
+            // 使用CubeDefinition的类加载器 加载 MosaicCube
             Class<?> clazz = cubeDefinition.getClassLoader().loadClass(cubeDefinition.getClassName());
 
             // 通过反射实例化
-            Constructor<?> constructor = clazz.getConstructor(GUID.class);
-            return (Cube) constructor.newInstance(cubeId);
+            MosaicCube mosaicCube = (MosaicCube) clazz.getDeclaredConstructor().newInstance();
+            cube.setMosaicCube(mosaicCube);
+            return cube;
         } catch (Exception e) {
-            throw new CubeException("Cube实例化失败: " + cubeDefinition.getClassName(), e);
+            throw new CubeException("cube init error: " + cubeDefinition.getClassName(), e);
         }
     }
 }

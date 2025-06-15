@@ -15,26 +15,12 @@ import java.util.Map;
  * @description :
  * @date 2025/6/7
  */
-public class JavaStringToFileUtil {
+public class AgentUtil {
 
-    public static byte[] compile(String fullClassName, String sourceCode, ClassLoader parentLoader) throws Exception {
-        SimpleCompiler compiler = new SimpleCompiler();
-        compiler.setParentClassLoader(parentLoader);
-        compiler.cook(sourceCode);
-
-        // 使用 SimpleCompiler 编译后的类加载器
-        ClassLoader classLoader = compiler.getClassLoader();
-
-        // 获取 class 字节码的资源路径
-        String resourceName = fullClassName.replace('.', '/') + ".class";
-        try (InputStream is = classLoader.getResourceAsStream(resourceName)) {
-            if (is == null) {
-                throw new IOException("无法从 SimpleCompiler 获取 class 字节码: " + resourceName);
-            }
-            return is.readAllBytes();
-        }
-    }
-
+    /**
+     *  获取fat jar 包所在目录路径
+     * @return
+     */
     public static String getFatJarPathFromClasspath() {
         String classPath = System.getProperty("java.class.path");
         if (classPath != null && classPath.endsWith(".jar")) {
@@ -43,6 +29,12 @@ public class JavaStringToFileUtil {
         return null;
     }
 
+    /**
+     * @param fullClassName 全限定名
+     * @param sourceCode 源码字符串
+     * @param classPath 依赖路径
+     * @return class文件字节码
+     */
     public static byte[] compile(String fullClassName, String sourceCode,String classPath) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         JavaFileObject javaFileObject = new JavaSourceFromString(fullClassName, sourceCode);
@@ -64,6 +56,7 @@ public class JavaStringToFileUtil {
         };
 
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, Arrays.asList("-classpath",classPath), null, List.of(javaFileObject));
+
         if (!task.call()) {
             throw new RuntimeException("编译失败");
         }
@@ -91,4 +84,5 @@ public class JavaStringToFileUtil {
             return code;
         }
     }
+
 }
