@@ -1,7 +1,6 @@
-package io.github.tml.mosaic.core.factory.support.manager;
+package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.factory.config.CubeManager;
-import io.github.tml.mosaic.core.factory.support.DefaultSingletonCubeRegistry;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GuuidAllocator;
 import io.github.tml.mosaic.cube.Cube;

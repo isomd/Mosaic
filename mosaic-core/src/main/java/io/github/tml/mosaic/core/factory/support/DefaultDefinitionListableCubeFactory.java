@@ -19,8 +19,8 @@ import java.util.Map;
 @Slf4j
 public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
 
-    private Map<GUID, CubeDefinition> cubeDefinitionMap = new HashMap<>();
-    private CubeEventBroadcaster eventBroadcaster;
+    private final Map<GUID, CubeDefinition> cubeDefinitionMap = new HashMap<>();
+    private final CubeEventBroadcaster eventBroadcaster;
 
     public DefaultDefinitionListableCubeFactory() {
         this.eventBroadcaster = DefaultCubeEventBroadcaster.broadcaster();

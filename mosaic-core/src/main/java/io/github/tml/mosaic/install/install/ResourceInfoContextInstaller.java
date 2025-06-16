@@ -19,6 +19,7 @@ import java.util.List;
 @Data
 public abstract class ResourceInfoContextInstaller extends AbstractInfoContextInstaller {
 
+
     protected List<CubeInstallationItemReader> cubeInstallationItemReaderList;
     protected List<InstallationConfigEnhancer> installationConfigEnhancers;
 

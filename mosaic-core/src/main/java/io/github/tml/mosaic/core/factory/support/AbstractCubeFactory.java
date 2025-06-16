@@ -1,7 +1,6 @@
 package io.github.tml.mosaic.core.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.factory.support.manager.DefaultCubeManager;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
