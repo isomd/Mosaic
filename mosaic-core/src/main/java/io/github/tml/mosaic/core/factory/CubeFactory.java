@@ -39,10 +39,4 @@ public interface CubeFactory {
      * @return 是否已注册
      */
     boolean containsCubeDefinition(String cubeId);
-
-    /**
-     * 获取已注册CubeDefinition的总数
-     * @return 注册数量
-     */
-    int getCubeDefinitionCount();
 }

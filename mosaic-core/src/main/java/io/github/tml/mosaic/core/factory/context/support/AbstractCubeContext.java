@@ -99,6 +99,21 @@ public abstract class AbstractCubeContext implements CubeContext {
     }
 
     @Override
+    public List<CubeDefinition> getAllCubeDefinitions() {
+        return getBeanFactory().getAllCubeDefinitions();
+    }
+
+    @Override
+    public Map<GUID, CubeDefinition> getAllCubeDefinitionMap() {
+        return getBeanFactory().getAllCubeDefinitionMap();
+    }
+
+    @Override
+    public boolean containsCubeDefinition(String cubeId) {
+        return getBeanFactory().containsCubeDefinition(cubeId);
+    }
+
+    @Override
     public void clear() {
         getBeanFactory().clear();
     }

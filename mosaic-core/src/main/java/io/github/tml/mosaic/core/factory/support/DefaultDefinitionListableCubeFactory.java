@@ -90,9 +90,4 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
     public boolean containsCubeDefinition(String cubeId) {
         return cubeId != null && cubeDefinitionMap.containsKey(new GUUID(cubeId));
     }
-
-    @Override
-    public int getCubeDefinitionCount() {
-        return cubeDefinitionMap.size();
-    }
 }
