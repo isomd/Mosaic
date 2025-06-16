@@ -2,6 +2,7 @@ package io.github.tml.mosaic.controller;
 
 import com.alibaba.fastjson.JSON;
 import io.github.tml.mosaic.GoldenShovel;
+import io.github.tml.mosaic.chunk.ChunkManager;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.req.HotSwapRequestDTO;
 import io.github.tml.mosaic.entity.req.AgentSocketRequestDTO;
@@ -41,10 +42,7 @@ public class TestController {
         String className = requestDTO.getClassName();
         String code = ChunkHotSwapUtil.decompileClassFromClassName(className);
         if(requestDTO.getCmd()==1){
-            proxy = ASMUtil.modify(code, requestDTO.getLine(),
-                    ASMUtil.CodeOp.REPLACE_ASSIGN_RIGHT,
-                    () -> CubeTemplateUtil.generateCubeTemplateBySlotName(requestDTO.getSlotName())
-                    , Set.of(CubeTemplateUtil.getCubeImportPath()));
+            proxy = ChunkManager.proxyCodeByFullName(requestDTO.getClassName(),requestDTO.getLine(), ChunkManager.InsertType.REPLACE_ASSIGN_RIGHT,CubeTemplateUtil.generateCubeTemplateBySlotName(code));
         }else{
             String slotId = requestDTO.getSlotId();
 
@@ -55,11 +53,10 @@ public class TestController {
                     .resName(requestDTO.getResName())
                     .build();
 
-
-            proxy = ASMUtil.modify(code, requestDTO.getLine(),
-                    ASMUtil.CodeOp.INSERT_AFTER,
-                    () -> CubeTemplateUtil.buildCodeTemplate(slotId, requestDTO.getArgs())
-                    , Set.of(CubeTemplateUtil.getCubeImportPath()));
+            proxy = ChunkManager.proxyCodeByFullName(
+                    className,requestDTO.getLine(), ChunkManager.InsertType.INSERT_AFTER,
+                    CubeTemplateUtil.buildCodeTemplate(slotId, requestDTO.getArgs()
+            ));
         }
         AgentSocketRequestDTO send = new AgentSocketRequestDTO();
         send.setClassCode(proxy);
@@ -71,7 +68,7 @@ public class TestController {
             dos.writeInt(jsonBytes.length);
             dos.write(jsonBytes);
 
-            System.out.println("[Client] Class sent: " + requestDTO);
+            log.info("[Client] Class sent: {}", requestDTO);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -81,6 +78,6 @@ public class TestController {
 
     @GetMapping("classString/{className}")
     public String classString(@PathVariable String className){
-        return ChunkHotSwapUtil.decompileClassFromClassName(className);
+        return ChunkManager.getProxyCode(className);
     }
 }

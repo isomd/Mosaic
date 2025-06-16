@@ -43,7 +43,6 @@ public class MosaicAgentSocketServer {
 
                 Instrumentation instrumentation = MosaicChunkAgent.getInstrumentation();
 
-
                 Class<?> dtoClazz = AgentServerRequestDTO.class;
                 ClassLoader targetClassLoader = dtoClazz.getClassLoader();
 
