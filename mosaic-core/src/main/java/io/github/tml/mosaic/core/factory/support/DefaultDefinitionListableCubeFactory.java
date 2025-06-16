@@ -6,10 +6,11 @@ import io.github.tml.mosaic.core.event.event.CubeDefinitionRegisteredEvent;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 描述: Cube工厂的核心实现类
@@ -19,7 +20,8 @@ import java.util.Map;
 @Slf4j
 public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
 
-    private final Map<GUID, CubeDefinition> cubeDefinitionMap = new HashMap<>();
+    // 使用ConcurrentHashMap保证线程安全
+    private final Map<GUID, CubeDefinition> cubeDefinitionMap = new ConcurrentHashMap<>();
     private final CubeEventBroadcaster eventBroadcaster;
 
     public DefaultDefinitionListableCubeFactory() {
@@ -70,5 +72,27 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
     @Override
     public void preInstantiateSingletons() throws CubeException {
         cubeDefinitionMap.keySet().forEach(this::getCube);
+    }
+
+    // ==================== CubeDefinitionAccessor实现 ====================
+
+    @Override
+    public List<CubeDefinition> getAllCubeDefinitions() {
+        return List.copyOf(cubeDefinitionMap.values());
+    }
+
+    @Override
+    public Map<GUID, CubeDefinition> getAllCubeDefinitionMap() {
+        return Map.copyOf(cubeDefinitionMap);
+    }
+
+    @Override
+    public boolean containsCubeDefinition(String cubeId) {
+        return cubeId != null && cubeDefinitionMap.containsKey(new GUUID(cubeId));
+    }
+
+    @Override
+    public int getCubeDefinitionCount() {
+        return cubeDefinitionMap.size();
     }
 }

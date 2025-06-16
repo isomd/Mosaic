@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.controller;
 
 
+import io.github.tml.mosaic.core.factory.context.CubeContext;
 import io.github.tml.mosaic.entity.JarPackageInfo;
 import io.github.tml.mosaic.service.JarPackageService;
 import io.github.tml.mosaic.util.R;
@@ -32,6 +33,7 @@ public class JarPackageController {
     public R<String> uploadJarPackage(@RequestParam("file") MultipartFile file) {
         try {
             String filename = jarPackageService.uploadJarPackage(file);
+
             log.info("JAR包上传成功: {}", filename);
             return R.success("JAR包上传成功", filename);
 

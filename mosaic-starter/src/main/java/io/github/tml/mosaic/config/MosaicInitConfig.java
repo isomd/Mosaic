@@ -51,7 +51,6 @@ public class MosaicInitConfig {
         for (CubeDefinition cubeDefinition : cubeDefinitions) {
             context.registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
         }
-
         return context;
     }
 

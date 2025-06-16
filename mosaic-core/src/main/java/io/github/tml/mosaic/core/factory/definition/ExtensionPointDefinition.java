@@ -32,5 +32,4 @@ public class ExtensionPointDefinition {
         return modelMapper.createTypeMap(extensionPackageInfo, ExtensionPointDefinition.class)
                 .map(extensionPackageInfo);
     }
-
 }

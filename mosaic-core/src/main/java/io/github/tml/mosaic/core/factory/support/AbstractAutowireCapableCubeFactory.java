@@ -42,7 +42,6 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
             GUID instanceId = registerCube(cubeId, cube);
             log.info("✓ property Cube register | CubeId: {} | instanceId: {}", cubeId, instanceId);
         }
-
         return cube;
     }
 
