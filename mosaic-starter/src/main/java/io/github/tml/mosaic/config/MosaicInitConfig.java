@@ -2,10 +2,10 @@ package io.github.tml.mosaic.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
-import io.github.tml.mosaic.core.factory.ClassPathCubeContext;
-import io.github.tml.mosaic.core.factory.context.CubeContext;
-import io.github.tml.mosaic.core.factory.definition.CubeDefinitionConverter;
-import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
+import io.github.tml.mosaic.cube.factory.context.CubeContext;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinitionConverter;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.install.install.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.info.InfoContext;

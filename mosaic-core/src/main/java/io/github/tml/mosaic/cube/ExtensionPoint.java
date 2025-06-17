@@ -1,9 +1,8 @@
 package io.github.tml.mosaic.cube;
 
-import io.github.tml.mosaic.core.factory.definition.ExtensionPointDefinition;
+import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
 import lombok.Getter;
 import lombok.Setter;

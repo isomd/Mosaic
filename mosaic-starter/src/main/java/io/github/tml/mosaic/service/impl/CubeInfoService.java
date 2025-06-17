@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.service.impl;
 
-import io.github.tml.mosaic.core.factory.context.CubeContext;
-import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.context.CubeContext;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.vo.CubeInfoVO;

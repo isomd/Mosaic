@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.install.adpter;
 
-import io.github.tml.mosaic.core.factory.io.loader.DefaultResourceLoader;
-import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
+import io.github.tml.mosaic.cube.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.InstallationItem;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.*;

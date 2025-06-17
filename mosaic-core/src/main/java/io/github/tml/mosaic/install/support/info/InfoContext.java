@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.install.support.info;
 
-import io.github.tml.mosaic.core.factory.io.resource.Resource;
+import io.github.tml.mosaic.cube.factory.io.resource.Resource;
 import io.github.tml.mosaic.cube.external.MCube;
 import io.github.tml.mosaic.cube.external.MExtension;
 import io.github.tml.mosaic.cube.external.MExtensionPackage;

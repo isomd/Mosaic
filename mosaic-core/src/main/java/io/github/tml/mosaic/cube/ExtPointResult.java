@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube;
 
-import io.github.tml.mosaic.core.factory.definition.PointResultDefinition;
+import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
 import lombok.Data;
 
 import java.util.HashMap;

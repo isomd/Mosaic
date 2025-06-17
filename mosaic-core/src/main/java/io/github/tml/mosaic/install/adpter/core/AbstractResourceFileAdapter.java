@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.install.adpter.core;
 
 import io.github.tml.mosaic.install.InstallationItem;
-import io.github.tml.mosaic.core.factory.io.loader.ResourceLoader;
+import io.github.tml.mosaic.cube.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
 import io.github.tml.mosaic.install.support.info.InfoContext;
 import lombok.extern.slf4j.Slf4j;

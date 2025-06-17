@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.entity.vo;
 
-import io.github.tml.mosaic.core.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import lombok.Data;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
