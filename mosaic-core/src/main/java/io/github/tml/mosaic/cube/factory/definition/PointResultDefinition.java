@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class PointResultDefinition {
 
-    @Getter
-    private List<PointResultItemDefinition> pointsResultInfoList = new ArrayList<>();
+    private final List<PointResultItemDefinition> pointsResultInfoList = new ArrayList<>();
 
     public void addPointResultInfo(PointResultItemDefinition pointResultInfo){
         this.pointsResultInfoList.add(pointResultInfo);

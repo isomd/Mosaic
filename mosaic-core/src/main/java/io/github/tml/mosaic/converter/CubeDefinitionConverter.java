@@ -28,7 +28,7 @@ public class CubeDefinitionConverter {
                 cubeInfo.getClassName(),
                 cubeInfo.getClassLoader()
         );
-        cubeDef.setCubeConfigInfo(cubeInfo.getCubeConfigInfo());
+        cubeDef.setConfigInfo(cubeInfo.getConfigInfo());
 
         // 处理扩展包
         for (ExtensionPackageInfo epInfo : cubeInfo.getExtensionPackages()) {

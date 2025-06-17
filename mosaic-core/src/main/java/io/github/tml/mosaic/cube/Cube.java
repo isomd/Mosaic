@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.cube;
 
+import io.github.tml.mosaic.core.tools.config.ConfigurableEntity;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
 import io.github.tml.mosaic.cube.api.CubeApi;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 方块抽象基类 - 所有插件必须继承此类
  */
 @Slf4j
-public class Cube extends UniqueEntity implements CubeApi {
+public class Cube extends ConfigurableEntity implements CubeApi {
 
     @Getter
     private MetaData metaData;
@@ -56,6 +56,7 @@ public class Cube extends UniqueEntity implements CubeApi {
 
     @Data
     public static class MetaData {
+
         private String name;
         private String version;
         private String description;

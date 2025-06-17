@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractAutowireInitCubeFactory extends AbstractAutowirePropertyCubeFactory {
 
     @Override
-    protected Cube initializeCube(Cube cube, CubeDefinition cubeDefinition) {
+    protected Cube initializeCube(Cube cube, CubeDefinition cubeDefinition, Object[] args) {
         try {
             if (cube.init()) {
                 log.info("✓ Cube init success | CubeId: {}, CubeName:{}", cube.getCubeId(), cube.getMetaData().getName());

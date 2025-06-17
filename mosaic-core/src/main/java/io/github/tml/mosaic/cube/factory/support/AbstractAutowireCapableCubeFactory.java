@@ -26,7 +26,7 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
             // 给 Cube 填充属性
             applyPropertyValues(cube, cubeDefinition);
             // 执行 Cube 的初始化方法
-            cube = initializeCube(cube, cubeDefinition);
+            cube = initializeCube(cube, cubeDefinition, args);
         } catch (Exception e) {
             throw new CubeException("Instantiation of cube failed", e);
         }
@@ -45,6 +45,6 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         return cube;
     }
 
-    protected abstract Cube initializeCube(Cube cube, CubeDefinition cubeDefinition);
+    protected abstract Cube initializeCube(Cube cube, CubeDefinition cubeDefinition, Object[] args);
     protected abstract void applyPropertyValues(Cube cube, CubeDefinition cubeDefinition);
 }

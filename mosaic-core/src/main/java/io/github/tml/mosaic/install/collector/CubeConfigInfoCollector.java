@@ -3,8 +3,8 @@ package io.github.tml.mosaic.install.collector;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.domian.info.CubeConfigInfo;
-import io.github.tml.mosaic.install.domian.info.CubeConfigItem;
+import io.github.tml.mosaic.core.tools.config.ConfigInfo;
+import io.github.tml.mosaic.core.tools.config.ConfigItem;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +42,14 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
         long startTime = System.currentTimeMillis();
 
         // 加载配置文件
-        List<CubeConfigInfo> configInfoList = loadConfigFile(infoContext);
+        List<ConfigInfo> configInfoList = loadConfigFile(infoContext);
         if (CollectionUtils.isEmpty(configInfoList)) {
             log.info("No cube config file found or config file is empty");
             return;
         }
 
         // 构建cubeId到配置的映射
-        Map<String, CubeConfigInfo> configMap = buildConfigMap(configInfoList);
+        Map<String, ConfigInfo> configMap = buildConfigMap(configInfoList);
 
         // 为每个Cube分配对应的配置
         int assignedCount = assignConfigToCubes(cubeInfoList, configMap);
@@ -61,9 +61,9 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
     /**
      * 加载配置文件
      */
-    private List<CubeConfigInfo> loadConfigFile(InfoContext infoContext) {
+    private List<ConfigInfo> loadConfigFile(InfoContext infoContext) {
         // 策略1: 从classpath根目录加载
-        List<CubeConfigInfo> configs = loadConfigFromClasspathRoot(infoContext);
+        List<ConfigInfo> configs = loadConfigFromClasspathRoot(infoContext);
         if (!CollectionUtils.isEmpty(configs)) {
             log.debug("Successfully loaded config from classpath root");
             return configs;
@@ -83,7 +83,7 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
     /**
      * 从classpath根目录加载配置
      */
-    private List<CubeConfigInfo> loadConfigFromClasspathRoot(InfoContext infoContext) {
+    private List<ConfigInfo> loadConfigFromClasspathRoot(InfoContext infoContext) {
         ClassLoader classLoader = determineClassLoader(infoContext);
 
         try (InputStream inputStream = classLoader.getResourceAsStream(CONFIG_FILE_NAME)) {
@@ -92,8 +92,8 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
                 return Collections.emptyList();
             }
 
-            List<CubeConfigInfo> configs = objectMapper.readValue(
-                    inputStream, new TypeReference<List<CubeConfigInfo>>() {});
+            List<ConfigInfo> configs = objectMapper.readValue(
+                    inputStream, new TypeReference<List<ConfigInfo>>() {});
 
             log.debug("Successfully loaded {} cube configs from classpath root", configs.size());
             return configs;
@@ -108,7 +108,7 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
     /**
      * 从resources目录加载配置
      */
-    private List<CubeConfigInfo> loadConfigFromResources(InfoContext infoContext) {
+    private List<ConfigInfo> loadConfigFromResources(InfoContext infoContext) {
         ClassLoader classLoader = determineClassLoader(infoContext);
         String resourcePath = "META-INF/" + CONFIG_FILE_NAME;
 
@@ -118,8 +118,8 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
                 return Collections.emptyList();
             }
 
-            List<CubeConfigInfo> configs = objectMapper.readValue(
-                    inputStream, new TypeReference<List<CubeConfigInfo>>() {});
+            List<ConfigInfo> configs = objectMapper.readValue(
+                    inputStream, new TypeReference<List<ConfigInfo>>() {});
 
             log.debug("Successfully loaded {} cube configs from resources", configs.size());
             return configs;
@@ -134,12 +134,12 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
     /**
      * 构建cubeId到配置的映射
      */
-    private Map<String, CubeConfigInfo> buildConfigMap(List<CubeConfigInfo> configInfoList) {
-        Map<String, CubeConfigInfo> configMap = new HashMap<>();
+    private Map<String, ConfigInfo> buildConfigMap(List<ConfigInfo> configInfoList) {
+        Map<String, ConfigInfo> configMap = new HashMap<>();
 
-        for (CubeConfigInfo configInfo : configInfoList) {
-            if (configInfo.getCubeId() != null && !configInfo.getCubeId().trim().isEmpty()) {
-                String cubeId = configInfo.getCubeId().trim();
+        for (ConfigInfo configInfo : configInfoList) {
+            if (configInfo.getId() != null && !configInfo.getId().trim().isEmpty()) {
+                String cubeId = configInfo.getId().trim();
 
                 if (configMap.containsKey(cubeId)) {
                     log.warn("Duplicate cube config found for cubeId: {}, using the first one", cubeId);
@@ -160,14 +160,14 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
      * 为Cube分配对应的配置
      */
     private int assignConfigToCubes(List<CubeInfo> cubeInfoList,
-                                    Map<String, CubeConfigInfo> configMap) {
+                                    Map<String, ConfigInfo> configMap) {
         int assignedCount = 0;
 
         for (CubeInfo cubeInfo : cubeInfoList) {
             String cubeId = cubeInfo.getId();
             if (cubeId != null && configMap.containsKey(cubeId)) {
-                CubeConfigInfo configInfo = configMap.get(cubeId);
-                cubeInfo.setCubeConfigInfo(configInfo);
+                ConfigInfo configInfo = configMap.get(cubeId);
+                cubeInfo.setConfigInfo(configInfo);
                 assignedCount++;
 
                 log.debug("Assigned config to cube: {} with {} config items",
@@ -176,7 +176,7 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
                 // 验证必填配置项（可选的警告性检查）
                 List<String> requiredItems = configInfo.getRequiredConfigItems()
                         .stream()
-                        .map(CubeConfigItem::getName).collect(Collectors.toList());
+                        .map(ConfigItem::getName).collect(Collectors.toList());
 
                 if (!requiredItems.isEmpty()) {
                     log.debug("Cube {} has {} required config items: {}",
