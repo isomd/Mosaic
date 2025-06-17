@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install;
+package io.github.tml.mosaic.install.domian;
 
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.support;
+package io.github.tml.mosaic.install.domian.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

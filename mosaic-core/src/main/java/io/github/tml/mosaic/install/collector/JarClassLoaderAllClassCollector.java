@@ -4,7 +4,7 @@ import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.execption.InfoCollectException;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.install.support.JarPluginClassLoader;
 import lombok.extern.slf4j.Slf4j;
 

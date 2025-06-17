@@ -1,7 +1,7 @@
 package io.github.tml.controller;
 
 import io.github.tml.mosaic.install.collector.LocalProjectClassCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube.factory.definition;
 
-import io.github.tml.mosaic.install.support.info.PointsResultInfo;
+import io.github.tml.mosaic.install.domian.info.PointsResultInfo;
 import lombok.Data;
 import lombok.Getter;
 

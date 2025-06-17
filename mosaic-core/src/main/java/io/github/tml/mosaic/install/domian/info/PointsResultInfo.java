@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.support.info;
+package io.github.tml.mosaic.install.domian.info;
 
 import io.github.tml.mosaic.cube.external.MResultItem;
 import io.github.tml.mosaic.cube.external.MosaicVoid;
@@ -11,10 +11,10 @@ import java.util.*;
 
 import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
 
+@Getter
 public class PointsResultInfo {
 
-    @Getter
-    private List<PointResultItemInfo> pointsResultInfoList = new ArrayList<>();
+    private final List<PointResultItemInfo> pointsResultInfoList = new ArrayList<>();
 
     public void addPointResultInfo(PointResultItemInfo pointResultInfo){
         this.pointsResultInfoList.add(pointResultInfo);
@@ -35,7 +35,7 @@ public class PointsResultInfo {
             if(i < description.length){
                 descriptionStr = description[i];
             }
-            addPointResultInfo(new PointResultItemInfo(name[i],type[i], descriptionStr));
+            addPointResultInfo(new PointResultItemInfo(name[i], type[i], descriptionStr));
         }
     }
 
@@ -46,14 +46,14 @@ public class PointsResultInfo {
             addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, returnType, ""));
         }else if(ClassUtils.isCustomEntityClass(returnType)){
             Field[] fields = returnType.getFields();
-            for (int i = 0; i < fields.length; i++) {
-                addPointResultInfo(new PointResultItemInfo(fields[i].getName(), fields[i].getType(), ""));
+            for (Field field : fields) {
+                addPointResultInfo(new PointResultItemInfo(field.getName(), field.getType(), ""));
             }
         }
     }
 
     @Data
-    public class PointResultItemInfo{
+    public static class PointResultItemInfo{
         private String itemName;
         private Class<?> itemClass;
         private String description;
@@ -64,5 +64,4 @@ public class PointsResultInfo {
             this.description = description;
         }
     }
-
 }

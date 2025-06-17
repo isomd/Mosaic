@@ -1,11 +1,11 @@
 package io.github.tml.mosaic.install.install;
 
-import io.github.tml.mosaic.install.InstallationConfig;
-import io.github.tml.mosaic.install.InstallationItem;
+import io.github.tml.mosaic.install.domian.InstallationConfig;
+import io.github.tml.mosaic.install.domian.InstallationItem;
 import io.github.tml.mosaic.install.reader.CubeInstallationItemReader;
 import io.github.tml.mosaic.install.adpter.core.ResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

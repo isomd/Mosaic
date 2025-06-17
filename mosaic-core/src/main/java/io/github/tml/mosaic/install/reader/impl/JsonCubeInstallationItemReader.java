@@ -5,7 +5,7 @@ import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
-import io.github.tml.mosaic.install.InstallationConfig;
+import io.github.tml.mosaic.install.domian.InstallationConfig;
 import io.github.tml.mosaic.install.reader.AbstractCubeInstallationItemReader;
 import io.github.tml.mosaic.install.reader.ReaderType;
 

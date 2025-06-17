@@ -2,8 +2,10 @@ package io.github.tml.mosaic.install.collector;
 
 import io.github.tml.mosaic.cube.external.*;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
-import io.github.tml.mosaic.install.support.info.PointsResultInfo;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPointInfo;
+import io.github.tml.mosaic.install.domian.InfoContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,14 +18,14 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
 
     @Override
     public void collect(InfoContext infoContext) {
-        List<InfoContext.CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
-        for (InfoContext.CubeInfo cubeInfo : cubeInfoList) {
+        List<CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
+        for (CubeInfo cubeInfo : cubeInfoList) {
             scanCubeInfo(cubeInfo);
             scanExtensionPackages(cubeInfo);
         }
     }
 
-    private void scanCubeInfo(InfoContext.CubeInfo cubeInfo){
+    private void scanCubeInfo(CubeInfo cubeInfo){
         Class<?> clazz = cubeInfo.getClazz();
         if (clazz.isAnnotationPresent(MCube.class)) {
             MCube mCube = clazz.getAnnotation(MCube.class);
@@ -31,11 +33,11 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
         }
     }
 
-    private void scanExtensionPackages(InfoContext.CubeInfo cubeInfo) {
+    private void scanExtensionPackages(CubeInfo cubeInfo) {
 
-        List<InfoContext.ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
+        List<ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
 
-        for (InfoContext.ExtensionPackageInfo extensionPackage : extensionPackages) {
+        for (ExtensionPackageInfo extensionPackage : extensionPackages) {
             Class<?> clazz = extensionPackage.getClazz();
             if (!clazz.isAnnotationPresent(MExtensionPackage.class)) {
                 continue;
@@ -49,11 +51,11 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
         }
     }
 
-    private void scanExtensionPoints(Class<?> pkgClass, InfoContext.ExtensionPackageInfo packageInfo) {
+    private void scanExtensionPoints(Class<?> pkgClass, ExtensionPackageInfo packageInfo) {
         for (Method method : pkgClass.getDeclaredMethods()) {
             MExtension extension = method.getAnnotation(MExtension.class);
             if (extension != null) {
-                InfoContext.ExtensionPointInfo epd = new InfoContext.ExtensionPointInfo();
+                ExtensionPointInfo epd = new ExtensionPointInfo();
                 epd.setInfoByMExtensionPoint(extension);
                 epd.setInfoByMethod(method);
                 packageInfo.addExtensionPoint(epd);

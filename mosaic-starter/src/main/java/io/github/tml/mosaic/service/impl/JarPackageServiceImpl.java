@@ -9,7 +9,7 @@ import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.JarPackageInfo;
 import io.github.tml.mosaic.install.install.InfoContextInstaller;
 import io.github.tml.mosaic.install.reader.ReaderType;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.service.JarPackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

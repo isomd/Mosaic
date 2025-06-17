@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.component.enhance;
 
-import io.github.tml.mosaic.install.InstallationItem;
+import io.github.tml.mosaic.install.domian.InstallationItem;
 import io.github.tml.mosaic.install.enhance.AbstractInstallationConfigEnhancer;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 

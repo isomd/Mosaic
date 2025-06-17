@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube.factory.definition;
 
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
 
@@ -21,7 +21,7 @@ public class ExtensionPackageDefinition {
         extensionPoints.add(epd);
     }
 
-    public static ExtensionPackageDefinition convertByInfoContext(InfoContext.ExtensionPackageInfo extensionPackageInfo){
+    public static ExtensionPackageDefinition convertByInfoContext(ExtensionPackageInfo extensionPackageInfo){
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.createTypeMap(extensionPackageInfo, ExtensionPackageDefinition.class)
                 .map(extensionPackageInfo);

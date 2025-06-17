@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube.factory.definition;
 
-import io.github.tml.mosaic.install.support.CubeConfigInfo;
+import io.github.tml.mosaic.install.domian.info.CubeConfigInfo;
 import lombok.Data;
 
 import java.util.ArrayList;

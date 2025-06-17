@@ -4,7 +4,9 @@ import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.cube.module.ModuleFileName;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -24,11 +26,11 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
             return;
         }
 
-        Map<String, InfoContext.CubeInfo> cubeInfoMap = new HashMap<>();
-        Map<String, List<InfoContext.ExtensionPackageInfo>> extensionPackageInfoHashMap = new HashMap<>();
+        Map<String, CubeInfo> cubeInfoMap = new HashMap<>();
+        Map<String, List<ExtensionPackageInfo>> extensionPackageInfoHashMap = new HashMap<>();
         for (Class<?> clazz : allClazz) {
             if (isValidCubeClass(clazz)) {
-                InfoContext.CubeInfo cubeInfo = new InfoContext.CubeInfo();
+                CubeInfo cubeInfo = new CubeInfo();
                 infoContext.addCubeInfo(cubeInfo);
 
                 cubeInfo.setClazz(clazz);
@@ -37,7 +39,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
                 cubeInfoMap.put(getRootPackageName(clazz, ModuleFileName.CUBE.getPackageName()), cubeInfo);
             } else if(isValidExtensionPackageApiClass(clazz)){
 
-                InfoContext.ExtensionPackageInfo extensionPackageInfo = new InfoContext.ExtensionPackageInfo();
+                ExtensionPackageInfo extensionPackageInfo = new ExtensionPackageInfo();
 
                 extensionPackageInfo.setClazz(clazz);
                 extensionPackageInfo.setClassName(clazz.getName());
@@ -50,7 +52,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
         }
 
         cubeInfoMap.forEach((packageName, cubeInfo)->{
-            List<InfoContext.ExtensionPackageInfo> packageInfos = extensionPackageInfoHashMap.getOrDefault(packageName, Collections.emptyList());
+            List<ExtensionPackageInfo> packageInfos = extensionPackageInfoHashMap.getOrDefault(packageName, Collections.emptyList());
             cubeInfo.setExtensionPackages(packageInfos);
         });
     }

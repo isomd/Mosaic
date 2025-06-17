@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.install.install;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 
 import java.util.List;
 

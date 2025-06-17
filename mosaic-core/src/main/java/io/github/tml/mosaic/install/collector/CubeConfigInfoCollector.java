@@ -3,9 +3,10 @@ package io.github.tml.mosaic.install.collector;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.CubeConfigInfo;
-import io.github.tml.mosaic.install.support.CubeConfigItem;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.info.CubeConfigInfo;
+import io.github.tml.mosaic.install.domian.info.CubeConfigItem;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -32,7 +33,7 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
 
     @Override
     public void collect(InfoContext infoContext) {
-        List<InfoContext.CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
+        List<CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
         if (CollectionUtils.isEmpty(cubeInfoList)) {
             log.debug("CubeConfigInfoCollector: cubeInfoList is empty, skip config collection");
             return;
@@ -158,11 +159,11 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
     /**
      * 为Cube分配对应的配置
      */
-    private int assignConfigToCubes(List<InfoContext.CubeInfo> cubeInfoList,
+    private int assignConfigToCubes(List<CubeInfo> cubeInfoList,
                                     Map<String, CubeConfigInfo> configMap) {
         int assignedCount = 0;
 
-        for (InfoContext.CubeInfo cubeInfo : cubeInfoList) {
+        for (CubeInfo cubeInfo : cubeInfoList) {
             String cubeId = cubeInfo.getId();
             if (cubeId != null && configMap.containsKey(cubeId)) {
                 CubeConfigInfo configInfo = configMap.get(cubeId);

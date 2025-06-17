@@ -8,7 +8,7 @@ import io.github.tml.mosaic.cube.factory.definition.CubeDefinitionConverter;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.install.install.InfoContextInstaller;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import org.springframework.context.annotation.Bean;

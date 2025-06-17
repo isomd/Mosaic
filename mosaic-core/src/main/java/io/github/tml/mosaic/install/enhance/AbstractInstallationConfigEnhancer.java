@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.install.enhance;
 
-import io.github.tml.mosaic.install.InstallationConfig;
-import io.github.tml.mosaic.install.InstallationItem;
+import io.github.tml.mosaic.install.domian.InstallationConfig;
+import io.github.tml.mosaic.install.domian.InstallationItem;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 
 import java.util.*;

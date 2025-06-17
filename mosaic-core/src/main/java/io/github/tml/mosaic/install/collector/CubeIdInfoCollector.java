@@ -3,7 +3,9 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -17,12 +19,12 @@ import java.util.Objects;
 public class CubeIdInfoCollector implements CommonInfoCollector {
     @Override
     public void collect(InfoContext infoContext) {
-        List<InfoContext.CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
+        List<CubeInfo> cubeInfoList = infoContext.getCubeInfoList();
         if(CollectionUtils.isEmpty(cubeInfoList)){
             log.error("CubeIdInfoCollector need cubeInfoList, but it is empty");
             return;
         }
-        for (InfoContext.CubeInfo cubeInfo : cubeInfoList) {
+        for (CubeInfo cubeInfo : cubeInfoList) {
             Class<?> clazz = cubeInfo.getClazz();
             if(Objects.nonNull(clazz)){
                 try {
@@ -33,11 +35,11 @@ public class CubeIdInfoCollector implements CommonInfoCollector {
                     continue;
                 }
             }
-            List<InfoContext.ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
+            List<ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
             if(CollectionUtils.isEmpty(extensionPackages)){
                 continue;
             }
-            for (InfoContext.ExtensionPackageInfo extensionPackage : extensionPackages) {
+            for (ExtensionPackageInfo extensionPackage : extensionPackages) {
                 if(Objects.nonNull(extensionPackage.getClazz())){
                     try {
                         MosaicExtPackage<?> mosaicExtension = (MosaicExtPackage) extensionPackage.getClazz().getDeclaredConstructor().newInstance();

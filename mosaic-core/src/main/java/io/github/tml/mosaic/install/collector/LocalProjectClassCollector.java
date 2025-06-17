@@ -3,7 +3,7 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.execption.InfoCollectException;
 import io.github.tml.mosaic.install.collector.core.InfoCollector;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

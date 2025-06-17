@@ -2,10 +2,10 @@ package io.github.tml.mosaic.install.adpter;
 
 import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
-import io.github.tml.mosaic.install.InstallationItem;
+import io.github.tml.mosaic.install.domian.InstallationItem;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.*;
-import io.github.tml.mosaic.install.support.info.InfoContext;
+import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;
 import lombok.extern.slf4j.Slf4j;
 

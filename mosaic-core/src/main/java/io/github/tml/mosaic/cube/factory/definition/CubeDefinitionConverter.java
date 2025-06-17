@@ -1,7 +1,10 @@
 package io.github.tml.mosaic.cube.factory.definition;
 
-import io.github.tml.mosaic.install.support.info.InfoContext;
-import io.github.tml.mosaic.install.support.info.PointsResultInfo;
+import io.github.tml.mosaic.install.domian.*;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
+import io.github.tml.mosaic.install.domian.info.ExtensionPointInfo;
+import io.github.tml.mosaic.install.domian.info.PointsResultInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -16,7 +19,7 @@ public class CubeDefinitionConverter {
             log.warn("infoContext is null");
             return cubeDefinitions;
         }
-        for (InfoContext.CubeInfo cubeInfo : infoContext.getCubeInfoList()) {
+        for (CubeInfo cubeInfo : infoContext.getCubeInfoList()) {
             // 构建CubeDefinition
             CubeDefinition cubeDef = new CubeDefinition(
                     cubeInfo.getId(),
@@ -30,7 +33,7 @@ public class CubeDefinitionConverter {
             cubeDef.setCubeConfigInfo(cubeInfo.getCubeConfigInfo());
             
             // 处理扩展包
-            for (InfoContext.ExtensionPackageInfo epInfo : cubeInfo.getExtensionPackages()) {
+            for (ExtensionPackageInfo epInfo : cubeInfo.getExtensionPackages()) {
                 ExtensionPackageDefinition epDef = new ExtensionPackageDefinition(
                         epInfo.getId(),
                         epInfo.getName(),
@@ -40,7 +43,7 @@ public class CubeDefinitionConverter {
                 );
                 
                 // 处理扩展点
-                for (InfoContext.ExtensionPointInfo pointInfo : epInfo.getExtensionPoints()) {
+                for (ExtensionPointInfo pointInfo : epInfo.getExtensionPoints()) {
                     ExtensionPointDefinition epoint = new ExtensionPointDefinition(
                             pointInfo.getId(),
                             pointInfo.getMethodName(),
