@@ -10,9 +10,9 @@ public class MosaicChunkAgentInstallScript {
         }
         String pid = args[0];
         String agentJar = args[1];
-
+        String bindPort = args[2];
         VirtualMachine vm = VirtualMachine.attach(pid);
-        vm.loadAgent(agentJar);
+        vm.loadAgent(agentJar,bindPort);
         vm.detach();
     }
 }
