@@ -2,11 +2,13 @@ package io.github.tml.mosaic.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
+import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
@@ -33,24 +35,14 @@ public class MosaicInitConfig {
     public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
         ClassPathCubeContext context = new ClassPathCubeContext();
 
-        // 初始化安装项Context
-        List<InfoContext> infoContexts = new ArrayList<>();
-        if (infoContextInstaller != null) {
-            infoContexts = infoContextInstaller.installCubeInfoContext();
-        }
+        // 初始化安装项Context 收集 -> List<CubeInfo>
+        List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(infoContextInstaller.installCubeInfoContext());
 
-        // 将安装项转换成CubeDefinition列表
-        List<CubeDefinition> cubeDefinitions = new ArrayList<>();
-        if (infoContexts != null && !infoContexts.isEmpty()) {
-            for (InfoContext infoContext : infoContexts) {
-                cubeDefinitions.addAll(CubeDefinitionConverter.convertToCubeDefinitions(infoContext));
-            }
-        }
+        // List<CubeInfo> -> List<CubeDefinition>
+        List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
 
         // 注册进context容器
-        for (CubeDefinition cubeDefinition : cubeDefinitions) {
-            context.registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
-        }
+        context.registerAllCubeDefinition(cubeDefinitions);
         return context;
     }
 

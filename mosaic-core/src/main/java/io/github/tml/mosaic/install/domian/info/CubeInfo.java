@@ -22,6 +22,7 @@ public class CubeInfo {
     private String className;
     private Class<?> clazz;
     private List<ExtensionPackageInfo> extensionPackages = new ArrayList<>();
+    private transient ClassLoader classLoader;
 
     /**
      * Cube配置信息

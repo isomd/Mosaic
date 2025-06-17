@@ -5,6 +5,8 @@ import io.github.tml.mosaic.cube.factory.config.CubeManager;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 
+import java.util.List;
+
 /**
  * 描述: Cube上下文接口
  * @author suifeng
@@ -13,4 +15,6 @@ import io.github.tml.mosaic.core.tools.guid.GUID;
 public interface CubeContext extends CubeFactory, CubeManager {
 
     void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
+
+    void registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList);
 }

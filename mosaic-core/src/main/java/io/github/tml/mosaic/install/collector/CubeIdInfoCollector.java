@@ -49,6 +49,10 @@ public class CubeIdInfoCollector implements CommonInfoCollector {
                     }
                 }
             }
+
+
+            // TODO 设置类加载器
+            cubeInfo.setClassLoader(infoContext.getClassLoader());
         }
     }
 }

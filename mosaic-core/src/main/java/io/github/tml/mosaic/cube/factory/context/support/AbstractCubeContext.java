@@ -2,6 +2,7 @@ package io.github.tml.mosaic.cube.factory.context.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
@@ -121,6 +122,13 @@ public abstract class AbstractCubeContext implements CubeContext {
     @Override
     public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
         getBeanFactory().registerCubeDefinition(cubeId, cubeDefinition);
+    }
+
+    @Override
+    public void registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList) {
+        for (CubeDefinition cubeDefinition : cubeDefinitionList) {
+            registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
+        }
     }
 
     protected abstract void loadCubeDefinitions(ListableCubeFactory cubeFactory);

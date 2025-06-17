@@ -1,12 +1,14 @@
 package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.config.properties.MosaicPluginProperties;
+import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.JarPackageInfo;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.ReaderType;
 import io.github.tml.mosaic.install.domian.InfoContext;
@@ -65,23 +67,12 @@ public class JarPackageServiceImpl implements JarPackageService {
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
             // 直接调用安装器安装
-            String[] strings = new String[1];
-            strings[0] = ReaderType.FILE.getPrefix() + targetPath;
-            List<InfoContext> infoContexts = installer.installCubeInfoContext(strings);
-
-            // 将安装项转换成CubeDefinition列表
-            List<CubeDefinition> cubeDefinitions = new ArrayList<>();
-            if (infoContexts != null && !infoContexts.isEmpty()) {
-                for (InfoContext infoContext : infoContexts) {
-                    cubeDefinitions.addAll(CubeDefinitionConverter.convertToCubeDefinitions(infoContext));
-                }
-            }
+            String[] configLocations = new String[]{ReaderType.FILE.getPrefix() + targetPath};
+            List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(installer.installCubeInfoContext(configLocations));
+            List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
 
             // 注册进context容器
-            for (CubeDefinition cubeDefinition : cubeDefinitions) {
-                cubeContext.registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
-            }
-
+            cubeContext.registerAllCubeDefinition(cubeDefinitions);
             log.info("JAR包上传成功: filename={}, size={}KB", filename, file.getSize() / 1024);
             return filename;
         } catch (IOException e) {
