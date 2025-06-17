@@ -20,10 +20,10 @@ public class MosaicChunkAgent {
 
         log.info("run mosaic agent...");
         instrumentation = inst;
-        System.out.println(instrumentation);
+        int port = Integer.parseInt(args.trim());
         new Thread(() -> {
             try {
-                new MosaicAgentSocketServer().start(9999);
+                new MosaicAgentSocketServer().start(port);
             } catch (Exception e) {
                 e.printStackTrace();
             }

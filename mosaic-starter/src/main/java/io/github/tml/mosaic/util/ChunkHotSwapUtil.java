@@ -9,11 +9,9 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import io.github.tml.mosaic.chunk.ChunkManager;
+import io.github.tml.mosaic.core.chunk.ChunkManager;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
-import org.benf.cfr.reader.util.getopt.Options;
-import org.benf.cfr.reader.util.getopt.OptionsImpl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

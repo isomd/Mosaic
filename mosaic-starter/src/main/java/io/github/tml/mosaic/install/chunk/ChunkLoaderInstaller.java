@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.install.chunk;
 
+import io.github.tml.mosaic.config.MosaicChunkConfig;
 import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -7,6 +8,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -23,6 +25,9 @@ import java.security.CodeSource;
 @Slf4j
 public class ChunkLoaderInstaller implements ApplicationListener<ApplicationReadyEvent> {
 
+    @Resource
+    MosaicChunkConfig mosaicChunkConfig;
+
     private String getCurrentPid() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
         return name.split("@")[0];
@@ -31,7 +36,7 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         String pid = getCurrentPid();
-        log.info(pid);
+
         try {
             Class<?> currentClass = Class.forName(ChunkLoaderInstaller.class.getName());
             Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicChunkAgent");
@@ -48,9 +53,10 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
                     "-cp", currentPath,
                     "io.github.tml.mosaic.install.chunk.MosaicChunkAgentInstallScript",
                     pid,
-                    agentPath
+                    agentPath,
+                    String.valueOf(mosaicChunkConfig.getPort())
             );
-
+            log.info("attach agent to target project, listen port is : {}", mosaicChunkConfig.getPort());
             pb.inheritIO();
             Process process = pb.start();
         } catch (IOException | ClassNotFoundException e) {

@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.chunk;
+package io.github.tml.mosaic.core.chunk;
 
 import io.github.tml.mosaic.util.ChunkHotSwapUtil;
 import io.github.tml.mosaic.util.CubeTemplateUtil;
