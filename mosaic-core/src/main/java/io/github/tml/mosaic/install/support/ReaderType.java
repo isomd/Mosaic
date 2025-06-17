@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.reader;
+package io.github.tml.mosaic.install.support;
 
 /**
  * 描述: Reader类型枚举

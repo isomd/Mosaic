@@ -1,13 +1,13 @@
-package io.github.tml.mosaic.install.reader.impl;
+package io.github.tml.mosaic.install.reader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
-import io.github.tml.mosaic.install.domian.InstallationConfig;
-import io.github.tml.mosaic.install.reader.AbstractCubeInstallationItemReader;
-import io.github.tml.mosaic.install.reader.ReaderType;
+import io.github.tml.mosaic.install.domian.install.InstallationConfig;
+import io.github.tml.mosaic.install.reader.core.AbstractCubeInstallationItemReader;
+import io.github.tml.mosaic.install.support.ReaderType;
 
 import java.io.IOException;
 import java.io.InputStream;

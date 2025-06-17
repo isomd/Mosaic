@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.install.adpter.core;
 
-import io.github.tml.mosaic.install.domian.InstallationItem;
+import io.github.tml.mosaic.install.domian.install.InstallationItem;
 import io.github.tml.mosaic.cube.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.install.support.ResourceFileType;

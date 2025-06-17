@@ -1,11 +1,12 @@
-package io.github.tml.mosaic.install.reader;
+package io.github.tml.mosaic.install.reader.core;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.install.domian.InstallationConfig;
-import io.github.tml.mosaic.install.domian.InstallationItem;
+import io.github.tml.mosaic.install.domian.install.InstallationConfig;
+import io.github.tml.mosaic.install.domian.install.InstallationItem;
 import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.loader.ResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
+import io.github.tml.mosaic.install.support.ReaderType;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package io.github.tml.mosaic.install.adpter;
 
 import io.github.tml.mosaic.cube.factory.io.loader.DefaultResourceLoader;
 import io.github.tml.mosaic.cube.factory.io.resource.Resource;
-import io.github.tml.mosaic.install.domian.InstallationItem;
+import io.github.tml.mosaic.install.domian.install.InstallationItem;
 import io.github.tml.mosaic.install.adpter.core.AbstractResourceFileAdapter;
 import io.github.tml.mosaic.install.collector.*;
 import io.github.tml.mosaic.install.domian.InfoContext;

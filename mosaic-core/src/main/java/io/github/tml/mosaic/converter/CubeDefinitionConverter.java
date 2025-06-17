@@ -1,5 +1,9 @@
-package io.github.tml.mosaic.cube.factory.definition;
+package io.github.tml.mosaic.converter;
 
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.definition.ExtensionPackageDefinition;
+import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
+import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
 import io.github.tml.mosaic.install.domian.*;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;

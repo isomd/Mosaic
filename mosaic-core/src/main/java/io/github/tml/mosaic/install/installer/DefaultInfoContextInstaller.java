@@ -1,5 +1,5 @@
-package io.github.tml.mosaic.install.install;
-import io.github.tml.mosaic.install.reader.CubeInstallationItemReader;
+package io.github.tml.mosaic.install.installer;
+import io.github.tml.mosaic.install.reader.core.CubeInstallationItemReader;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 import lombok.extern.slf4j.Slf4j;
 

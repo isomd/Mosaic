@@ -1,8 +1,8 @@
-package io.github.tml.mosaic.install.install;
+package io.github.tml.mosaic.install.installer;
 
-import io.github.tml.mosaic.install.domian.InstallationConfig;
-import io.github.tml.mosaic.install.domian.InstallationItem;
-import io.github.tml.mosaic.install.reader.CubeInstallationItemReader;
+import io.github.tml.mosaic.install.domian.install.InstallationConfig;
+import io.github.tml.mosaic.install.domian.install.InstallationItem;
+import io.github.tml.mosaic.install.reader.core.CubeInstallationItemReader;
 import io.github.tml.mosaic.install.adpter.core.ResourceFileAdapter;
 import io.github.tml.mosaic.install.adpter.registry.ResourceFileAdapterRegistry;
 import io.github.tml.mosaic.install.domian.InfoContext;

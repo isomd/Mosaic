@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.install;
+package io.github.tml.mosaic.install.installer.core;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.install.domian.InfoContext;

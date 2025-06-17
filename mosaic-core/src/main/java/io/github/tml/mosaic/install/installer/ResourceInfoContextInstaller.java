@@ -1,11 +1,12 @@
-package io.github.tml.mosaic.install.install;
+package io.github.tml.mosaic.install.installer;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.install.domian.InstallationConfig;
-import io.github.tml.mosaic.install.domian.InstallationItem;
-import io.github.tml.mosaic.install.reader.CubeInstallationItemReader;
+import io.github.tml.mosaic.install.domian.install.InstallationConfig;
+import io.github.tml.mosaic.install.domian.install.InstallationItem;
+import io.github.tml.mosaic.install.installer.core.AbstractInfoContextInstaller;
+import io.github.tml.mosaic.install.reader.core.CubeInstallationItemReader;
 
-import io.github.tml.mosaic.install.enhance.InstallationConfigEnhancer;
+import io.github.tml.mosaic.install.enhance.core.InstallationConfigEnhancer;
 import lombok.Data;
 
 import java.util.ArrayList;
