@@ -5,7 +5,7 @@ import com.sun.tools.attach.VirtualMachine;
 
 public class MosaicChunkAgentInstallScript {
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
+        if (args.length != 3) {
             throw new IllegalArgumentException("参数不正确");
         }
         String pid = args[0];
