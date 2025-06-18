@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.install.domian.info;
 
+import io.github.tml.mosaic.core.tools.config.ConfigInfo;
 import io.github.tml.mosaic.cube.external.MCube;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +28,7 @@ public class CubeInfo {
     /**
      * Cube配置信息
      */
-    private CubeConfigInfo cubeConfigInfo;
+    private ConfigInfo configInfo;
 
     public void setInfoByMCube(MCube mCube) {
         String name = mCube.name().isEmpty() ? this.getClass().getSimpleName() : mCube.name();

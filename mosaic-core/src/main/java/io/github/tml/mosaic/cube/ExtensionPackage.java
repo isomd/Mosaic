@@ -21,13 +21,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author suifeng
  * 日期: 2025/6/7
  */
+@Getter
 public class ExtensionPackage extends UniqueEntity implements ExtensionPackageApi {
 
     // 关联的Cube实例
-    @Getter
     private MetaData exPackageMetaData;
 
-    @Getter
     @Setter
     private MosaicExtPackage<?> mosaicExtPackage;
 

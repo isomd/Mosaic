@@ -10,30 +10,24 @@ import lombok.Setter;
 /**
  * 扩展点抽象基类
  */
+@Setter
+@Getter
 public class ExtensionPoint extends UniqueEntity {
 
-    @Getter @Setter
     private String methodName;
 
-    @Getter @Setter
     private Class<?> returnType;
 
-    @Getter @Setter
     private Class<?>[] parameterTypes;
 
-    @Getter @Setter
     private String description;
 
-    @Getter @Setter
     private boolean asyncFlag;
 
-    @Getter @Setter
     private String extensionName;
 
-    @Getter @Setter
     private int priority = 100;
 
-    @Getter
     private ExtPointResult returnResult;
 
     public ExtensionPoint(String id, String name, String description) {
@@ -61,7 +55,4 @@ public class ExtensionPoint extends UniqueEntity {
         return extensionPoint;
     }
 
-    public void setReturnResult(ExtPointResult result) {
-        this.returnResult = result;
-    }
 }

@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.domian.info;
+package io.github.tml.mosaic.core.tools.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,22 +8,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Cube配置信息容器
+ * 描述: 配置信息容器
+ * @author suifeng
+ * 日期: 2025/6/18
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CubeConfigInfo {
+public class ConfigInfo {
     
-    @JsonProperty("cubeId")
-    private String cubeId;
+    @JsonProperty("id")
+    private String id;
     
     @JsonProperty("config")
-    private List<CubeConfigItem> config;
+    private List<ConfigItem> config;
     
     /**
      * 根据配置项名称获取配置项
      */
-    public CubeConfigItem getConfigItem(String name) {
+    public ConfigItem getConfigItem(String name) {
         return Optional.ofNullable(config)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -35,18 +37,18 @@ public class CubeConfigInfo {
     /**
      * 获取所有必填配置项
      */
-    public List<CubeConfigItem> getRequiredConfigItems() {
+    public List<ConfigItem> getRequiredConfigItems() {
         return Optional.ofNullable(config)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(CubeConfigItem::isRequired)
+                .filter(ConfigItem::isRequired)
                 .collect(Collectors.toList());
     }
     
     /**
      * 根据类型获取配置项列表
      */
-    public List<CubeConfigItem> getConfigItemsByType(String type) {
+    public List<ConfigItem> getConfigItemsByType(String type) {
         return Optional.ofNullable(config)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -61,7 +63,7 @@ public class CubeConfigInfo {
         return Optional.ofNullable(config)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(CubeConfigItem::getName)
+                .map(ConfigItem::getName)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

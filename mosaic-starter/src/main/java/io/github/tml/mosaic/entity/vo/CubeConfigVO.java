@@ -33,7 +33,7 @@ public class CubeConfigVO {
         }
 
         // 根据实际的CubeConfigInfo结构来实现
-        if (definition.getCubeConfigInfo() != null) {
+        if (definition.getConfigInfo() != null) {
             return buildFromConfigInfo(definition);
         }
 
@@ -46,7 +46,7 @@ public class CubeConfigVO {
     private static CubeConfigVO buildFromConfigInfo(CubeDefinition definition) {
         // 这里需要根据实际的CubeConfigInfo结构来实现
         return CubeConfigVO.builder()
-                .singleton(true) // 从definition.getCubeConfigInfo()获取
+                .singleton(true) // 从definition.getConfigInfo()获取
                 .lazyInit(false)
                 .initMethod("init")
                 .destroyMethod("destroy")

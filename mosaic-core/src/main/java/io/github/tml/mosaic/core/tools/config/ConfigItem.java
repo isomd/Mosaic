@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.domian.info;
+package io.github.tml.mosaic.core.tools.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,12 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 /**
- * Cube配置项信息
+ * 配置项信息
  */
 @Data
 @Slf4j
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CubeConfigItem {
+public class ConfigItem {
     
     @JsonProperty("name")
     private String name;
@@ -111,39 +111,7 @@ public class CubeConfigItem {
         if (validation == null || validation.isEmpty()) {
             return true;
         }
-        
         // 可以根据需要扩展更多验证规则
         return true;
-    }
-    
-    private boolean isInteger(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-    
-    private boolean isBooleanString(String str) {
-        return "true".equalsIgnoreCase(str) || "false".equalsIgnoreCase(str);
-    }
-    
-    private boolean isNumeric(String str) {
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-    
-    private boolean isLong(String str) {
-        try {
-            Long.parseLong(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }

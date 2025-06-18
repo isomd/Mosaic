@@ -1,7 +1,21 @@
 [
   {
-    "cubeId": "system.log.cube.s",
+    "id": "system.log.cube.p",
     "config": [
+      {
+        "name": "outputFormat",
+        "type": "string",
+        "desc": "输出格式模板",
+        "required": true,
+        "defaultValue": "[%date] %level - %message"
+      },
+      {
+        "name": "retentionDays",
+        "type": "integer",
+        "desc": "日志保留天数",
+        "required": false,
+        "defaultValue": 30
+      },
       {
         "name": "logLevel",
         "type": "string",
@@ -25,25 +39,6 @@
         "desc": "是否启用控制台输出",
         "required": false,
         "defaultValue": true
-      }
-    ]
-  },
-  {
-    "cubeId": "system.log.cube.p",
-    "config": [
-      {
-        "name": "outputFormat",
-        "type": "string",
-        "desc": "输出格式模板",
-        "required": true,
-        "defaultValue": "[%date] %level - %message"
-      },
-      {
-        "name": "retentionDays",
-        "type": "integer",
-        "desc": "日志保留天数",
-        "required": false,
-        "defaultValue": 30
       }
     ]
   }
