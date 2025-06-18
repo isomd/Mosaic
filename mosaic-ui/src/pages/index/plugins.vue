@@ -14,67 +14,12 @@ const upload = (item) => {
 
 const cubeList = ref<Cube[]>([])
 const getCubeListFunction = () => {
-  // getCubeList().then((res:any)=>{
-  //   if(res.code == 200) {
-  //     // cubeList.value = res.data
-  //
-  //   } else {
-  //     //
-  //   }
-  // })
-  new Promise((resolve => {
-    setTimeout(()=>{
-      resolve({
-        code: 200, // 添加 code 字段
-        data: [    // 将数组包装在 data 字段中
-          {
-            cubeName: 'TestCube',
-            description: '[vite] hot updated: /src/components/plugin/CubeListItemComponent.vue?vue&type=style&index=0&scoped=bb932527&lang.scss\n',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '21331232'
-          },
-          {
-            cubeName: 'TestCube',
-            description: '[vite] hot updated: /src/components/plugin/CubeListItemComponent.vue\n',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '31331232'
-          },
-          {
-            cubeName: 'TestCube',
-            description: 'Proxy(Object) {cubeName: \'TestCube\', description: \'[vite] hot updated: /src/components/plugin/CubeLis…vue&type=style&index=0&scoped=bb932527&lang.scss\\n\', version: \'1.20.1\', author: \'dhx\', cubeId: \'21331232\'}',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '21331232'
-          },
-          {
-            cubeName: 'TestCube',
-            description: 'a test cube',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '21331232'
-          },
-          {
-            cubeName: 'TestCube',
-            description: 'a test cube',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '21331232'
-          },
-          {
-            cubeName: 'TestCube',
-            description: 'a test cube',
-            version: '1.20.1',
-            author: 'dhx',
-            cubeId: '21331232'
-          }
-        ]
-      });
-    },300)
-  })).then((res:any)=>{
+  getCubeList().then((res:any)=>{
     if(res.code == 200) {
       cubeList.value = res.data
+
+    } else {
+      //
     }
   })
 }
