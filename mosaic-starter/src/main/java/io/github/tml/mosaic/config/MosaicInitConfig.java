@@ -7,23 +7,16 @@ import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
-import io.github.tml.mosaic.install.domian.InfoContext;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.cube.Cube;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * mosaic框架初始化
@@ -72,4 +65,5 @@ public class MosaicInitConfig {
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
     }
+
 }
