@@ -3,7 +3,7 @@
 @use 'sass:math';
 
 // ===== Minecraft 色彩变量 =====
-.root {
+:root {
   // 主色调 - 基于Minecraft方块
   --mc-oak: #8B4513;           // 橡木
   --mc-dark-oak: #654321;      // 深色橡木
@@ -52,10 +52,10 @@
   --mc-stone-dark: #696969;
 
   // 英文使用像素字体，中文不使用像素字体
-  //--minecraft-font-family: 'Press Start 2P', monospace,-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  //--minecraft-font-family: 'Press Start 2P', 'Orbitron', monospace,-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   // 中英文都使用像素字体
-  --minecraft-font-family: 'Press Start 2P','Pixel-zh', monospace,-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --minecraft-font-family: 'Press Start 2P','Pixel-zh', 'Orbitron', monospace,-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 // ===== 全局基础样式 =====
