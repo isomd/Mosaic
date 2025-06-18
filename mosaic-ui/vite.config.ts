@@ -4,6 +4,8 @@ import Pages from 'vite-plugin-pages'
 
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
+import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm'
+
 import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
@@ -31,6 +33,15 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
     vue(),
+    monacoEditorEsmPlugin(<any>{
+      languageWorkers: ['editorWorkerService'],
+      globalAPI: true,
+      customLanguages: [{
+        label: 'java',
+        entry: 'monaco-editor/esm/vs/basic-languages/java/java.contribution.js'
+      }],
+      disableBuiltinLanguages: true,
+    })
   ],
   resolve: {
     alias: {
@@ -45,6 +56,15 @@ export default defineConfig({
       '.tsx',
       '.vue',
     ],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          monaco: ['monaco-editor']
+        }
+      }
+    }
   },
   server: {
     port: 3000,

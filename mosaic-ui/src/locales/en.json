@@ -12,7 +12,21 @@
     "upload": "upload",
     "details": "details",
     "remove": "remove",
-    "author": "Author"
+    "author": "Author",
+    "cube": {
+      "totalExtensionPackages": "totalExtensionPackages",
+      "totalExtensionPoints": "totalExtensionPoints",
+      "asyncExtensionPoints": "asyncExtensionPoints",
+      "syncExtensionPoints": "syncExtensionPoints",
+      "averagePriority": "averagePriority",
+      "memoryUsage": "memoryUsage",
+      "singleton": "singleton",
+      "lazyInit": "lazyInit",
+      "initMethod": "initMethod",
+      "destroyMethod": "destroyMethod",
+      "dependencies": "dependencies",
+      "properties": "properties"
+    }
   },
   "dashboard": {
     "slotNum": "SLOT LOADED",

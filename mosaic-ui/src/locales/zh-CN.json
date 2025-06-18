@@ -12,7 +12,21 @@
     "upload": "上传",
     "details": "详情",
     "remove": "移除",
-    "author": "作者"
+    "author": "作者",
+    "cube": {
+      "totalExtensionPackages": "拓展包数量",
+      "totalExtensionPoints": "拓展点数量",
+      "asyncExtensionPoints": "异步拓展点数量",
+      "syncExtensionPoints": "同步拓展点数量",
+      "averagePriority": "平均优先级",
+      "memoryUsage(KB)": "内存占用",
+      "singleton": "是否为单例",
+      "lazyInit": "懒加载",
+      "initMethod": "初始化方法",
+      "destroyMethod": "销毁方法",
+      "dependencies": "依赖",
+      "properties": "配置"
+    }
   },
   "dashboard": {
     "slotNum": "已有槽",

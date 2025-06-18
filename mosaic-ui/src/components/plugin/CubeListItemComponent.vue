@@ -1,20 +1,16 @@
 <script lang="ts" setup>
 import {defineProps} from "vue";
 import {type Cube} from "../../api/plugin/pluginType";
-
+const dialog = ref(false)
 const props = defineProps({
   cube: {
     default: {
-      cubeName:'',
-      description:'',
-      version:'',
-      author:'',
-      cubeId:''
+
     } as Cube
   }
 })
 onMounted(()=>{
-  console.log(props.cube)
+
 })
 </script>
 <template>
@@ -22,7 +18,7 @@ onMounted(()=>{
           class=" jar-card">
     <template v-slot:title>
       <span class="cubeName">
-        {{props.cube.cubeName}}
+        {{props.cube.name}}
       </span>
       <span class="version">
         {{props.cube.version}}
@@ -32,12 +28,12 @@ onMounted(()=>{
       {{props.cube.description}}
     </template>
     <v-card-actions>
-      <v-btn color="black" :text="$t('plugins.details')"></v-btn>
+      <v-btn color="black" :text="$t('plugins.details')" @click="dialog = true"></v-btn>
       <v-btn color="black" :text="$t('plugins.remove')"></v-btn>
       <v-spacer></v-spacer>
       <span>
         <p class="id">
-        {{`ID: ${props.cube.cubeId}`}}
+        {{`ID: ${props.cube.id}`}}
       </p>
       <p class="id">
         {{`${$t('plugins.author')}: ${props.cube.author}`}}
@@ -45,10 +41,11 @@ onMounted(()=>{
       </span>
     </v-card-actions>
   </v-card>
+  <CubeDetailsComponent v-model="dialog" :pluginData="props.cube"></CubeDetailsComponent>
 </template>
 <style scoped lang="scss">
 .cubeName{
-  font-size: 0.8rem;
+  font-size: 1rem;
   text-align: left;
 }
 .version{
