@@ -15,7 +15,7 @@ mosaic:
 
   plugin:
     # 推荐的配置方式
-    # storage-path: /data/mosaic/plugins          # Linux/Mac
-#    storage-path: E:/plugins           # Windows绝对路径
+    storage-path: /Users/suifeng/Code/mplugin          # Linux/Mac
+    # storage-path:           # Windows绝对路径
     # storage-path: ./plugins                   # 相对路径
     # storage-path: ${user.home}/mosaic/plugins # 用户主目录

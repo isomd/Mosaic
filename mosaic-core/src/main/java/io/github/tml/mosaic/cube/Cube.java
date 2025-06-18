@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube;
 
-import io.github.tml.mosaic.core.tools.config.ConfigurableEntity;
+import io.github.tml.mosaic.core.tools.param.ConfigurableEntity;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.api.CubeApi;
 import io.github.tml.mosaic.cube.external.MosaicCube;

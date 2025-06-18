@@ -45,6 +45,6 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         return cube;
     }
 
-    protected abstract Cube initializeCube(Cube cube, CubeDefinition cubeDefinition, Object[] args);
+    protected abstract Cube initializeCube(Cube cube, CubeDefinition cubeDefinition, Object[] args) throws CubeException;
     protected abstract void applyPropertyValues(Cube cube, CubeDefinition cubeDefinition);
 }

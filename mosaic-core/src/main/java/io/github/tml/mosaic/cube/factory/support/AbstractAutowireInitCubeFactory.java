@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.cube.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.tools.config.ConfigInfo;
+import io.github.tml.mosaic.core.tools.param.ConfigInfo;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.cube.Cube;
 import lombok.extern.slf4j.Slf4j;

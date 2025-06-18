@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.tools.config;
+package io.github.tml.mosaic.core.tools.param;
 
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
@@ -106,7 +106,7 @@ public abstract class ConfigurableEntity extends UniqueEntity {
             Object value = entry.getValue();
             ConfigItem item = configInfo.getConfigItem(name);
             
-            if (item != null && !item.validateValue(value)) {
+            if (item != null && !item.getValidationResult(value).isValid()) {
                 throw new CubeException("Invalid config value: " + name + " = " + value);
             }
         }

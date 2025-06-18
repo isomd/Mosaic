@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.tools.config;
+package io.github.tml.mosaic.core.tools.param;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,44 +44,19 @@ public class ConfigInfo {
                 .filter(ConfigItem::isRequired)
                 .collect(Collectors.toList());
     }
-    
-    /**
-     * 根据类型获取配置项列表
-     */
-    public List<ConfigItem> getConfigItemsByType(String type) {
-        return Optional.ofNullable(config)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> Objects.equals(item.getType(), type))
-                .collect(Collectors.toList());
-    }
-    
-    /**
-     * 获取配置项的名称列表
-     */
-    public List<String> getConfigItemNames() {
-        return Optional.ofNullable(config)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(ConfigItem::getName)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-    
+
     /**
      * 验证配置完整性
      */
     public List<String> validateRequiredConfigs(Map<String, Object> actualValues) {
         List<String> missingConfigs = new ArrayList<>();
-        
+
         getRequiredConfigItems().forEach(requiredItem -> {
             String itemName = requiredItem.getName();
-            if (!actualValues.containsKey(itemName) || 
-                !requiredItem.validateValue(actualValues.get(itemName))) {
+            if (!actualValues.containsKey(itemName) || !requiredItem.validateValue(actualValues.get(itemName))) {
                 missingConfigs.add(itemName);
             }
         });
-        
         return missingConfigs;
     }
     
