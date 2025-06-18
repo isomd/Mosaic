@@ -30,8 +30,7 @@
         "name": "maxFileSize",
         "type": "integer",
         "desc": "最大文件大小(字节)",
-        "required": false,
-        "defaultValue": 10485760
+        "required": true
       },
       {
         "name": "enableConsoleOutput",

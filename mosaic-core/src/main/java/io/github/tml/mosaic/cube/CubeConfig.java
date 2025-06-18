@@ -44,7 +44,6 @@ public class CubeConfig {
         if (value == null || type.isInstance(value)) {
             return (T) value;
         }
-
         try {
             String str = value.toString();
             if (type == String.class) return (T) str;
@@ -55,7 +54,6 @@ public class CubeConfig {
 
             return (T) value;
         } catch (Exception e) {
-            log.warn("Type conversion failed: {} -> {}", value, type.getSimpleName());
             return null;
         }
     }

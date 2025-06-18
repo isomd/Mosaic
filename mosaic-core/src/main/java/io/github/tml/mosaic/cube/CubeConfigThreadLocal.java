@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class CubeConfigThreadLocal {
 
-    private static final ThreadLocal<HashMap<String, CubeConfig>> cubeConfigThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<HashMap<String, CubeConfig>> cubeConfigThreadLocal = ThreadLocal.withInitial(HashMap::new);
 
     public static CubeConfig get(String cubeId) {
         return cubeConfigThreadLocal.get().get(cubeId);

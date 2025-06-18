@@ -11,6 +11,10 @@ import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID_P;
         version = "1.0.1", model = "property")
 public class PropertySystemLogCube extends MosaicCube {
 
+    String outputFormat = "";
+
+    Integer maxFileSize;
+
     public PropertySystemLogCube() {
     }
 
@@ -25,6 +29,12 @@ public class PropertySystemLogCube extends MosaicCube {
     @Override
     public boolean init() {
         CubeConfig cubeConfig = getCubeConfig();
+        outputFormat = cubeConfig.getConfig("outputFormat", String.class);
+        maxFileSize = cubeConfig.getConfig("maxFileSize", Integer.class);
+
+        System.out.println(outputFormat + "-------------------------------------");
+
+        System.out.println(maxFileSize + "-------------------------------------");
         return true;
     }
 

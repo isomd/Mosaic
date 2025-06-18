@@ -65,14 +65,13 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         // 设置线程变量
         CubeConfigThreadLocal.set(getCubeId().toString(), new CubeConfig(getConfigValues()));
         try {
-            Class<?> clazz = this.getClass().getClassLoader().loadClass(metaData.getClassName());
-            mosaicCube = (MosaicCube) clazz.getDeclaredConstructor().newInstance();
+            mosaicCube = (MosaicCube) metaData.getClazz().getDeclaredConstructor().newInstance();
             boolean result = mosaicCube.init();
             if (result) {
                 initialized = true;
             }
             return result;
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+        } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
             log.error("Failed to create and init cube instance: {}", e.getMessage());
             throw new RuntimeException(e);
@@ -100,7 +99,7 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         private String version;
         private String description;
         private String model;
-        private String className;
+        private Class<?> clazz;
 
         // 扩展包元数据
         private final List<ExtensionPackage> extensionPackages = new CopyOnWriteArrayList<>();
