@@ -1,77 +1,60 @@
 package io.github.tml.mosaic.cube.factory.support;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.tools.param.ConfigInfo;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.cube.Cube;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 /**
- * 描述: 第三步：属性填充之后的cube初始化操作
+ * 描述: 第四步：配置处理之后的cube初始化操作
+ * 职责：专门负责Cube的初始化调用和结果处理
  * @author suifeng
  * 日期: 2025/6/6
  */
 @Slf4j
-public abstract class AbstractAutowireInitCubeFactory extends AbstractAutowirePropertyCubeFactory {
+public abstract class AbstractAutowireInitCubeFactory extends AbstractAutowireConfigCubeFactory {
 
     @Override
-    protected Cube initializeCube(Cube cube, CubeDefinition cubeDefinition, Object[] args) {
+    protected Cube executeInitializationPhase(Cube cube, CubeDefinition cubeDefinition, Object[] args) throws CubeException {
         try {
-            // 1. 设置配置定义
-            ConfigInfo configInfo = cubeDefinition.getConfigInfo();
-            if (configInfo != null) {
-                cube.setConfigInfo(configInfo);
-            }
+            log.debug("开始初始化阶段 | CubeId: {}", cube.getCubeId());
 
-            // 2. 注入配置参数
-            Map<String, Object> configs = extractConfigs(args);
-            if (!configs.isEmpty()) {
-                cube.setConfigs(configs);
-                log.info("✓ Config injected | CubeId: {}, configs: {}", cube.getCubeId(), configs.keySet());
-            }
+            // 执行前置初始化处理
+            preInitialization(cube, cubeDefinition, args);
 
-            // 3. 执行初始化
+            // 执行核心初始化
             if (cube.init()) {
-                log.info("✓ Cube init success | CubeId: {}, CubeName: {}",
-                        cube.getCubeId(), cube.getMetaData().getName());
+                log.info("✓ Cube初始化成功 | CubeId: {}, CubeName: {}", cube.getCubeId(), cube.getMetaData().getName());
+
+                // 执行后置初始化处理
+                postInitialization(cube, cubeDefinition, args);
                 return cube;
             } else {
-                throw new CubeException("Cube init failed, cubeId:" + cube.getCubeId());
+                String errorMsg = String.format("Cube初始化返回false | CubeId: %s", cube.getCubeId());
+                log.error("✗ {}", errorMsg);
+                throw new CubeException(errorMsg);
             }
+
         } catch (CubeException e) {
-            throw new CubeException("Config validation failed: " + e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            throw new CubeException("Cube init failed: " + e.getMessage(), e);
+            String errorMsg = String.format("Cube初始化异常 | CubeId: %s", cube.getCubeId());
+            log.error("✗ {}: {}", errorMsg, e.getMessage(), e);
+            throw new CubeException(errorMsg + ": " + e.getMessage(), e);
         }
     }
 
     /**
-     * 从参数中提取配置
+     * 前置初始化处理
      */
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> extractConfigs(Object[] args) {
-        Map<String, Object> configs = new HashMap<>();
+    protected void preInitialization(Cube cube, CubeDefinition cubeDefinition, Object[] args) throws CubeException {
 
-        if (args == null || args.length == 0) {
-            return configs;
-        }
-        for (Object arg : args) {
-            if (arg instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) arg;
-                map.forEach((k, v) -> {
-                    if (k instanceof String) {
-                        configs.put((String) k, v);
-                    }
-                });
-            } else if (arg instanceof Properties) {
-                Properties props = (Properties) arg;
-                props.forEach((k, v) -> configs.put(k.toString(), v));
-            }
-        }
-        return configs;
+    }
+
+    /**
+     * 后置初始化处理
+     */
+    protected void postInitialization(Cube cube, CubeDefinition cubeDefinition, Object[] args) throws CubeException {
+
     }
 }

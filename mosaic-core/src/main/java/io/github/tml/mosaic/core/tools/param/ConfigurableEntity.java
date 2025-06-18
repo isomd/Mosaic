@@ -36,20 +36,32 @@ public abstract class ConfigurableEntity extends UniqueEntity {
      * 批量设置配置值（带校验）
      */
     public void setConfigs(Map<String, Object> configs) throws CubeException {
-        if (configs == null || configs.isEmpty()) {
-            return;
-        }
+        // 确保configs不为null
+        Map<String, Object> safeConfigs = configs != null ? configs : new HashMap<>();
 
-        // 校验配置
-        validateConfigs(configs);
-        
-        // 存储配置
-        configValues.putAll(configs);
-        
-        // 设置默认值
-        setDefaultValues();
-        
-        log.debug("✓ Config set completed, total: {}", configValues.size());
+        try {
+            // 1. 清空现有配置
+            configValues.clear();
+
+            // 2. 校验配置（包括空配置的校验）
+            validateConfigs(safeConfigs);
+
+            // 3. 存储用户提供的配置
+            if (!safeConfigs.isEmpty()) {
+                configValues.putAll(safeConfigs);
+            }
+
+            // 4. 设置默认值（始终执行）
+            setDefaultValues();
+
+            log.debug("✓ Config processing completed | Provided: {}, Final: {}",
+                    safeConfigs.size(), configValues.size());
+
+        } catch (CubeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CubeException("Config processing failed: " + e.getMessage(), e);
+        }
     }
 
     /**
