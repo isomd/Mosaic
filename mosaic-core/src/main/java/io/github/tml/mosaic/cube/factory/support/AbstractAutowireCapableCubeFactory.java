@@ -30,18 +30,8 @@ public abstract class AbstractAutowireCapableCubeFactory extends AbstractCubeFac
         } catch (Exception e) {
             throw new CubeException("Instantiation of cube failed", e);
         }
-
-        // 根据Cube模式进行不同的注册策略
-        String model = cubeDefinition.getModel();
-        if ("singleton".equals(model)) {
-            // 单例模式：注册到单例池
-            addSingleton(cubeId, cube);
-            log.info("✓ singleton Cube register | CubeId: {}", cubeId);
-        } else {
-            // 多例模式：注册到管理器
-            GUID instanceId = registerCube(cubeId, cube);
-            log.info("✓ property Cube register | CubeId: {} | instanceId: {}", cubeId, instanceId);
-        }
+        // 存放到单例池
+        addSingleton(cubeId, cube);
         return cube;
     }
 
