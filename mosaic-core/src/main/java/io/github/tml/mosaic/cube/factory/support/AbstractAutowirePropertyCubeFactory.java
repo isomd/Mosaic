@@ -89,6 +89,7 @@ public abstract class AbstractAutowirePropertyCubeFactory extends AbstractAutowi
         metaData.setVersion(cubeDefinition.getVersion());
         metaData.setDescription(cubeDefinition.getDescription());
         metaData.setModel(cubeDefinition.getModel());
+        metaData.setClassName(cubeDefinition.getClassName());
         // 日志记录元数据填充
         log.debug("填充Cube元数据 | ID: {} | 名称: {} | 版本: {}", cube.getCubeId(), metaData.getName(), metaData.getVersion());
     }

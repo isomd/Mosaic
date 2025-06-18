@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,43 @@ public class Cube extends ConfigurableEntity implements CubeApi {
 
     @Override
     public boolean init() {
-        return mosaicCube.init();
+        // 判断mosaicCube是否存在
+        if (mosaicCube == null) {
+            // 不存在则直接实例化并初始化
+            return createAndInitInstance();
+        }
+
+        // 存在则检查model模式
+        String model = metaData.getModel();
+        if ("property".equals(model)) {
+            // property模式：销毁现有实例，重新创建
+            mosaicCube.destroy();
+            mosaicCube = null;
+            initialized = false;
+            return createAndInitInstance();
+        }
+
+        // singleton模式或其他情况：复用现有实例
+        return true;
+    }
+
+    /**
+     * 创建实例并初始化
+     */
+    private boolean createAndInitInstance() {
+        try {
+            Class<?> clazz = this.getClass().getClassLoader().loadClass(metaData.getClassName());
+            mosaicCube = (MosaicCube) clazz.getDeclaredConstructor().newInstance();
+            boolean result = mosaicCube.init();
+            if (result) {
+                initialized = true;
+            }
+            return result;
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            log.error("Failed to create and init cube instance: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -61,6 +98,7 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         private String version;
         private String description;
         private String model;
+        private String className;
 
         // 扩展包元数据
         private final List<ExtensionPackage> extensionPackages = new CopyOnWriteArrayList<>();
