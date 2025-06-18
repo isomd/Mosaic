@@ -62,6 +62,8 @@ public class Cube extends ConfigurableEntity implements CubeApi {
      * 创建实例并初始化
      */
     private boolean createAndInitInstance() {
+        // 设置线程变量
+        CubeConfigThreadLocal.set(getCubeId().toString(), new CubeConfig(getConfigValues()));
         try {
             Class<?> clazz = this.getClass().getClassLoader().loadClass(metaData.getClassName());
             mosaicCube = (MosaicCube) clazz.getDeclaredConstructor().newInstance();
