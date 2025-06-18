@@ -72,12 +72,13 @@ onMounted(()=>{
   width: 100%;
   height: 320px;
   left: 0;
-  bottom: -220px;
+  bottom: -230px;
   background-image: url("/img.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
   cursor: pointer;
+  animation: float 3s ease-in-out infinite;
   transition: all 0.3s;
   span {
     position: absolute;
