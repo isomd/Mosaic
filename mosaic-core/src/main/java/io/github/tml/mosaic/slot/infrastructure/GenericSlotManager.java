@@ -5,9 +5,7 @@ import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.slot.Slot;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class GenericSlotManager implements SlotManager {
 
@@ -21,6 +19,11 @@ public class GenericSlotManager implements SlotManager {
 
     public static GenericSlotManager manager(){
         return MANAGER;
+    }
+
+    @Override
+    public List<Slot> getSlotList() {
+        return new ArrayList<>(slotMap.values());
     }
 
     @Override
