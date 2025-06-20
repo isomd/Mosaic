@@ -2,6 +2,7 @@ package io.github.tml.mosaic.controller;
 
 import com.alibaba.fastjson.JSON;
 import io.github.tml.mosaic.GoldenShovel;
+import io.github.tml.mosaic.config.MosaicChunkConfig;
 import io.github.tml.mosaic.core.chunk.ChunkManager;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.req.HotSwapRequestDTO;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -32,6 +34,10 @@ public class TestController {
 
     @Autowired
     SlotManager slotManager;
+
+    @Resource
+    MosaicChunkConfig mosaicChunkConfig;
+
 
     @PostMapping("v1")
     public void testHotSwap(@RequestBody HotSwapRequestDTO requestDTO) {
@@ -61,7 +67,7 @@ public class TestController {
         send.setClassName(requestDTO.getClassName());
         String json = JSON.toJSONString(send);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
-        try (Socket socket = new Socket("localhost", 9999);
+        try (Socket socket = new Socket("localhost", mosaicChunkConfig.getPort());
              DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
             dos.writeInt(jsonBytes.length);
             dos.write(jsonBytes);

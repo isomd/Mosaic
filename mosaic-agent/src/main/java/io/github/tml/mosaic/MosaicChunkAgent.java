@@ -12,13 +12,11 @@ import java.lang.instrument.Instrumentation;
  * @date 2025/5/27
  */
 
-@Slf4j
 public class MosaicChunkAgent {
 
     private static Instrumentation instrumentation;
     public static void agentmain(String args, Instrumentation inst) {
 
-        log.info("run mosaic agent...");
         instrumentation = inst;
         int port = Integer.parseInt(args.trim());
         new Thread(() -> {
