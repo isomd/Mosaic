@@ -24,7 +24,7 @@ public class ChunkController {
     ChunkService chunkService;
 
     @GetMapping("getClassStr")
-    public R<?> classString(@RequestParam(value = "fullName") String fullName){
+    public R<?> classString(@RequestParam(value = "className") String fullName){
         return chunkService.getClassStrByClassFullName(fullName);
     }
 

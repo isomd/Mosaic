@@ -26,7 +26,6 @@ import java.util.jar.JarFile;
  * @description :
  * @date 2025/6/7
  */
-@Slf4j
 public class MosaicAgentSocketServer {
 
     public void start(int port) throws IOException {
@@ -102,7 +101,7 @@ public class MosaicAgentSocketServer {
                 //热替换
                 instrumentation
                         .redefineClasses(new ClassDefinition(targetClass,replace));
-                log.info("Mosaic agent proxy finished...");
+                System.out.println("Mosaic agent proxy finished...");
             } catch (Exception e) {
                 e.printStackTrace();
             }
