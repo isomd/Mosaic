@@ -80,8 +80,4 @@ public class TestController {
         }
     }
 
-    @GetMapping("classString/{className}")
-    public String classString(@PathVariable String className){
-        return ChunkManager.getProxyCode(className);
-    }
 }
