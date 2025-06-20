@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.controller;
+import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.service.CubeService;
-import io.github.tml.mosaic.service.impl.CubeInfoService;
 import io.github.tml.mosaic.util.R;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +31,8 @@ public class CubeController {
      * 根据条件搜索Cube插件
      */
     @GetMapping("/search")
-    public R<?> searchCubes(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String model,
-            @RequestParam(required = false) String version) {
-
-        CubeInfoService.CubeFilterCriteria criteria = new CubeInfoService.CubeFilterCriteria();
-        criteria.setName(name);
-        criteria.setModel(model);
-        criteria.setVersion(version);
-
-        return cubeService.getCubesByFilter(criteria);
+    public R<?> searchCubes(@RequestBody CubeFilterReq cubeFilterReq) {
+        return cubeService.getCubesByFilter(cubeFilterReq);
     }
 
     /**

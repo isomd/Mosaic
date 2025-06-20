@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.vo;
+package io.github.tml.mosaic.entity.vo.slot;
 
 import lombok.Data;
 

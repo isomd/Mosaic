@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.service;
 
-import io.github.tml.mosaic.service.impl.CubeInfoService;
+import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.util.R;
 
 /**
@@ -10,7 +10,7 @@ public interface CubeService {
 
     R<?> getCubeList();
 
-    R<?> getCubesByFilter(CubeInfoService.CubeFilterCriteria criteria);
+    R<?> getCubesByFilter(CubeFilterReq cubeFilterReq);
 
     R<?> getCubeById(String cubeId);
 

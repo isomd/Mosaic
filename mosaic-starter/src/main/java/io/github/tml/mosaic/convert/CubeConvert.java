@@ -2,10 +2,8 @@ package io.github.tml.mosaic.convert;
 
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
-import io.github.tml.mosaic.entity.dto.CubeFilterDTO;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
-import io.github.tml.mosaic.entity.vo.*;
-import io.github.tml.mosaic.service.impl.CubeInfoService;
+import io.github.tml.mosaic.entity.vo.cube.*;
 
 import java.util.List;
 import java.util.Map;
@@ -112,33 +110,6 @@ public class CubeConvert {
                 .totalExtensionPackages(totalExtensionPackages)
                 .totalExtensionPoints(totalExtensionPoints)
                 .cubesByModel(cubesByModel)
-                .build();
-    }
-
-    /**
-     * 概览DTO -> 概览VO
-     */
-    public static CubeOverviewVO convertOverviewToVO(CubeOverviewDTO overviewDTO) {
-        if (overviewDTO == null) {
-            return CubeOverviewVO.buildEmptyOverview();
-        }
-
-        return CubeOverviewVO.builder()
-                .totalCubes(overviewDTO.getTotalCubes())
-                .totalExtensionPackages(overviewDTO.getTotalExtensionPackages())
-                .totalExtensionPoints(overviewDTO.getTotalExtensionPoints())
-                .cubesByModel(overviewDTO.getCubesByModel())
-                .build();
-    }
-
-    /**
-     * 过滤条件转换
-     */
-    public static CubeFilterDTO convertToDomainFilter(CubeInfoService.CubeFilterCriteria criteria) {
-        return CubeFilterDTO.builder()
-                .name(criteria.getName())
-                .model(criteria.getModel())
-                .version(criteria.getVersion())
                 .build();
     }
 

@@ -5,7 +5,7 @@ import io.github.tml.mosaic.domain.SlotDomain;
 import io.github.tml.mosaic.entity.dto.SlotDTO;
 import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
-import io.github.tml.mosaic.entity.vo.SlotVO;
+import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.service.SlotService;
 import io.github.tml.mosaic.util.R;
 import lombok.extern.slf4j.Slf4j;

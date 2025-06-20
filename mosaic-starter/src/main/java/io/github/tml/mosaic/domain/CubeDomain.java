@@ -6,7 +6,7 @@ import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
-import io.github.tml.mosaic.entity.dto.CubeFilterDTO;
+import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class CubeDomain {
     /**
      * 根据过滤条件获取Cube信息
      */
-    public List<CubeDTO> getCubesByFilter(CubeFilterDTO filterDTO) {
+    public List<CubeDTO> getCubesByFilter(CubeFilterReq filterDTO) {
         log.debug("Domain: Applying filter criteria: {}", filterDTO);
         
         List<CubeDefinition> allDefinitions = cubeContext.getAllCubeDefinitions();
@@ -132,7 +132,7 @@ public class CubeDomain {
     /**
      * 构建领域级别的过滤谓词
      */
-    private Predicate<CubeDefinition> buildDomainFilterPredicate(CubeFilterDTO filterDTO) {
+    private Predicate<CubeDefinition> buildDomainFilterPredicate(CubeFilterReq filterDTO) {
         Predicate<CubeDefinition> predicate = def -> true;
 
         if (filterDTO.hasName()) {

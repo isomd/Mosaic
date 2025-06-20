@@ -5,7 +5,7 @@ import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.dto.SlotDTO;
 import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
-import io.github.tml.mosaic.entity.vo.SlotVO;
+import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.slot.Slot;
 import org.springframework.beans.BeanUtils;
 

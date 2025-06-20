@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.dto;
+package io.github.tml.mosaic.entity.req;
 
 import lombok.Data;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CubeFilterDTO {
+public class CubeFilterReq {
     
     private String name;
     private String model;
