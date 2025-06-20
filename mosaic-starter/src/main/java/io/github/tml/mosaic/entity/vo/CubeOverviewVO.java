@@ -62,7 +62,7 @@ public class CubeOverviewVO {
     /**
      * 构建空概览信息
      */
-    private static CubeOverviewVO buildEmptyOverview() {
+    public static CubeOverviewVO buildEmptyOverview() {
         return CubeOverviewVO.builder()
                 .totalCubes(0)
                 .totalExtensionPackages(0)
