@@ -17,14 +17,7 @@ public class DefaultInstantiationStrategy implements InstantiationStrategy {
     @Override
     public Cube instantiate(CubeDefinition cubeDefinition, GUID cubeId, Object[] args) throws CubeException {
         try {
-            Cube cube = new Cube(cubeId);
-            // 使用CubeDefinition的类加载器 加载 MosaicCube
-            Class<?> clazz = cubeDefinition.getClassLoader().loadClass(cubeDefinition.getClassName());
-
-            // 通过反射实例化
-            MosaicCube mosaicCube = (MosaicCube) clazz.getDeclaredConstructor().newInstance();
-            cube.setMosaicCube(mosaicCube);
-            return cube;
+            return new Cube(cubeId);
         } catch (Exception e) {
             throw new CubeException("cube init error: " + cubeDefinition.getClassName(), e);
         }

@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.cube.factory.support;
 
+import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.cube.*;
@@ -83,13 +84,18 @@ public abstract class AbstractAutowirePropertyCubeFactory extends AbstractAutowi
      * 填充Cube核心元数据
      */
     private void populateCubeMetadata(Cube cube, CubeDefinition cubeDefinition) {
-        Cube.MetaData metaData = cube.getMetaData();
-        // 设置基础元数据
-        metaData.setName(cubeDefinition.getName());
-        metaData.setVersion(cubeDefinition.getVersion());
-        metaData.setDescription(cubeDefinition.getDescription());
-        metaData.setModel(cubeDefinition.getModel());
-        // 日志记录元数据填充
-        log.debug("填充Cube元数据 | ID: {} | 名称: {} | 版本: {}", cube.getCubeId(), metaData.getName(), metaData.getVersion());
+        try {
+            Cube.MetaData metaData = cube.getMetaData();
+            // 设置基础元数据
+            metaData.setName(cubeDefinition.getName());
+            metaData.setVersion(cubeDefinition.getVersion());
+            metaData.setDescription(cubeDefinition.getDescription());
+            metaData.setModel(cubeDefinition.getModel());
+            metaData.setClazz(cubeDefinition.getClassLoader().loadClass(cubeDefinition.getClassName()));
+            // 日志记录元数据填充
+            log.debug("填充Cube元数据 | ID: {} | 名称: {} | 版本: {}", cube.getCubeId(), metaData.getName(), metaData.getVersion());
+        } catch (ClassNotFoundException e) {
+            throw new CubeException(e);
+        }
     }
 }

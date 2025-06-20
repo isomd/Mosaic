@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.cube;
 
-import io.github.tml.mosaic.core.tools.config.ConfigurableEntity;
+import io.github.tml.mosaic.core.tools.param.ConfigurableEntity;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.api.CubeApi;
 import io.github.tml.mosaic.cube.external.MosaicCube;
@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,44 @@ public class Cube extends ConfigurableEntity implements CubeApi {
 
     @Override
     public boolean init() {
-        return mosaicCube.init();
+        // 判断mosaicCube是否存在
+        if (mosaicCube == null) {
+            // 不存在则直接实例化并初始化
+            return createAndInitInstance();
+        }
+
+        // 存在则检查model模式
+        String model = metaData.getModel();
+        if ("property".equals(model)) {
+            // property模式：销毁现有实例，重新创建
+            mosaicCube.destroy();
+            mosaicCube = null;
+            initialized = false;
+            return createAndInitInstance();
+        }
+
+        // singleton模式或其他情况：复用现有实例
+        return true;
+    }
+
+    /**
+     * 创建实例并初始化
+     */
+    private boolean createAndInitInstance() {
+        // 设置线程变量
+        CubeConfigThreadLocal.set(getCubeId().toString(), new CubeConfig(getConfigValues()));
+        try {
+            mosaicCube = (MosaicCube) metaData.getClazz().getDeclaredConstructor().newInstance();
+            boolean result = mosaicCube.init();
+            if (result) {
+                initialized = true;
+            }
+            return result;
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            log.error("Failed to create and init cube instance: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -61,6 +99,7 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         private String version;
         private String description;
         private String model;
+        private Class<?> clazz;
 
         // 扩展包元数据
         private final List<ExtensionPackage> extensionPackages = new CopyOnWriteArrayList<>();

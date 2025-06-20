@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.install.domian.info;
 
-import io.github.tml.mosaic.core.tools.config.ConfigInfo;
+import io.github.tml.mosaic.core.tools.param.ConfigInfo;
 import io.github.tml.mosaic.cube.external.MCube;
 import lombok.AllArgsConstructor;
 import lombok.Data;

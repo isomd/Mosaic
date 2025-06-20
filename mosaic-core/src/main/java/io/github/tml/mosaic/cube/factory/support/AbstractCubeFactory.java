@@ -13,14 +13,14 @@ import java.util.Objects;
  * @author suifeng
  * 日期: 2025/6/6
  */
-public abstract class AbstractCubeFactory extends DefaultCubeManager implements CubeFactory {
+public abstract class AbstractCubeFactory extends DefaultSingletonCubeRegistry implements CubeFactory {
 
     /**
      * 实现getCube方法，定义主流程
      */
     @Override
     public Cube getCube(GUID cubeId, Object[] args) throws CubeException {
-        // 1. 先尝试获取单例
+        // 获取Cube实例
         Cube singletonCube = getSingleton(cubeId);
         if (singletonCube != null) {
             return singletonCube;
