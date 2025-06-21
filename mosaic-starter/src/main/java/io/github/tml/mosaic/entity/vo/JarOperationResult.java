@@ -3,26 +3,21 @@ package io.github.tml.mosaic.entity.vo;
 import lombok.Data;
 
 /**
- * JAR包上传结果
+ * JAR包操作结果
  */
 @Data
-public class JarUploadResult {
-
+public class JarOperationResult {
+    
     /**
      * JAR包ID
      */
     private String jarId;
-
+    
     /**
-     * 原始文件名
+     * 操作是否成功
      */
-    private String originalFilename;
-
-    /**
-     * 文件上传是否成功
-     */
-    private boolean uploadSuccess;
-
+    private boolean success;
+    
     /**
      * 错误信息
      */
