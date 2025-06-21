@@ -1,16 +1,13 @@
 package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.config.properties.MosaicPluginProperties;
-import io.github.tml.mosaic.converter.InfoContextConverter;
-import io.github.tml.mosaic.cube.factory.context.CubeContext;
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
+import io.github.tml.mosaic.domain.CubeDomain;
 import io.github.tml.mosaic.entity.JarPackageInfo;
-import io.github.tml.mosaic.install.domian.info.CubeInfo;
-import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
-import io.github.tml.mosaic.install.support.ReaderType;
+import io.github.tml.mosaic.entity.vo.JarUploadResult;
 import io.github.tml.mosaic.service.JarPackageService;
+import io.github.tml.mosaic.util.R;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +32,7 @@ import java.util.stream.Collectors;
 public class JarPackageServiceImpl implements JarPackageService {
 
     private final MosaicPluginProperties properties;
-    private final InfoContextInstaller installer;
-    private final CubeContext cubeContext;
+    private final CubeDomain cubeDomain;
 
     private static final String JAR_EXTENSION = ".jar";
     private static final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -53,94 +50,180 @@ public class JarPackageServiceImpl implements JarPackageService {
     }
 
     @Override
-    public String uploadJarPackage(MultipartFile file) throws IOException {
-        validateUploadFile(file);
+    public R<JarUploadResult> uploadJarPackage(MultipartFile file) {
+        List<JarUploadResult> results = batchUploadJarPackagesInternal(new MultipartFile[]{file});
+        return R.success("上传完成", results.get(0));
+    }
 
-        String filename = CommonComponent.GuidAllocator().nextGUID().toString() + JAR_EXTENSION;
-        Path targetPath = null;
-        targetPath = resolveStoragePath().resolve(filename);
+    /**
+     * 批量上传JAR包（内部方法）
+     * @param files 要上传的文件数组
+     * @return 每个文件的上传结果列表
+     */
+    @Override
+    public R<List<JarUploadResult>> batchUploadJarPackages(MultipartFile[] files) {
+        if (files == null || files.length == 0) {
+            return R.error("请选择至少一个文件");
+        }
 
-        try {
-            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        List<JarUploadResult> results = batchUploadJarPackagesInternal(files);
 
-            // 直接调用安装器安装
+        // 统计成功/失败数量
+        long successCount = results.stream()
+                .filter(r -> r.isFileUploadSuccess() && r.getRegistrationResults().stream().allMatch(CubeRegistrationResult::isSuccess))
+                .count();
 
-            String[] configLocations = new String[]{ReaderType.FILE.getPrefix() + targetPath};
-            List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(installer.installCubeInfoContext(configLocations));
-            List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
-            // 注册进context容器
-            cubeContext.registerAllCubeDefinition(cubeDefinitions);
+        long partialSuccessCount = results.stream()
+                .filter(r -> r.isFileUploadSuccess() && r.getRegistrationResults().stream().anyMatch(rr -> !rr.isSuccess()))
+                .count();
 
-            log.info("JAR包上传成功: filename={}, size={}KB", filename, file.getSize() / 1024);
-            return filename;
-        } catch (IOException e) {
-            log.error("JAR包文件写入失败: {}", filename, e);
-            throw new RuntimeException("JAR包上传失败：文件写入错误");
+        long failureCount = results.size() - successCount - partialSuccessCount;
+
+        String message = String.format("批量上传完成: 成功%d个, 部分成功%d个, 失败%d个",
+                successCount, partialSuccessCount, failureCount);
+
+        return R.success(message, results);
+    }
+
+    /**
+     * 批量上传JAR包（内部实现）
+     */
+    private List<JarUploadResult> batchUploadJarPackagesInternal(MultipartFile[] files) {
+        List<JarUploadResult> results = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            JarUploadResult result = new JarUploadResult();
+            result.setFileUploadSuccess(false);
+
+            try {
+                validateUploadFile(file);
+
+                // 生成唯一文件名
+                String filename = CommonComponent.GuidAllocator().nextGUID().toString() + JAR_EXTENSION;
+                Path targetPath = resolveStoragePath().resolve(filename);
+
+                // 保存文件
+                Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                // 安装并注册Cube
+                List<CubeRegistrationResult> registrationResults = cubeDomain.installAndRegisterCube(targetPath);
+
+                // 设置结果
+                result.setFilename(filename);
+                result.setFileUploadSuccess(true);
+                result.setRegistrationResults(registrationResults);
+                result.setErrorMsg(null);
+
+                log.info("JAR包上传成功: filename={}, size={}KB", filename, file.getSize() / 1024);
+
+            } catch (IllegalArgumentException e) {
+                String errorMsg = e.getMessage();
+                result.setErrorMsg(errorMsg);
+                log.warn("JAR包上传参数错误: {}", errorMsg);
+
+            } catch (Exception e) {
+                String errorMsg = "JAR包上传失败: " + e.getMessage();
+                result.setErrorMsg(errorMsg);
+                log.error(errorMsg, e);
+            }
+
+            results.add(result);
+        }
+
+        return results;
+    }
+
+    /**
+     * 处理注册结果，记录失败情况
+     */
+    private void handleRegistrationResults(List<CubeRegistrationResult> results, String filename) {
+        List<CubeRegistrationResult> failedResults = results.stream()
+                .filter(result -> !result.isSuccess())
+                .collect(Collectors.toList());
+
+        if (!failedResults.isEmpty()) {
+            String errorMsg = "JAR包上传成功，但部分Cube注册失败: " +
+                    failedResults.stream()
+                            .map(r -> r.getCubeId() + ": " + r.getMessage())
+                            .collect(Collectors.joining("; "));
+
+            log.warn("JAR包: {} - {}", filename, errorMsg);
         }
     }
 
     @Override
-    public List<JarPackageInfo> listJarPackages() throws IOException {
-        Path storageDir = resolveStoragePath();
-
-        if (!Files.exists(storageDir)) {
-            log.warn("JAR包存储目录不存在: {}", storageDir);
-            return List.of();
-        }
-
+    public R<List<JarPackageInfo>> listJarPackages() {
         try {
-            return Files.list(storageDir)
+            Path storageDir = resolveStoragePath();
+
+            if (!Files.exists(storageDir)) {
+                log.warn("JAR包存储目录不存在: {}", storageDir);
+                return R.success("获取JAR包列表成功", List.of());
+            }
+
+            List<JarPackageInfo> jarPackages = Files.list(storageDir)
                     .filter(path -> path.toString().toLowerCase().endsWith(JAR_EXTENSION))
                     .map(this::buildJarPackageInfo)
                     .collect(Collectors.toList());
-        } catch (IOException e) {
-            log.error("读取JAR包目录失败: {}", storageDir, e);
-            throw new RuntimeException("读取JAR包目录失败");
+
+            log.debug("获取JAR包列表成功，共{}个文件", jarPackages.size());
+            return R.success("获取JAR包列表成功", jarPackages);
+        } catch (Exception e) {
+            log.error("获取JAR包列表失败", e);
+            return R.error("获取JAR包列表失败，请稍后重试");
         }
     }
 
     @Override
-    public void renameJarPackage(String oldFilename, String newFilename) throws IOException {
-        validateFilename(oldFilename, "原文件名");
-        validateFilename(newFilename, "新文件名");
-
-        Path storageDir = resolveStoragePath();
-        Path oldPath = storageDir.resolve(oldFilename);
-        Path newPath = storageDir.resolve(ensureJarExtension(newFilename));
-
-        if (!Files.exists(oldPath)) {
-            throw new IllegalArgumentException("源文件不存在: " + oldFilename);
-        }
-
-        if (Files.exists(newPath) && !oldPath.equals(newPath)) {
-            throw new IllegalArgumentException("目标文件名已存在: " + newFilename);
-        }
-
+    public R<Void> renameJarPackage(String oldFilename, String newFilename) {
         try {
+            validateFilename(oldFilename, "原文件名");
+            validateFilename(newFilename, "新文件名");
+
+            Path storageDir = resolveStoragePath();
+            Path oldPath = storageDir.resolve(oldFilename);
+            Path newPath = storageDir.resolve(ensureJarExtension(newFilename));
+
+            if (!Files.exists(oldPath)) {
+                return R.error("源文件不存在: " + oldFilename);
+            }
+
+            if (Files.exists(newPath) && !oldPath.equals(newPath)) {
+                return R.error("目标文件名已存在: " + newFilename);
+            }
+
             Files.move(oldPath, newPath);
             log.info("JAR包重命名成功: {} -> {}", oldFilename, newPath.getFileName());
-        } catch (IOException e) {
+            return R.success("JAR包重命名成功");
+        } catch (IllegalArgumentException e) {
+            log.warn("JAR包重命名参数错误: {}", e.getMessage());
+            return R.error(e.getMessage());
+        } catch (Exception e) {
             log.error("JAR包重命名失败: {} -> {}", oldFilename, newFilename, e);
-            throw new RuntimeException("JAR包重命名失败：文件系统错误");
+            return R.error("JAR包重命名失败，请稍后重试");
         }
     }
 
     @Override
-    public void deleteJarPackage(String filename) throws IOException {
-        validateFilename(filename, "文件名");
-
-        Path filePath = resolveStoragePath().resolve(filename);
-
-        if (!Files.exists(filePath)) {
-            throw new IllegalArgumentException("文件不存在: " + filename);
-        }
-
+    public R<Void> deleteJarPackage(String filename) {
         try {
+            validateFilename(filename, "文件名");
+
+            Path filePath = resolveStoragePath().resolve(filename);
+
+            if (!Files.exists(filePath)) {
+                return R.error("文件不存在: " + filename);
+            }
+
             Files.delete(filePath);
             log.info("JAR包删除成功: {}", filename);
-        } catch (IOException e) {
+            return R.success("JAR包删除成功");
+        } catch (IllegalArgumentException e) {
+            log.warn("JAR包删除参数错误: {}", e.getMessage());
+            return R.error(e.getMessage());
+        } catch (Exception e) {
             log.error("JAR包删除失败: {}", filename, e);
-            throw new RuntimeException("JAR包删除失败：文件系统错误");
+            return R.error("JAR包删除失败，请稍后重试");
         }
     }
 

@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
  * 通用返回对象
- * @author xzh
+ * @author suifeng
  */
 @Data
 @AllArgsConstructor

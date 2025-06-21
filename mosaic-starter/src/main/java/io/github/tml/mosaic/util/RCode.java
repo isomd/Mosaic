@@ -46,6 +46,5 @@ public enum RCode {
         this.code = code;
         this.message = message;
     }
-
 }
 

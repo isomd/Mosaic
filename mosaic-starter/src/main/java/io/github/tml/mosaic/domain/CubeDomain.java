@@ -1,17 +1,24 @@
 package io.github.tml.mosaic.domain;
 
 import io.github.tml.mosaic.convert.CubeConvert;
+import io.github.tml.mosaic.converter.CubeDefinitionConverter;
+import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
+import io.github.tml.mosaic.install.support.ReaderType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +35,8 @@ import java.util.stream.Collectors;
 public class CubeDomain {
 
     private final CubeContext cubeContext;
+    private final InfoContextInstaller installer;
+
 
     /**
      * 获取所有Cube列表
@@ -43,6 +52,40 @@ public class CubeDomain {
         
         log.info("Domain: Successfully retrieved {} cube definitions", result.size());
         return result;
+    }
+
+    /**
+     * 安装并注册Cube
+     * @param configLocations 配置位置数组
+     * @return 注册结果列表
+     */
+    public List<CubeRegistrationResult> installAndRegisterCubes(String... configLocations) {
+        try {
+            // 转换信息上下文
+            List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(
+                    installer.installCubeInfoContext(configLocations)
+            );
+
+            // 转换为Cube定义
+            List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
+
+            // 注册到上下文容器
+            return cubeContext.registerAllCubeDefinition(cubeDefinitions);
+
+        } catch (Exception e) {
+            log.error("安装并注册Cube失败", e);
+            throw new RuntimeException("安装并注册Cube失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 通过JAR路径安装并注册Cube
+     * @param jarPath JAR文件路径
+     * @return 注册结果列表
+     */
+    public List<CubeRegistrationResult> installAndRegisterCube(Path jarPath) {
+        String[] configLocations = new String[]{ReaderType.FILE.getPrefix() + jarPath};
+        return installAndRegisterCubes(configLocations);
     }
 
     /**
