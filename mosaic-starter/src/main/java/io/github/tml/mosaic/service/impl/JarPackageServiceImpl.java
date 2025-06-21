@@ -64,12 +64,13 @@ public class JarPackageServiceImpl implements JarPackageService {
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
             // 直接调用安装器安装
+
             String[] configLocations = new String[]{ReaderType.FILE.getPrefix() + targetPath};
             List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(installer.installCubeInfoContext(configLocations));
             List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
-
             // 注册进context容器
             cubeContext.registerAllCubeDefinition(cubeDefinitions);
+
             log.info("JAR包上传成功: filename={}, size={}KB", filename, file.getSize() / 1024);
             return filename;
         } catch (IOException e) {
