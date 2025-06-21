@@ -300,7 +300,6 @@ body {
     @include minecraft-panel(#FFFAFA); // snow
     border-radius: 0 !important;
     overflow: visible !important;
-
     .v-card-title {
       @include minecraft-panel(#8B4513); // oak
       color: var(--mc-snow) !important;
@@ -318,8 +317,8 @@ body {
       font-size: 1em !important;
       line-height: 1.6;
     }
-  }
 
+  }
   .v-btn {
     @include minecraft-button();
     border-radius: 0 !important;
@@ -353,6 +352,22 @@ body {
       opacity: 0.9;
     }
   }
+
+}
+.v-overlay-container{
+  .v-alert{
+    @include minecraft-panel(#607D8B);
+  }
+  .v-expansion-panel-title{
+    @include minecraft-panel(#F9F9F9);
+  }
+  .v-toolbar__content{
+    @include minecraft-panel(#1867C0);
+  }
+  .v-card{
+    @include minecraft-panel(#FFFFFF);
+  }
+
 }
 
 // ===== 自定义组件样式 =====
