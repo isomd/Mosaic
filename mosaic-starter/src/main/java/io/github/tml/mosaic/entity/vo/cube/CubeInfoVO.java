@@ -1,11 +1,9 @@
 package io.github.tml.mosaic.entity.vo.cube;
 
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 描述: Cube插件信息前端展示对象
