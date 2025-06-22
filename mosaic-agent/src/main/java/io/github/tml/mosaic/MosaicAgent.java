@@ -1,6 +1,8 @@
 package io.github.tml.mosaic;
 
+import io.github.tml.mosaic.core.watcher.MosaicAgentWatcher;
 import io.github.tml.mosaic.server.MosaicAgentSocketServer;
+import io.github.tml.mosaic.util.AgentUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.instrument.Instrumentation;
@@ -12,12 +14,12 @@ import java.lang.instrument.Instrumentation;
  * @date 2025/5/27
  */
 
-public class MosaicChunkAgent {
+public class MosaicAgent {
 
-    private static Instrumentation instrumentation;
     public static void agentmain(String args, Instrumentation inst) {
 
-        instrumentation = inst;
+        AgentUtil.instrumentation = inst;
+        AgentUtil.instrumentation.addTransformer(new MosaicAgentWatcher(), true);
         int port = Integer.parseInt(args.trim());
         new Thread(() -> {
             try {
@@ -28,7 +30,4 @@ public class MosaicChunkAgent {
         }).start();
     }
 
-    public static Instrumentation getInstrumentation() {
-        return instrumentation;
-    }
 }

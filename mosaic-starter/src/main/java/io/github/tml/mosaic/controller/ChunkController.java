@@ -23,9 +23,14 @@ public class ChunkController {
     @Resource
     ChunkService chunkService;
 
+    /**
+     * 根据全限定类名获取类字符串源码
+     * @param classFullName 全限定类名
+     * @return
+     */
     @GetMapping("getClassStr")
-    public R<?> classString(@RequestParam(value = "className") String fullName){
-        return chunkService.getClassStrByClassFullName(fullName);
+    public R<?> classString(@RequestParam(value = "className") String classFullName){
+        return chunkService.getClassStrByClassFullName(classFullName);
     }
 
 }

@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.install.chunk;
+package io.github.tml.mosaic.core.chunk;
 
 import io.github.tml.mosaic.config.MosaicChunkConfig;
 import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
@@ -35,7 +35,7 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
 
         try {
             Class<?> currentClass = Class.forName(ChunkLoaderInstaller.class.getName());
-            Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicChunkAgent");
+            Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicAgent");
             String currentPath = EnvironmentPathFindUtil.getJarPath(currentClass);
 
             String agentPath = EnvironmentPathFindUtil.getJarPath(agentClass);
@@ -46,8 +46,7 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
             String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             ProcessBuilder pb = new ProcessBuilder(
                     javaBin,
-                    "-cp", currentPath,
-                    "io.github.tml.mosaic.install.chunk.MosaicChunkAgentInstallScript",
+                    "-jar", agentPath,
                     pid,
                     agentPath,
                     String.valueOf(mosaicChunkConfig.getPort())
