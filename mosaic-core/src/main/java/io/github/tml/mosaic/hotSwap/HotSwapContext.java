@@ -22,4 +22,5 @@ public class HotSwapContext {
         REPLACE_ASSIGN_RIGHT,   //等号右边复制修改
         INSERT_AFTER        //行号下插入代码段
     }
+
 }
