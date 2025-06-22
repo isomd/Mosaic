@@ -40,7 +40,7 @@ public class SlotConvert {
         SlotSetupDTO slotSetupDTO = new SlotSetupDTO();
         slotSetupDTO.setSlotId(appendSlotReq.getSlotId());
         slotSetupDTO.setCubeId(new GUUID(appendSlotReq.getCubeId()));
-        slotSetupDTO.setResName(Optional.ofNullable(appendSlotReq.getResName()).orElse(DEFAULT_RETURN_NAME));
+        slotSetupDTO.setResName(appendSlotReq.getResName());
         slotSetupDTO.setExPointId(new DotNotationId(appendSlotReq.getExPointId()));
         slotSetupDTO.setExPackageId(new DotNotationId(appendSlotReq.getExPackageId()));
         return slotSetupDTO;

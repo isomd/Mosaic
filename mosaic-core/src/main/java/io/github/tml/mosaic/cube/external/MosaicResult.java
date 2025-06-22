@@ -15,6 +15,10 @@ public class MosaicResult extends AbstractMosaicResult {
 
     private JSONObject result;
 
+    public void put(String key, Object value){
+        result.put(key, value);
+    }
+
     public static Builder build(){
         return new Builder();
     }
