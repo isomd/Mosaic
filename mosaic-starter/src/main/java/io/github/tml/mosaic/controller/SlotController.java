@@ -1,11 +1,14 @@
 package io.github.tml.mosaic.controller;
 
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
+import io.github.tml.mosaic.entity.resp.CreateSlotResp;
 import io.github.tml.mosaic.service.SlotService;
 import io.github.tml.mosaic.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -20,21 +23,33 @@ public class SlotController {
      */
     @GetMapping("/list")
     public R<?> getAllCubes() {
-        return slotService.getSlotList();
+        return R.success(Map.of(
+                "slotList", slotService.getSlotList()
+        ));
     }
 
     @PostMapping("/createOrSetup")
     public R<?> createOrSetupSlot(@RequestBody AppendSlotReq req) {
-        return slotService.createOrSetupSlot(req);
+        CreateSlotResp resp = slotService.createOrSetupSlot(req);
+        if (resp.isSuccess()) {
+            return R.success();
+        }else{
+            return R.error(resp.getErrorMsg());
+        }
     }
 
     @GetMapping("/unSetup")
     public R<?> unSetup(@RequestParam("slotId") String slotId) {
-        return slotService.unSetupSlot(slotId);
+        if (slotService.unSetupSlot(slotId)) {
+            return R.success();
+        }else{
+            return R.error("unSetup slot failed");
+        }
     }
 
     @GetMapping("/delete")
     public R<?> deleteSlot(@RequestParam("slotId") String slotId) {
-        return slotService.deleteSlot(slotId);
+        slotService.deleteSlot(slotId);
+        return R.success();
     }
 }

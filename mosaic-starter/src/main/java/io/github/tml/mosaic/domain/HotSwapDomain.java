@@ -1,12 +1,18 @@
 package io.github.tml.mosaic.domain;
 
+import io.github.tml.mosaic.core.tools.guid.GUID;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.dto.HotSwapDTO;
+import io.github.tml.mosaic.entity.dto.HotSwapPointDTO;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
+import io.github.tml.mosaic.hotSwap.model.ChangeRecord;
+import io.github.tml.mosaic.hotSwap.model.DeployVersion;
 import io.github.tml.mosaic.util.ChunkHotSwapUtil;
-import io.github.tml.mosaic.util.CubeTemplateUtil;
+import io.github.tml.mosaic.util.CodeTemplateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -32,7 +38,7 @@ public class HotSwapDomain {
                 dto.getTargetLine(),
                 dto.getType(),
                 dto::getProxyCode,
-                Set.of(CubeTemplateUtil.getCubeImportPath()));
+                Set.of(CodeTemplateUtil.getCubeImportPath()));
         context.putClassProxyCode(dto.getFullName(), proxy);
         return proxy;
     }
@@ -46,6 +52,16 @@ public class HotSwapDomain {
         String code = ChunkHotSwapUtil.decompileClassFromClassName(fullName);
         context.putClassProxyCode(fullName,code);
         return code;
+    }
+
+    public DeployVersion generateHotSwapPoint(HotSwapPointDTO pointDTO) {
+
+        ChangeRecord record = new ChangeRecord(pointDTO.getClassName(),pointDTO.getMethodName(),pointDTO.getChangeType(),null);
+
+        DeployVersion deployVersion = new DeployVersion(new GUUID(""), LocalDateTime.now(),record);
+
+        return deployVersion;
+
     }
 
 }
