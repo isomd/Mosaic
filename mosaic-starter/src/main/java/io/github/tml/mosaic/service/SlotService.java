@@ -1,15 +1,19 @@
 package io.github.tml.mosaic.service;
 
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
+import io.github.tml.mosaic.entity.resp.CreateSlotResp;
+import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.util.R;
+
+import java.util.List;
 
 public interface SlotService {
 
-    R<?> getSlotList();
+    List<SlotVO> getSlotList();
 
-    R<?> createOrSetupSlot(AppendSlotReq appendSlotReq);
+    CreateSlotResp createOrSetupSlot(AppendSlotReq appendSlotReq);
 
-    R<?> unSetupSlot(String slotId);
+    boolean unSetupSlot(String slotId);
 
-    R<?> deleteSlot(String slotId);
+    boolean deleteSlot(String slotId);
 }
