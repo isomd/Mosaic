@@ -21,8 +21,10 @@ public class R<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
+    private long timestamp;
+
     public static <T> R<T> success(String message, T data) {
-        return new R<T>(RCode.SUCCESS.getCode(), message, data);
+        return new R<T>(RCode.SUCCESS.getCode(), message, data, System.currentTimeMillis());
     }
 
     public static <T> R<T> success(String message) {
@@ -38,7 +40,7 @@ public class R<T> {
     }
 
     public static <T> R<T> error(int code, String message) {
-        return new R<>(code, message, null);
+        return new R<>(code, message, null, System.currentTimeMillis());
     }
 
     public static <T> R<T> error(String message) {

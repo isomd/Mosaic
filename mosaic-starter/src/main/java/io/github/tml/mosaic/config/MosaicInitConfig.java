@@ -49,12 +49,6 @@ public class MosaicInitConfig {
         // 刷新容器
         context.refresh();
 
-        Map<String, Object> cubeConfiguration = context.getCubeConfiguration("ai.chat.cube");
-
-        cubeConfiguration.remove("apiKey");
-
-        Map<String, Object> stringObjectMap = context.updateConfigurations("ai.chat.cube", cubeConfiguration);
-
         return context;
     }
 

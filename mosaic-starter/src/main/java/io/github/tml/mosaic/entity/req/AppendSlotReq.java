@@ -1,6 +1,5 @@
 package io.github.tml.mosaic.entity.req;
 
-import io.github.tml.mosaic.core.tools.guid.GUID;
 import lombok.*;
 
 @Data
