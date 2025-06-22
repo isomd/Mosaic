@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.core.watcher;
 
-import io.github.tml.mosaic.core.async.AsyncNotifier;
-import io.github.tml.mosaic.core.async.ThreadPoolAsyncNotifier;
 import io.github.tml.mosaic.core.components.DeployComponent;
 import io.github.tml.mosaic.core.components.DeployContext;
 import io.github.tml.mosaic.core.components.codeProcessor.CodeProxyComponent;
@@ -20,14 +18,11 @@ import java.util.List;
 public class MosaicAgentWatcher implements ClassFileTransformer {
 
     private final List<DeployComponent> components = new ArrayList<>();
-    private final AsyncNotifier asyncNotifier;
 
     public MosaicAgentWatcher() {
         // 组件收集
         components.add(new SecurityChainComponent());
         components.add(new CodeProxyComponent());
-
-        this.asyncNotifier = new ThreadPoolAsyncNotifier();;
     }
 
     @Override
@@ -50,8 +45,6 @@ public class MosaicAgentWatcher implements ClassFileTransformer {
         } catch (Exception e) {
             // 返回原始字节码
             return context.getOriginalBytes();
-        }finally {
-            asyncNotifier.notifyAsync(context);
         }
     }
 
