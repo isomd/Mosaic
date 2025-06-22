@@ -48,7 +48,6 @@ public class MosaicInitConfig {
         YamlConfigReader yamlConfigReader = new YamlConfigReader();
         JSONObject jsonObject = yamlConfigReader.readYamlAsJson();
 
-
         return context;
     }
 

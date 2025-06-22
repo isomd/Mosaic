@@ -1,14 +1,14 @@
 package io.github.tml.mosaic.cube.factory;
 
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.cube.factory.context.support.AbstractResourcesLoaderCubeContext;
+import io.github.tml.mosaic.cube.factory.context.support.AbstractConfigLoaderCubeContext;
 
 /**
  * 描述: 核心应用上下文实现类
  * @author suifeng
  * 日期: 2025/6/7
  */
-public class ClassPathCubeContext extends AbstractResourcesLoaderCubeContext {
+public class ClassPathCubeContext extends AbstractConfigLoaderCubeContext {
 
     private final String[] configLocations;
 

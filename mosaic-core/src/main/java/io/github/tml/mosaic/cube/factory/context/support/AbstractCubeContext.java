@@ -20,10 +20,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractCubeContext implements CubeContext {
 
-    protected abstract void refreshCubeFactory() throws CubeException;
-
     protected abstract ListableCubeFactory getBeanFactory();
-
 
     @Override
     public Cube getCube(GUID cubeId) throws CubeException {
@@ -63,6 +60,4 @@ public abstract class AbstractCubeContext implements CubeContext {
                 })
                 .collect(Collectors.toList());
     }
-
-    protected abstract void loadCubeDefinitions(ListableCubeFactory cubeFactory);
 }
