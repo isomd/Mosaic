@@ -1,10 +1,8 @@
 package io.github.tml.mosaic.config;
 
-import com.alibaba.fastjson.JSONObject;
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.InfoContextConverter;
-import io.github.tml.mosaic.cube.config.YamlConfigReader;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
@@ -17,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-
 import java.util.List;
 
 /**
@@ -45,9 +42,8 @@ public class MosaicInitConfig {
         // 注册进context容器
         context.registerAllCubeDefinition(cubeDefinitions);
 
-        YamlConfigReader yamlConfigReader = new YamlConfigReader();
-        JSONObject jsonObject = yamlConfigReader.readYamlAsJson();
-
+        // 刷新容器
+        context.refresh();
 
         return context;
     }
