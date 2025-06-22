@@ -11,6 +11,7 @@ const menuItems = ref([
   {title: 'menu.dashboard', icon: 'mdi-view-dashboard', route: '/dashboard', badge: null},
   {title: 'menu.plugins', icon: 'mdi-puzzle', route: '/plugins', badge: null, badgeColor: 'warning'},
   {title: 'menu.settings', icon: 'mdi-cog', route: '/settings', badge: null},
+  {title: 'menu.slot',icon: 'mdi-shovel',route: '/slot',badge:null}
 ])
 const navigateTo = (route: string) => {
   path.value = route

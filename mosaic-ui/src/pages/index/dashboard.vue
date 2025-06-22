@@ -33,7 +33,7 @@ const stats = ref([
   {
     title: 'dashboard.slotNum',
     value: '156',
-    icon: 'mdi-code-block-tags',
+    icon: 'mdi-shovel',
     highlight: true,
     progress: 31.2,
     progressColor: 'success'
