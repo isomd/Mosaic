@@ -13,10 +13,13 @@ import io.github.tml.mosaic.cube.factory.support.ListableCubeFactory;
  */
 public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext implements ConfigurableCubeContext {
 
-    private DefaultDefinitionListableCubeFactory cubeFactory;
+    private static final DefaultDefinitionListableCubeFactory cubeFactory;
+
+    static {
+        cubeFactory = new DefaultDefinitionListableCubeFactory();
+    }
 
     public AbstractRefreshableCubeContext() {
-        cubeFactory = createBeanFactory();
     }
 
     @Override
@@ -33,10 +36,6 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
 
     protected void refreshCubeFactory() throws CubeException {
         loadCubeDefinitions(cubeFactory);
-    }
-
-    private DefaultDefinitionListableCubeFactory createBeanFactory() {
-        return new DefaultDefinitionListableCubeFactory();
     }
 
     @Override

@@ -1,27 +1,38 @@
 package io.github.tml.mosaic.world.construct;
 
 import io.github.tml.mosaic.world.WorldContainer;
-import lombok.Data;
+import io.github.tml.mosaic.world.manager.WorldContainerManager;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
-@Data
 public abstract class WorldConstruct {
-    private WorldContainer runningWorldContainer;
+    protected WorldContainer runningWorldContainer;
+
+    public WorldConstruct() {
+    }
 
     public WorldConstruct(WorldContainer runningWorldContainer) {
         this.runningWorldContainer = runningWorldContainer;
     }
 
     public void traverse(WorldContainer worldContainer){
-        this.saveWorld();
+        if (!this.saveWorld()){
+            this.setRunningWorldContainer(worldContainer);
 
-        this.setRunningWorldContainer(worldContainer);
+            this.constructWorld();
+        }
+        throw new RuntimeException("World traverse failed");
+    }
+
+    public void init(){
+        this.runningWorldContainer = WorldContainerManager.getOriginalWorldContainer();
 
         this.constructWorld();
     }
 
     public abstract void constructWorld();
 
-    public abstract void saveWorld();
+    public abstract Boolean saveWorld();
 }

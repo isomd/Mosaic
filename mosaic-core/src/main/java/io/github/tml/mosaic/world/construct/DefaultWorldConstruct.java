@@ -5,7 +5,6 @@ import io.github.tml.mosaic.world.WorldContainer;
 public class DefaultWorldConstruct extends WorldConstruct{
 
     public DefaultWorldConstruct() {
-        super();
     }
 
     public DefaultWorldConstruct(WorldContainer runningWorldContainer) {
@@ -14,11 +13,14 @@ public class DefaultWorldConstruct extends WorldConstruct{
 
     @Override
     public void constructWorld() {
+        // TODO: 热加载
+
+        // 更新spring bean
 
     }
 
     @Override
-    public void saveWorld() {
-
+    public Boolean saveWorld() {
+        return Boolean.TRUE;
     }
 }
