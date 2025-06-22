@@ -73,13 +73,20 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
                 loadConfigurationFromLocation(configLocation.trim());
             }
 
-            log.info("Configuration resources refresh completed successfully, {} configurations loaded",
-                    getConfigurationCount());
+            log.info("Configuration resources refresh completed successfully, {} configurations loaded", getConfigurationCount());
 
         } catch (Exception e) {
             log.error("Failed to refresh configuration resources", e);
             throw new CubeException("Configuration refresh failed: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * 清空所有配置信息
+     */
+    protected void clearConfigurations() {
+        configurationMap.clear();
+        log.info("All configurations cleared");
     }
 
     /**
@@ -186,6 +193,27 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
     public void setConfigReader(ConfigReader configReader) {
         this.configReader = Objects.requireNonNull(configReader, "ConfigReader cannot be null");
         log.info("ConfigReader updated to: {}", configReader.getClass().getSimpleName());
+    }
+
+    /**
+     * 更新配置信息
+     *
+     * @param configKey 配置键
+     * @param configValue 配置值
+     */
+    protected void updateConfiguration(String configKey, JSONObject configValue) {
+        if (configKey == null || configKey.trim().isEmpty()) {
+            log.warn("Attempted to update configuration with null or empty key");
+            return;
+        }
+
+        if (configValue == null) {
+            log.warn("Attempted to update configuration with null value for key: {}", configKey);
+            configValue = new JSONObject();
+        }
+
+        configurationMap.put(configKey, configValue);
+        log.debug("Configuration updated for key: {}", configKey);
     }
 
     /**
