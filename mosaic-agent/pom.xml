@@ -65,8 +65,9 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Premain-Class>io.github.tml.mosaic.MosaicChunkAgent</Premain-Class>
-                                        <Agent-Class>io.github.tml.mosaic.MosaicChunkAgent</Agent-Class>
+                                        <Premain-Class>io.github.tml.mosaic.MosaicAgent</Premain-Class>
+                                        <Agent-Class>io.github.tml.mosaic.MosaicAgent</Agent-Class>
+                                        <Main-Class>io.github.tml.mosaic.core.injector.MosaicAgentInjector</Main-Class>
                                         <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                         <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                     </manifestEntries>
