@@ -1,14 +1,9 @@
 package io.github.tml.mosaic.entity.vo.cube;
 
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import lombok.Data;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 描述: Cube插件信息前端展示对象
@@ -34,20 +29,15 @@ public class CubeInfoVO {
     private LocalDateTime registeredTime;
     private LocalDateTime lastUpdatedTime;
 
+    @Getter
     public enum CubeStatus {
         ACTIVE("运行中"),
         INACTIVE("未激活"),
         ERROR("错误"),
         LOADING("加载中");
-
         private final String description;
-
         CubeStatus(String description) {
             this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
         }
     }
 }

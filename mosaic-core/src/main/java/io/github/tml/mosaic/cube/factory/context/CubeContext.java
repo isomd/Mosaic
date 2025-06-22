@@ -3,6 +3,8 @@ package io.github.tml.mosaic.cube.factory.context;
 import io.github.tml.mosaic.cube.factory.CubeFactory;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUID;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
+
 import java.util.List;
 
 /**
@@ -12,7 +14,6 @@ import java.util.List;
  */
 public interface CubeContext extends CubeFactory {
 
-    void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
-
-    void registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList);
+    CubeRegistrationResult registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
+    List<CubeRegistrationResult> registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList);
 }

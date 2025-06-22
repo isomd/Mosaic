@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-
 import java.util.List;
 
 /**
@@ -43,6 +42,9 @@ public class MosaicInitConfig {
         // 注册进context容器
         context.registerAllCubeDefinition(cubeDefinitions);
 
+        // 刷新容器
+        context.refresh();
+
         return context;
     }
 
@@ -65,5 +67,4 @@ public class MosaicInitConfig {
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
     }
-
 }

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import {uploadPluginJar,getCubeList} from "@/api/plugin/pluginApi";
 import {type Cube} from "@/api/plugin/pluginType";
+import {useCubeStore} from '@/store/data/useCubeStore'
+const cubeStore = useCubeStore()
 const uploadRef = ref()
 const upload = (item) => {
   uploadPluginJar(item.target.files[0]).then((res:any)=>{
@@ -14,13 +16,8 @@ const upload = (item) => {
 
 const cubeList = ref<Cube[]>([])
 const getCubeListFunction = () => {
-  getCubeList().then((res:any)=>{
-    if(res.code == 200) {
-      cubeList.value = res.data
-
-    } else {
-      //
-    }
+  cubeStore.getCubes().then((cubes:Cube[])=>{
+    cubeList.value = cubes
   })
 }
 onMounted(()=>{

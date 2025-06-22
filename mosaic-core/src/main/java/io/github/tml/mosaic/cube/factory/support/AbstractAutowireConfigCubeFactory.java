@@ -60,7 +60,7 @@ public abstract class AbstractAutowireConfigCubeFactory extends AbstractAutowire
      */
     protected void setupConfigDefinition(Cube cube, CubeDefinition cubeDefinition) throws CubeException {
         ConfigInfo configInfo = cubeDefinition.getConfigInfo();
-        if (configInfo != null) {cube.setConfigInfo(configInfo);log.debug("✓ 配置定义已设置 | CubeId: {}, 配置项数量: {}", cube.getCubeId(), configInfo.getConfigItemCount());
+        if (configInfo != null) {cube.setConfigInfo(configInfo);log.debug("✓ 配置定义已设置 | CubeId: {}, 配置项数量: {}", cube.getCubeId(), configInfo.configItemCount());
         } else {
             log.debug("无配置定义 | CubeId: {}", cube.getCubeId());
         }

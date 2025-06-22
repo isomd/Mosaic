@@ -2,6 +2,7 @@ package io.github.tml.mosaic.cube.factory.config;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 
 /**
  * 描述: Cube定义注册接口
@@ -15,5 +16,5 @@ public interface CubeDefinitionRegistry {
      * @param cubeId 指定方块Id
      * @param cubeDefinition 方块定义
      */
-    void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
+    CubeRegistrationResult registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
 }

@@ -1,14 +1,15 @@
 package io.github.tml.mosaic.util;
 
-import org.codehaus.janino.SimpleCompiler;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 
 import javax.tools.*;
 import java.io.*;
+import java.lang.instrument.Instrumentation;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @author welsir
@@ -17,6 +18,94 @@ import java.util.Map;
  */
 public class AgentUtil {
 
+    public static Instrumentation instrumentation;
+
+    public static Class<?> getClassByInst(String className) {
+        for (Class<?> clazz : instrumentation.getAllLoadedClasses()) {
+            if(clazz.getName().equals(className)){
+                return clazz;
+            }
+        }
+        throw new RuntimeException("无法找到对应类，请确保该类被加载 : " + className);
+    }
+
+
+    public static String generateClassPathByEnvironment(Class<?> targetClass) {
+
+        ClassLoader targetClassLoader = targetClass.getClassLoader();
+        try {
+            //解析当前classloader下所有依赖
+            ScanResult scanResult = new ClassGraph()
+                    .enableAllInfo()
+                    .overrideClassLoaders(targetClassLoader)
+                    .scan();
+
+            List<String> realJarPaths = new ArrayList<>();
+
+            for (URI uri : scanResult.getClasspathURIs()) {
+                String s = uri.toString();
+
+                if (s.startsWith("file:")) {
+                    // 普通文件路径，直接转 File
+                    realJarPaths.add(new File(uri).getAbsolutePath());
+                } else if (s.startsWith("jar:file:")) {
+
+                    List<String> jarPaths = getJarPaths();
+
+                    realJarPaths.addAll(jarPaths);
+                } else {
+                    throw new RuntimeException("不支持的URI类型");
+                }
+            }
+
+            return String.join(File.pathSeparator, realJarPaths);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static List<String> getJarPaths() throws IOException {
+        String fatJarPathFromClasspath = AgentUtil.getFatJarPathFromClasspath();
+
+        File fatJarFile;
+        if (fatJarPathFromClasspath == null) {
+            throw new RuntimeException("无法获取fat jar路径");
+        }
+        fatJarFile = new File(fatJarPathFromClasspath);
+        File parentDir = fatJarFile.getParentFile();
+        File outputDir = new File(parentDir, "mosaic/lib/");
+
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        List<String> jarPaths = new ArrayList<>();
+
+        try (JarFile jarFile = new JarFile(fatJarFile)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+
+                // 只解压 BOOT-INF/lib/*.jar
+                if (name.startsWith("BOOT-INF/lib/") && name.endsWith(".jar")) {
+                    String jarName = name.substring(name.lastIndexOf('/') + 1);
+                    File outFile = new File(outputDir, jarName);
+
+                    // 避免重复解压
+                    if (!outFile.exists()) {
+                        try (InputStream is = jarFile.getInputStream(entry);
+                             OutputStream os = new FileOutputStream(outFile)) {
+                            is.transferTo(os);
+                        }
+                    }
+
+                    jarPaths.add(outFile.getAbsolutePath());
+                }
+            }
+        }
+        return jarPaths;
+    }
     /**
      *  获取fat jar 包所在目录路径
      * @return

@@ -2,11 +2,17 @@
   "welcome": "欢迎使用Mosaic",
   "toggle_theme": "切换主题",
   "toggle_lang": "Switch Language",
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "confirmTitle": "确认执行？"
+  },
   "menu": {
     "craftingTable": "工作台",
     "dashboard": "控制台",
     "plugins": "插件",
-    "settings": "设置"
+    "settings": "设置",
+    "slot": "槽"
   },
   "plugins": {
     "upload": "上传",
@@ -33,5 +39,24 @@
     "worldNum": "已有世界",
     "pluginNum": "已有插件",
     "runningTime": "运行时间"
+  },
+  "slot": {
+    "add":"新 建 槽",
+    "slotId":"槽 ID",
+    "resName": "返回参数",
+    "create": "创建一个空槽",
+    "cube": "插件",
+    "extensionPackages": "拓展包",
+    "extensionPoint": "拓展点",
+    "rule": {
+      "empty": "此处不能为空"
+    },
+    "save": "保存",
+    "method": "方法",
+    "resType": "返回类型",
+    "uninstall": "卸载",
+    "setup": "安装",
+    "confirmDelete": "删除槽？",
+    "confirmUnSetup": "卸载插件？"
   }
 }

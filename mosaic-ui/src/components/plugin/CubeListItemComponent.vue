@@ -15,7 +15,7 @@ onMounted(()=>{
 </script>
 <template>
   <v-card width="100%"
-          class=" jar-card">
+          class="jar-card">
     <template v-slot:title>
       <span class="cubeName">
         {{props.cube.name}}

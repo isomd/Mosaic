@@ -2,11 +2,17 @@
   "welcome": "Welcome to Mosaic",
   "toggle_theme": "Toggle Theme",
   "toggle_lang": "切换语言",
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "confirmTitle": "Confirm the execution?"
+  },
   "menu": {
     "craftingTable": "Crafting Table",
     "dashboard": "Dashboard",
     "plugins": "Plugins",
-    "settings": "Settings"
+    "settings": "Settings",
+    "slot": "Slot"
   },
   "plugins": {
     "upload": "upload",
@@ -33,5 +39,24 @@
     "worldNum": "ACTIVE WORLD",
     "pluginNum": "PLUGIN LOADED",
     "runningTime": "RUNNING TIME"
+  },
+  "slot": {
+    "add":"ADD SLOT",
+    "slotId":"Slot ID",
+    "resName": "Result Name",
+    "create": "Create e empty slot",
+    "cube": "Plugin",
+    "extensionPackage": "Extension Package",
+    "extensionPoint": "Extension Point",
+    "rule": {
+      "empty": "You must enter a value"
+    },
+    "save": "Save",
+    "method": "Method",
+    "resType": "Result Type",
+    "uninstall": "Uninstall",
+    "setup": "Setup",
+    "confirmDelete": "Delete Slot?",
+    "confirmUnSetup": "UnSetup plugin?"
   }
 }

@@ -146,7 +146,7 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
                 } else {
                     configMap.put(cubeId, configInfo);
                     log.debug("Mapped config for cubeId: {} with {} config items",
-                            cubeId, configInfo.getConfigItemCount());
+                            cubeId, configInfo.configItemCount());
                 }
             } else {
                 log.warn("Found cube config with null or empty cubeId, skipping");
@@ -171,10 +171,10 @@ public class CubeConfigInfoCollector implements CommonInfoCollector {
                 assignedCount++;
 
                 log.debug("Assigned config to cube: {} with {} config items",
-                        cubeId, configInfo.getConfigItemCount());
+                        cubeId, configInfo.configItemCount());
 
                 // 验证必填配置项（可选的警告性检查）
-                List<String> requiredItems = configInfo.getRequiredConfigItems()
+                List<String> requiredItems = configInfo.requiredConfigItems()
                         .stream()
                         .map(ConfigItem::getName).collect(Collectors.toList());
 

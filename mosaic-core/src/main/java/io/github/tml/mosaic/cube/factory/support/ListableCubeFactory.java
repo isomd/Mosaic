@@ -7,4 +7,5 @@ import io.github.tml.mosaic.cube.factory.config.CubeDefinitionRegistry;
  */
 public abstract class ListableCubeFactory extends AbstractAutowireInitCubeFactory
         implements CubeDefinitionRegistry, ConfigurableCubeFactory {
+
 }
