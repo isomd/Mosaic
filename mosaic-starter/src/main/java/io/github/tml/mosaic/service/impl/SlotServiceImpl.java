@@ -5,6 +5,7 @@ import io.github.tml.mosaic.domain.SlotDomain;
 import io.github.tml.mosaic.entity.dto.SlotDTO;
 import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
+import io.github.tml.mosaic.entity.resp.CreateSlotResp;
 import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.service.SlotService;
 import io.github.tml.mosaic.util.R;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,22 +24,23 @@ public class SlotServiceImpl implements SlotService {
     private SlotDomain slotDomain;
 
     @Override
-    public R<?> getSlotList() {
+    public List<SlotVO> getSlotList() {
         List<SlotDTO> slotList = slotDomain.getSlotList();
-        List<SlotVO> slotVOS = slotList.stream().map(SlotConvert::convert2VO).collect(Collectors.toList());
-        return R.success(Map.of(
-                "slotList", slotVOS
-        ));
+        return slotList.stream().map(SlotConvert::convert2VO).collect(Collectors.toList());
     }
 
     @Override
-    public R<?> createOrSetupSlot(AppendSlotReq appendSlotReq) {
+    public CreateSlotResp createOrSetupSlot(AppendSlotReq appendSlotReq) {
         String slotId = appendSlotReq.getSlotId();
+
+        CreateSlotResp createSlotResp = new CreateSlotResp();
         // 创建槽
         if (!slotDomain.hasSlot(slotId)) {
             if (slotDomain.createSlot(slotId).isEmpty()) {
                 log.error("create slot failed, slotId:{}", slotId);
-                return R.error("create slot failed");
+                createSlotResp.setErrorMsg("create slot failed");
+                createSlotResp.setSuccess(false);
+                return createSlotResp;
             }
         }
 
@@ -47,25 +48,24 @@ public class SlotServiceImpl implements SlotService {
         if(appendSlotReq.isSetupFlag()){
             SlotSetupDTO slotSetupDTO = SlotConvert.appendSlotReqConvert2SetupDTO(appendSlotReq);
             if (!slotDomain.setupSlot(slotSetupDTO)) {
-                log.error("setup slot failed, slotId:{}", slotId);
-                return R.error("setup slot failed");
+                createSlotResp.setErrorMsg("create slot failed");
+                createSlotResp.setSuccess(false);
+                return createSlotResp;
             }
         }
-        return R.success();
+
+        createSlotResp.setSuccess(true);
+        return createSlotResp;
     }
 
     @Override
-    public R<?> unSetupSlot(String slotId) {
-        if (slotDomain.unSetupSlot(slotId)) {
-            return R.success();
-        }else{
-            return R.error("unSetup slot failed");
-        }
+    public boolean unSetupSlot(String slotId) {
+        return slotDomain.unSetupSlot(slotId);
     }
 
     @Override
-    public R<?> deleteSlot(String slotId) {
+    public boolean deleteSlot(String slotId) {
         slotDomain.removeSlot(slotId);
-        return R.success();
+        return true;
     }
 }
