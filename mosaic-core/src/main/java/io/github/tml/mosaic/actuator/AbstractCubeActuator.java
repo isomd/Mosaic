@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
+import java.util.Optional;
 
 import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
 
@@ -35,6 +36,7 @@ public abstract class AbstractCubeActuator implements CubeActuator{
             MosaicResult mosaicResult = null;
             if(returnType.isAssignableFrom(MosaicResult.class)){
                 mosaicResult = (MosaicResult) obj;
+                mosaicResult.put(DEFAULT_RETURN_NAME, obj);
             }else if(!MosaicVoid.isVoid(returnType)){
                 mosaicResult= MosaicResult.build()
                         .put(DEFAULT_RETURN_NAME, obj)
@@ -42,7 +44,9 @@ public abstract class AbstractCubeActuator implements CubeActuator{
             }
             ExtPointResult extPointResult = executeContext.getExPoint().getReturnResult();
             if(Objects.nonNull(mosaicResult)){
-                String resName = executeContext.getSlot().getSetupCubeInfo().getResName();
+                String resName = Optional.ofNullable(executeContext.getSlot().getSetupCubeInfo().getResName())
+                        .orElse(DEFAULT_RETURN_NAME);
+
                 ExtPointResult.ExtPointResultItem resultItem = extPointResult.getResultItem(resName);
                 return (T) mosaicResult.getResult(resultItem.getItemName(), resultItem.getItemClass());
             }else{

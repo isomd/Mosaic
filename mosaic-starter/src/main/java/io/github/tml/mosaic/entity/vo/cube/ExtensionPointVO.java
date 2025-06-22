@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.entity.vo.cube;
 
 import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
+import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
 import lombok.Data;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,12 @@ public class ExtensionPointVO {
 
         String[] parameterTypes = extractParameterTypes(definition);
         String returnType = extractReturnType(definition);
-        PointResultVO pointResult = PointResultVO.fromDefinition(definition);
+        PointResultVO pointResult = new PointResultVO();
+
+        PointResultDefinition pointResultDefinitions = definition.getPointResultDefinitions();
+        for (PointResultDefinition.PointResultItemDefinition pointResultItemDefinition : pointResultDefinitions.getPointsResultInfoList()) {
+            pointResult.getPointItems().add(new PointResultVO.PointItemVO(pointResultItemDefinition.getItemName(), pointResultItemDefinition.getItemClass(), pointResultItemDefinition.getDescription()));
+        }
 
         return ExtensionPointVO.builder()
                 .id(definition.getId())
