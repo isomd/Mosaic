@@ -13,6 +13,7 @@ import java.util.Properties;
 /**
  * 描述: 第三步：属性填充之后的配置校验与设置操作
  * 职责：专门负责配置定义设置、配置提取、配置校验和配置注入
+ *
  * @author suifeng
  * 日期: 2025/6/6
  */
@@ -60,7 +61,9 @@ public abstract class AbstractAutowireConfigCubeFactory extends AbstractAutowire
      */
     protected void setupConfigDefinition(Cube cube, CubeDefinition cubeDefinition) throws CubeException {
         ConfigInfo configInfo = cubeDefinition.getConfigInfo();
-        if (configInfo != null) {cube.setConfigInfo(configInfo);log.debug("✓ 配置定义已设置 | CubeId: {}, 配置项数量: {}", cube.getCubeId(), configInfo.configItemCount());
+        if (configInfo != null) {
+            cube.setConfigInfo(configInfo);
+            log.debug("✓ 配置定义已设置 | CubeId: {}, 配置项数量: {}", cube.getCubeId(), configInfo.configItemCount());
         } else {
             log.debug("无配置定义 | CubeId: {}", cube.getCubeId());
         }

@@ -2,8 +2,13 @@ package io.github.tml.mosaic.cube.factory.context.support;
 
 import com.alibaba.fastjson.JSONObject;
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.core.tools.param.ConfigInfo;
+import io.github.tml.mosaic.core.tools.param.ConfigItem;
+import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.config.ConfigReader;
 import io.github.tml.mosaic.cube.config.YamlConfigReader;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,8 +39,38 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
      */
     private ConfigReader configReader;
 
-    public void updateConfigurations(String cubeId, JSONObject config) {
-        configurationMap.put(cubeId, config);
+    @Override
+    public Map<String, Object> updateConfigurations(String cubeId, Map<String, Object> config) {
+        CubeDefinition cubeDefinition = getAllCubeDefinitionMap().get(new GUUID(cubeId));
+        ConfigInfo configInfo = null;
+        if (cubeDefinition == null) {
+            log.error("cube definition not found, cubeId:{}", cubeId);
+            throw new CubeException("cube definition not found, cubeId:" + cubeId);
+        } else {
+            configInfo = cubeDefinition.getConfigInfo();
+        }
+
+        // 校验必填项
+        List<String> missing = configInfo.validateRequiredConfigs(config);
+        List<String> result = new ArrayList<>(missing);
+
+        // 校验每个配置项
+        for (Map.Entry<String, Object> entry : config.entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            ConfigItem item = configInfo.getConfigItem(name);
+
+            if (item != null && !item.getValidationResult(value).isValid()) {
+                result.add("Invalid config value: " + name + " = " + value);
+            }
+        }
+
+        if (result.isEmpty()) {
+            throw new CubeException("cube configs update failed !!!: " + String.join(", ", result));
+        }
+
+        configurationMap.put(cubeId, (JSONObject) config);
+        return config;
     }
 
     /**
@@ -229,7 +264,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
      * @return 配置对象，如果不存在则返回空的JSONObject
      */
     @Override
-    public JSONObject getCubeConfiguration(String configKey) {
+    public Map<String, Object> getCubeConfiguration(String configKey) {
         if (configKey == null || configKey.trim().isEmpty()) {
             log.warn("Attempted to get configuration with null or empty key");
             return new JSONObject();

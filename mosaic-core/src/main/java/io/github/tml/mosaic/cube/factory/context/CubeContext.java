@@ -7,6 +7,7 @@ import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 描述: Cube上下文接口
@@ -20,4 +21,8 @@ public interface CubeContext extends CubeFactory {
     List<CubeRegistrationResult> registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList);
 
     void preInstantiateSingletons() throws CubeException;
+
+    Map<String, Object> getCubeConfiguration(String cubeId);
+
+    Map<String, Object> updateConfigurations(String cubeId, Map<String, Object> config);
 }

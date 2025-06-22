@@ -54,7 +54,7 @@ public class ConfigInfo {
         requiredConfigItems().forEach(requiredItem -> {
             String itemName = requiredItem.getName();
             if (!actualValues.containsKey(itemName) || !requiredItem.validateValue(actualValues.get(itemName))) {
-                missingConfigs.add(itemName);
+                missingConfigs.add("Missing required config : " + itemName);
             }
         });
         return missingConfigs;

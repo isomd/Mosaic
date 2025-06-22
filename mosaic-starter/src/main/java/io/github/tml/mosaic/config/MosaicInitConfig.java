@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.config;
 
+import com.alibaba.fastjson.JSONObject;
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.InfoContextConverter;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import java.util.List;
+import java.util.Map;
 
 /**
  * mosaic框架初始化
@@ -46,6 +48,12 @@ public class MosaicInitConfig {
 
         // 刷新容器
         context.refresh();
+
+        Map<String, Object> cubeConfiguration = context.getCubeConfiguration("ai.chat.cube");
+
+        cubeConfiguration.remove("apiKey");
+
+        Map<String, Object> stringObjectMap = context.updateConfigurations("ai.chat.cube", cubeConfiguration);
 
         return context;
     }

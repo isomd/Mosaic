@@ -36,8 +36,6 @@ public abstract class AbstractCubeContext implements CubeContext {
         return getCube(cubeId, configMap);
     }
 
-    protected abstract Map<String, Object> getCubeConfiguration(String cubeId);
-
     @Override
     public Cube getCube(GUID cubeId, Object... args) throws CubeException {
         return getBeanFactory().getCube(cubeId, args);

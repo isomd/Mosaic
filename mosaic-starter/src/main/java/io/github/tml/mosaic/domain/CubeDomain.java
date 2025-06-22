@@ -37,7 +37,6 @@ public class CubeDomain {
     private final CubeContext cubeContext;
     private final InfoContextInstaller installer;
 
-
     /**
      * 获取所有Cube列表
      */
