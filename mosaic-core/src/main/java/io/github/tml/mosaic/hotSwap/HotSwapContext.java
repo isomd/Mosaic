@@ -23,4 +23,15 @@ public class HotSwapContext {
         INSERT_AFTER        //行号下插入代码段
     }
 
+    public void putClassProxyCode(String className, String proxyCode) {
+        classProxyCode.put(className, proxyCode);
+    }
+
+    public Boolean ProxyCodeContainsKey(String className) {
+        return classProxyCode.containsKey(className);
+    }
+
+    public String getProxyCode(String className) {
+        return classProxyCode.get(className);
+    }
 }

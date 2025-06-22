@@ -27,24 +27,24 @@ public class HotSwapDomain {
      */
     public String proxyCodeByFullName(HotSwapDTO dto) {
 
-        String code = getProxyCode(dto.getFullName());
+        String code = getProxyCodeByClassFullName(dto.getFullName());
         String proxy = ChunkHotSwapUtil.modify(code,
                 dto.getTargetLine(),
                 dto.getType(),
                 dto::getProxyCode,
                 Set.of(CubeTemplateUtil.getCubeImportPath()));
-        context.getClassProxyCode().put(dto.getFullName(), proxy);
-
+        context.putClassProxyCode(dto.getFullName(), proxy);
         return proxy;
     }
 
-    public String getProxyCode(String fullName) {
-        if(context.getClassProxyCode().containsKey(fullName)) {
-            return context.getClassProxyCode().get(fullName);
+    public String getProxyCodeByClassFullName(String fullName) {
+
+        if(context.ProxyCodeContainsKey(fullName)) {
+            return context.getProxyCode(fullName);
         }
 
         String code = ChunkHotSwapUtil.decompileClassFromClassName(fullName);
-        context.getClassProxyCode().put(fullName,code);
+        context.putClassProxyCode(fullName,code);
         return code;
     }
 
