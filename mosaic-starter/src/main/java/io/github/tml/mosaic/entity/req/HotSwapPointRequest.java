@@ -1,11 +1,14 @@
 package io.github.tml.mosaic.entity.req;
 
+import lombok.Data;
+
 /**
  * @author welsir
  * @description :
  * @date 2025/6/22
  */
 
+@Data
 public class HotSwapPointRequest {
 
     private String slotId;
@@ -24,5 +27,5 @@ public class HotSwapPointRequest {
 
     private String className;
     private int lineNumber;
-
+    private String ChangeType;
 }
