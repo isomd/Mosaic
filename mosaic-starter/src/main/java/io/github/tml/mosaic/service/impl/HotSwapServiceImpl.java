@@ -20,13 +20,12 @@ public class HotSwapServiceImpl implements HotSwapService {
 
     @Override
     public R<?> getClassStrByClassFullName(String classFullName) {
-        return R.success(domain.getProxyCode(classFullName));
+        return R.success(domain.getProxyCodeByClassFullName(classFullName));
     }
 
     @Override
     public R<?> proxyCode(HotSwapDTO dto) {
         return R.success(domain.proxyCodeByFullName(dto));
     }
-
 
 }
