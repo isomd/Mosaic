@@ -21,7 +21,13 @@ public class DefaultSingletonCubeRegistry implements SingletonCubeRegistry {
         return singletonCubes.get(cubeId);
     }
 
-    protected void addSingleton(GUID cubeId, Cube cube) {
+    @Override
+    public void removeSingleton(GUID cubeId) {
+        singletonCubes.remove(cubeId);
+    }
+
+    @Override
+    public void addSingleton(GUID cubeId, Cube cube) {
         singletonCubes.put(cubeId, cube);
     }
 }

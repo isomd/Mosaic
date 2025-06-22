@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.cube.factory.context;
 
+import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.cube.factory.CubeFactory;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUID;
@@ -15,5 +16,8 @@ import java.util.List;
 public interface CubeContext extends CubeFactory {
 
     CubeRegistrationResult registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition);
+
     List<CubeRegistrationResult> registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList);
+
+    void preInstantiateSingletons() throws CubeException;
 }

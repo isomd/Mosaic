@@ -1,13 +1,13 @@
 package io.github.tml.mosaic.core.event.listener;
 
-import io.github.tml.mosaic.core.event.event.CubeEvent;
+import io.github.tml.mosaic.core.event.event.MosaicEvent;
 
 /**
  * 描述: 事件监听器基础接口
  * @author suifeng
  * 日期: 2025/6/13
  */
-public interface CubeEventListener<T extends CubeEvent> {
+public interface MosaicEventListener<T extends MosaicEvent> {
 
     /**
      * 处理事件

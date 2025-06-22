@@ -10,7 +10,7 @@ import lombok.Data;
  * 日期: 2025/6/13
  */
 @Data
-public class CubeDefinitionRegisteredEvent extends CubeEvent {
+public class CubeDefinitionRegisteredEvent extends MosaicEvent {
 
     private final GUID cubeId;
     private final CubeDefinition cubeDefinition;

@@ -7,9 +7,8 @@ import io.github.tml.mosaic.cube.config.YamlConfigReader;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 描述: 配置加载器Cube上下文抽象实现
@@ -23,10 +22,21 @@ import java.util.Objects;
 public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshableCubeContext {
 
     /**
+     * 配置信息存储容器
+     * Key: YAML文件中的顶级配置键
+     * Value: 对应配置键下的完整配置对象
+     */
+    protected final Map<String, JSONObject> configurationMap = new ConcurrentHashMap<>();
+
+    /**
      * 配置读取器
      *  获取当前配置读取器
      */
     private ConfigReader configReader;
+
+    public void updateConfigurations(String cubeId, JSONObject config) {
+        configurationMap.put(cubeId, config);
+    }
 
     /**
      * 构造函数，初始化配置读取器
@@ -60,8 +70,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
                 return;
             }
 
-            log.info("Loading configurations from {} locations: {}",
-                    configLocations.length, Arrays.toString(configLocations));
+            log.info("Loading configurations from {} locations: {}", configLocations.length, Arrays.toString(configLocations));
 
             // 逐个加载配置文件
             for (String configLocation : configLocations) {
@@ -69,11 +78,8 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
                     log.warn("Skipping null or empty configuration location");
                     continue;
                 }
-
                 loadConfigurationFromLocation(configLocation.trim());
             }
-
-            log.info("Configuration resources refresh completed successfully, {} configurations loaded", getConfigurationCount());
 
         } catch (Exception e) {
             log.error("Failed to refresh configuration resources", e);
@@ -214,6 +220,79 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
 
         configurationMap.put(configKey, configValue);
         log.debug("Configuration updated for key: {}", configKey);
+    }
+
+    /**
+     * 获取指定键的配置信息
+     *
+     * @param configKey 配置键
+     * @return 配置对象，如果不存在则返回空的JSONObject
+     */
+    @Override
+    public JSONObject getCubeConfiguration(String configKey) {
+        if (configKey == null || configKey.trim().isEmpty()) {
+            log.warn("Attempted to get configuration with null or empty key");
+            return new JSONObject();
+        }
+
+        JSONObject config = configurationMap.get(configKey);
+        return config != null ? config : new JSONObject();
+    }
+
+    /**
+     * 将JSONObject转换为Map<String, Object>
+     * 支持嵌套对象的递归转换，确保类型安全和性能优化
+     */
+    private Map<String, Object> convertJsonObjectToMap(JSONObject jsonObject) {
+        if (jsonObject == null || jsonObject.isEmpty()) {
+            log.debug("Empty or null JSONObject provided, returning empty map");
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> resultMap = new HashMap<>(jsonObject.size());
+
+        try {
+            for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                if (value instanceof JSONObject) {
+                    resultMap.put(key, convertJsonObjectToMap((JSONObject) value));
+                } else if (value instanceof com.alibaba.fastjson.JSONArray) {
+                    resultMap.put(key, convertJsonArrayToList((com.alibaba.fastjson.JSONArray) value));
+                } else {
+                    resultMap.put(key, value);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error converting JSONObject to Map for configuration: {}", jsonObject, e);
+            throw new CubeException("Failed to convert configuration to map", e);
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 处理JSONArray到List的转换
+     */
+    private List<Object> convertJsonArrayToList(com.alibaba.fastjson.JSONArray jsonArray) {
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Object> resultList = new ArrayList<>(jsonArray.size());
+
+        for (Object item : jsonArray) {
+            if (item instanceof JSONObject) {
+                resultList.add(convertJsonObjectToMap((JSONObject) item));
+            } else if (item instanceof com.alibaba.fastjson.JSONArray) {
+                resultList.add(convertJsonArrayToList((com.alibaba.fastjson.JSONArray) item));
+            } else {
+                resultList.add(item);
+            }
+        }
+
+        return resultList;
     }
 
     /**
