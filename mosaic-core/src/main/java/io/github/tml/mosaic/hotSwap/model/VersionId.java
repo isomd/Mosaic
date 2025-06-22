@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.model;
+package io.github.tml.mosaic.hotSwap.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

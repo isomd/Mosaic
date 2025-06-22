@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.async;
+package io.github.tml.mosaic.hotSwap.async;
 
 import io.github.tml.mosaic.core.components.DeployContext;
 

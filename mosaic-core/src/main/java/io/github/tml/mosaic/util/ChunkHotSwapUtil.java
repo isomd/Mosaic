@@ -9,7 +9,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import io.github.tml.mosaic.core.chunk.ChunkManager;
+import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 
@@ -112,7 +112,7 @@ public class ChunkHotSwapUtil {
     private static void processMethodStatements(
             CompilationUnit cu,
             int targetLine,
-            ChunkManager.InsertType operation,
+            HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier
     ) {
         cu.findAll(MethodDeclaration.class).forEach(method -> {
@@ -132,7 +132,7 @@ public class ChunkHotSwapUtil {
             NodeList<Statement> stmts,
             int index,
             Statement stmt,
-            ChunkManager.InsertType operation,
+            HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier
     ) {
         String newCode = codeSupplier.get().trim();
@@ -183,7 +183,7 @@ public class ChunkHotSwapUtil {
     public static String modify(
             String sourceCode,
             int targetLine,
-            ChunkManager.InsertType operation,
+            HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier,
             Set<String> importsToAdd
     ) {

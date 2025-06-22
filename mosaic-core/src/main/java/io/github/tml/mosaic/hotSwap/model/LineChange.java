@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.core.model;
+package io.github.tml.mosaic.hotSwap.model;
 
 /**
  * @author welsir
