@@ -69,7 +69,9 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
             throw new CubeException("cube configs update failed : { " + String.join(", ", result) + " } ");
         }
 
-        configurationMap.put(cubeId, (JSONObject) config);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.putAll(config);
+        configurationMap.put(cubeId, jsonObject);
 
         // TODO 如果是单例并且，需要重新移除并且初始化
         if (cubeDefinition.getModel().equals("singleton")) {
