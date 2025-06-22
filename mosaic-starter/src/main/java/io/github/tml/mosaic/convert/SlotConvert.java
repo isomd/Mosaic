@@ -9,6 +9,10 @@ import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.slot.Slot;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Optional;
+
+import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
+
 public class SlotConvert {
 
     public static SlotDTO convert2DTO(Slot slot) {
@@ -36,7 +40,7 @@ public class SlotConvert {
         SlotSetupDTO slotSetupDTO = new SlotSetupDTO();
         slotSetupDTO.setSlotId(appendSlotReq.getSlotId());
         slotSetupDTO.setCubeId(new GUUID(appendSlotReq.getCubeId()));
-        slotSetupDTO.setResName(appendSlotReq.getResName());
+        slotSetupDTO.setResName(Optional.ofNullable(appendSlotReq.getResName()).orElse(DEFAULT_RETURN_NAME));
         slotSetupDTO.setExPointId(new DotNotationId(appendSlotReq.getExPointId()));
         slotSetupDTO.setExPackageId(new DotNotationId(appendSlotReq.getExPackageId()));
         return slotSetupDTO;
