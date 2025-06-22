@@ -1,8 +1,10 @@
 package io.github.tml.mosaic.config;
 
+import com.alibaba.fastjson.JSONObject;
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.InfoContextConverter;
+import io.github.tml.mosaic.cube.config.YamlConfigReader;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
@@ -43,6 +45,10 @@ public class MosaicInitConfig {
         // 注册进context容器
         context.registerAllCubeDefinition(cubeDefinitions);
 
+        YamlConfigReader yamlConfigReader = new YamlConfigReader();
+        JSONObject jsonObject = yamlConfigReader.readYamlAsJson();
+
+
         return context;
     }
 
@@ -65,5 +71,4 @@ public class MosaicInitConfig {
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
     }
-
 }

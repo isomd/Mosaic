@@ -37,7 +37,7 @@ public class ConfigInfo {
     /**
      * 获取所有必填配置项
      */
-    public List<ConfigItem> getRequiredConfigItems() {
+    public List<ConfigItem> requiredConfigItems() {
         return Optional.ofNullable(config)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -51,7 +51,7 @@ public class ConfigInfo {
     public List<String> validateRequiredConfigs(Map<String, Object> actualValues) {
         List<String> missingConfigs = new ArrayList<>();
 
-        getRequiredConfigItems().forEach(requiredItem -> {
+        requiredConfigItems().forEach(requiredItem -> {
             String itemName = requiredItem.getName();
             if (!actualValues.containsKey(itemName) || !requiredItem.validateValue(actualValues.get(itemName))) {
                 missingConfigs.add(itemName);
@@ -70,9 +70,7 @@ public class ConfigInfo {
     /**
      * 获取配置项数量
      */
-    public int getConfigItemCount() {
-        return Optional.ofNullable(config)
-                .map(List::size)
-                .orElse(0);
+    public int configItemCount() {
+        return Optional.ofNullable(config).map(List::size).orElse(0);
     }
 }

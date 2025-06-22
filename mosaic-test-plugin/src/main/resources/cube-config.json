@@ -1,5 +1,68 @@
 [
   {
+    "id": "ai.chat.cube",
+    "config": [
+      {
+        "name": "apiEndpoint",
+        "type": "string",
+        "desc": "AI服务API端点地址",
+        "required": true,
+        "defaultValue": "https://api.openai.com/v1/chat/completions"
+      },
+      {
+        "name": "apiKey",
+        "type": "string",
+        "desc": "AI服务API密钥",
+        "required": true
+      },
+      {
+        "name": "model",
+        "type": "string",
+        "desc": "使用的AI模型名称",
+        "required": true,
+        "defaultValue": "gpt-3.5-turbo",
+        "validation": {
+          "allowedValues": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "claude-3-sonnet"]
+        }
+      },
+      {
+        "name": "maxTokens",
+        "type": "integer",
+        "desc": "最大token数量",
+        "required": false,
+        "defaultValue": 2048
+      },
+      {
+        "name": "temperature",
+        "type": "double",
+        "desc": "生成文本的随机性控制(0.0-2.0)",
+        "required": false,
+        "defaultValue": 0.7
+      },
+      {
+        "name": "timeout",
+        "type": "integer",
+        "desc": "请求超时时间(秒)",
+        "required": false,
+        "defaultValue": 30
+      },
+      {
+        "name": "enableLogging",
+        "type": "boolean",
+        "desc": "是否启用请求日志记录",
+        "required": false,
+        "defaultValue": true
+      },
+      {
+        "name": "retryCount",
+        "type": "integer",
+        "desc": "失败重试次数",
+        "required": false,
+        "defaultValue": 3
+      }
+    ]
+  },
+  {
     "id": "system.log.cube.p",
     "config": [
       {

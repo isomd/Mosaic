@@ -6,10 +6,12 @@ import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import io.github.tml.mosaic.cube.factory.support.ListableCubeFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 描述: Cube上下文抽象类实现
@@ -48,15 +50,18 @@ public abstract class AbstractCubeContext implements CubeContext {
     }
 
     @Override
-    public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
-        getBeanFactory().registerCubeDefinition(cubeId, cubeDefinition);
+    public CubeRegistrationResult registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
+        return getBeanFactory().registerCubeDefinition(cubeId, cubeDefinition);
     }
 
     @Override
-    public void registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList) {
-        for (CubeDefinition cubeDefinition : cubeDefinitionList) {
-            registerCubeDefinition(new GUUID(cubeDefinition.getId()), cubeDefinition);
-        }
+    public List<CubeRegistrationResult> registerAllCubeDefinition(List<CubeDefinition> cubeDefinitionList) {
+        return cubeDefinitionList.stream()
+                .map(def -> {
+                    GUID cubeId = new GUUID(def.getId());
+                    return registerCubeDefinition(cubeId, def);
+                })
+                .collect(Collectors.toList());
     }
 
     protected abstract void loadCubeDefinitions(ListableCubeFactory cubeFactory);

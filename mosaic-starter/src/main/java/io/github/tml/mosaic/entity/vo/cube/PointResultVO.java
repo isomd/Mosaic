@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.vo;
+package io.github.tml.mosaic.entity.vo.cube;
 
 import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
 import lombok.Data;

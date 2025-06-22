@@ -50,7 +50,6 @@ public class ValidationResult {
         if (other == null || other.isValid()) {
             return this;
         }
-        
         this.valid = false;
         if (this.errorMessages == null) {
             this.errorMessages = new ArrayList<>();

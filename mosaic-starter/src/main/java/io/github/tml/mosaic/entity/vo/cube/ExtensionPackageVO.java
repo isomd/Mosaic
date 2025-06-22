@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.vo;
+package io.github.tml.mosaic.entity.vo.cube;
 
 import io.github.tml.mosaic.cube.factory.definition.ExtensionPackageDefinition;
 import lombok.Data;
@@ -50,18 +50,5 @@ public class ExtensionPackageVO {
                 .extensionPoints(extensionPointVOs)
                 .extensionPointCount(extensionPointVOs.size())
                 .build();
-    }
-
-    /**
-     * 批量转换ExtensionPackageDefinition列表
-     */
-    public static List<ExtensionPackageVO> fromDefinitions(List<ExtensionPackageDefinition> definitions) {
-        if (definitions == null || definitions.isEmpty()) {
-            return List.of();
-        }
-        
-        return definitions.stream()
-                .map(ExtensionPackageVO::fromDefinition)
-                .collect(Collectors.toList());
     }
 }

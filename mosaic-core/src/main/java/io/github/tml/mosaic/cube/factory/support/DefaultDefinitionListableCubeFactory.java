@@ -7,6 +7,7 @@ import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -29,34 +30,33 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
     }
 
     @Override
-    public void registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
+    public CubeRegistrationResult registerCubeDefinition(GUID cubeId, CubeDefinition cubeDefinition) {
         if (cubeId == null) {
-            throw new IllegalArgumentException("CubeId cannot be null");
+            return new CubeRegistrationResult(null, false, "CubeId cannot be null");
         }
         if (cubeDefinition == null) {
-            throw new IllegalArgumentException("CubeDefinition cannot be null");
+            return new CubeRegistrationResult(cubeId, false, "CubeDefinition cannot be null");
         }
 
         if (cubeDefinitionMap.containsKey(cubeId)) {
-            log.warn("CubeDefinition {} is already registered", cubeId);
-            return;
+            String warnMsg = String.format("CubeDefinition [%s] is already registered", cubeId);
+            log.warn(warnMsg);
+            return new CubeRegistrationResult(cubeId, false, warnMsg);
         }
 
         // 注册CubeDefinition
-        CubeDefinition previousDefinition = cubeDefinitionMap.put(cubeId, cubeDefinition);
+        cubeDefinitionMap.put(cubeId, cubeDefinition);
 
-        // 发布事件
+        // 发布事件（简化异常处理）
         try {
             CubeDefinitionRegisteredEvent event = new CubeDefinitionRegisteredEvent(this, cubeId, cubeDefinition);
             eventBroadcaster.broadcastEvent(event);
-
-            log.debug("Successfully registered CubeDefinition [{}] and published event", cubeId);
+            log.debug("Registered CubeDefinition [{}]", cubeId);
+            return new CubeRegistrationResult(cubeId, true, "Registration successful");
         } catch (Exception e) {
-            log.error("Failed to publish CubeDefinitionRegisteredEvent for cubeId [{}]", cubeId, e);
-        }
-
-        if (previousDefinition != null) {
-            log.info("Replaced existing CubeDefinition for cubeId [{}]", cubeId);
+            String errorMsg = String.format("Event publish failed for cubeId [%s]", cubeId);
+            log.error(errorMsg, e);
+            return new CubeRegistrationResult(cubeId, false, errorMsg + ": " + e.getMessage());
         }
     }
 

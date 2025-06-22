@@ -13,12 +13,11 @@ import java.util.Map;
 @Slf4j
 public class YamlConfigReader implements ConfigReader {
 
-
     private String yamlFilePath;
 
     // 默认构造方法，指定默认 YAML 文件路径
     public YamlConfigReader() {
-        this.yamlFilePath = "application.yaml"; // 默认 YAML 文件路径
+        this.yamlFilePath = "application.yml"; // 默认 YAML 文件路径
     }
 
     // 自定义 YAML 文件路径的构造方法
