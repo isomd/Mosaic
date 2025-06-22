@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {defineProps,defineEmits} from "vue";
-import {type Cube} from "@/api/plugin/pluginType";
+import {type Cube, statisticsItemName} from "@/api/plugin/pluginType";
 
 const emit = defineEmits(['input'])
 const props = defineProps({
@@ -77,6 +77,8 @@ const formatConfigValue = (value) => {
         </v-alert>
 
         <v-expansion-panels class="mb-4">
+          <v-card-title class="subtitle-1">插件功能拓展包</v-card-title>
+          <v-divider></v-divider>
           <v-expansion-panel v-for="(pkg, i) in pluginData.extensionPackages" :key="i">
             <v-expansion-panel-title>
               {{ pkg.name }} <v-chip small class="ml-2">{{ pkg.id }}</v-chip>
@@ -117,7 +119,7 @@ const formatConfigValue = (value) => {
             <v-simple-table dense>
               <tbody>
               <tr v-for="(value, key) in pluginData.statistics" :key="key">
-                <td class="font-weight-bold">{{ $t(`plugins.cube.${key}`) }}</td>
+                <td class="font-weight-bold">{{ statisticsItemName[$t(`plugins.cube.${key}`)] }}</td>
                 <td class="text-right">{{ value }}</td>
               </tr>
               </tbody>

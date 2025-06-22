@@ -69,3 +69,12 @@ export interface Statistics {
     totalExtensionPoints: number;
     [property: string]: any;
 }
+
+export const statisticsItemName = {
+    "totalExtensionPackages": "扩展包总数",
+    "totalExtensionPoints": "扩展点总数",
+    "syncExtensionPoints": "同步扩展点数",
+    "asyncExtensionPoints": "异步扩展点数",
+    "averagePriority": "平均优先级",
+    "memoryUsage": "内存使用量",
+}
