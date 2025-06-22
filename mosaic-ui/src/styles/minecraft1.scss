@@ -67,6 +67,7 @@
 }
 
 html {
+  overflow: hidden;
   scroll-behavior: smooth;
 }
 
@@ -76,7 +77,6 @@ body {
   line-height: 1.8;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
 
   // 动态草地背景
   background:
@@ -200,7 +200,7 @@ body {
 // ===== Vuetify 组件重写 =====
 .v-application {
   font-family: var(--minecraft-font-family) !important;
-
+  overflow-y: scroll;
   .v-app-bar {
     @include minecraft-panel(#8B4513); // oak
     height: 80px !important;
@@ -297,7 +297,7 @@ body {
   }
 
   .v-card {
-    @include minecraft-panel(#FFFAFA); // snow
+    @include minecraft-panel(rgba(255,255,255,0.3)); // snow
     border-radius: 0 !important;
     overflow: visible !important;
     .v-card-title {
@@ -367,7 +367,8 @@ body {
   .v-card{
     @include minecraft-panel(#FFFFFF);
   }
-
+  .v-btn{
+    @include minecraft-button(#FFFFFF);  }
 }
 
 // ===== 自定义组件样式 =====
@@ -612,4 +613,15 @@ body {
   &:hover {
     background: linear-gradient(145deg, var(--mc-gold), var(--mc-acacia));
   }
+}
+// slot.vue
+.slot-list{
+  .add-slot{
+    @include minecraft-block(rgba(0,0,0,0.1));
+  }
+}
+
+// SlotListItemComponent.vue
+.slot-title{
+  @include minecraft-block(#808080); // stone
 }

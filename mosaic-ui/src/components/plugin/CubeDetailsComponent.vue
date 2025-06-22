@@ -1,3 +1,30 @@
+<script lang="ts" setup>
+import {defineProps,defineEmits} from "vue";
+import {type Cube} from "@/api/plugin/pluginType";
+
+const emit = defineEmits(['input'])
+const props = defineProps({
+  value: Boolean,
+  pluginData: {
+
+  } as Cube
+})
+const dialog = computed({
+  get() { return props.value },
+  set(val) { emit('input', val) }
+})
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleString()
+}
+const formatConfigValue = (value) => {
+  if (value === null) return 'null'
+  if (Array.isArray(value)) return value.join(', ') || '空数组'
+  if (typeof value === 'object') return JSON.stringify(value)
+  return value.toString()
+}
+
+</script>
 <template>
   <v-dialog v-model="dialog" max-width="800">
     <v-card>
@@ -101,15 +128,16 @@
         <v-card outlined>
           <v-card-title class="subtitle-1">配置信息</v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
-            <v-simple-table dense>
-              <tbody>
-              <tr v-for="(value, key) in pluginData.config" :key="key">
-                <td class="font-weight-bold">{{ $t(`plugins.cube.${key}`) }}</td>
-                <td class="text-right">{{ formatConfigValue(value) }}</td>
-              </tr>
-              </tbody>
-            </v-simple-table>
+          <v-card-text style="white-space: break-spaces">
+<!--            <v-simple-table dense>-->
+<!--              <tbody>-->
+<!--              <tr v-for="(value, key) in pluginData.config" :key="key">-->
+<!--                <td class="font-weight-bold">{{ $t(`plugins.cube.${key}`) }}</td>-->
+<!--                <td class="text-right">{{ formatConfigValue(value) }}</td>-->
+<!--              </tr>-->
+<!--              </tbody>-->
+<!--            </v-simple-table>-->
+            {{pluginData.config}}
           </v-card-text>
         </v-card>
       </v-card-text>
@@ -122,29 +150,7 @@
   </v-dialog>
 </template>
 
-<script lang="ts" setup>
-import {defineProps,defineEmits} from "vue";
-const emit = defineEmits(['input'])
-const props = defineProps({
-  value: Boolean,
-  pluginData: Object
-})
-const dialog = computed({
-  get() { return props.value },
-  set(val) { emit('input', val) }
-})
 
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString()
-}
-const formatConfigValue = (value) => {
-  if (value === null) return 'null'
-  if (Array.isArray(value)) return value.join(', ') || '空数组'
-  if (typeof value === 'object') return JSON.stringify(value)
-  return value.toString()
-}
-
-</script>
 
 <style scoped>
 .code-font {
