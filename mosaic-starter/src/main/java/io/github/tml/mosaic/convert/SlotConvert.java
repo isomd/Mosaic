@@ -9,10 +9,6 @@ import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.slot.Slot;
 import org.springframework.beans.BeanUtils;
 
-import java.util.Optional;
-
-import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
-
 public class SlotConvert {
 
     public static SlotDTO convert2DTO(Slot slot) {

@@ -87,23 +87,28 @@ const formatConfigValue = (value) => {
               <v-list dense>
                 <v-list-item>
                     <v-list-item-title>类名</v-list-item-title>
-                    <v-list-item-subtitle class="code-font">{{ pkg.className }}</v-list-item-subtitle>
+                    <v-list-item-subtitle class="code-font">
+                      {{ pkg.className }}
+                    </v-list-item-subtitle>
                 </v-list-item>
                 <v-divider></v-divider>
 
                 <v-list-item v-for="(point, j) in pkg.extensionPoints" :key="j">
                     <v-list-item-title>{{ point.extensionName }}</v-list-item-title>
                     <v-list-item-subtitle class="d-flex align-center">
-                      <v-chip x-small label class="mr-2">{{ point.methodName }}()</v-chip>
-                      <v-chip x-small label color="indigo" text-color="white">
-                        {{ point.returnType }}
-                      </v-chip>
+                      <span class="text-caption">拓展点ID: </span>
+                      <v-chip x-small label class="mr-3">{{ point.id }}</v-chip>
                     </v-list-item-subtitle>
-
+                  <v-chip x-small label color="indigo" text-color="white">
+                    {{ point.returnType }}
+                  </v-chip>
                     <div class="mt-2">
                       <span class="text-caption">参数: </span>
-                      <v-chip v-for="(param, k) in point.parameterTypes" :key="k" x-small class="mr-1">
+                      <v-chip v-if="point.parameterTypes.length > 0" v-for="(param, k) in point.parameterTypes" :key="k" x-small class="mr-1">
                         {{ param }}
+                      </v-chip>
+                      <v-chip v-else x-small class="mr-1">
+                        void
                       </v-chip>
                     </div>
                 </v-list-item>
