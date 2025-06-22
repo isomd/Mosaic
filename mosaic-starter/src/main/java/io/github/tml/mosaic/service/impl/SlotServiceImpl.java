@@ -8,7 +8,6 @@ import io.github.tml.mosaic.entity.req.AppendSlotReq;
 import io.github.tml.mosaic.entity.resp.CreateSlotResp;
 import io.github.tml.mosaic.entity.vo.slot.SlotVO;
 import io.github.tml.mosaic.service.SlotService;
-import io.github.tml.mosaic.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,27 +33,34 @@ public class SlotServiceImpl implements SlotService {
         String slotId = appendSlotReq.getSlotId();
 
         CreateSlotResp createSlotResp = new CreateSlotResp();
+        String errorMessage = null;
+        boolean isSuccess = true;
         // 创建槽
         if (!slotDomain.hasSlot(slotId)) {
             if (slotDomain.createSlot(slotId).isEmpty()) {
                 log.error("create slot failed, slotId:{}", slotId);
-                createSlotResp.setErrorMsg("create slot failed");
-                createSlotResp.setSuccess(false);
-                return createSlotResp;
+                errorMessage = "create slot failed";
+                isSuccess = false;
             }
         }
 
         // 安装槽信息
         if(appendSlotReq.isSetupFlag()){
             SlotSetupDTO slotSetupDTO = SlotConvert.appendSlotReqConvert2SetupDTO(appendSlotReq);
-            if (!slotDomain.setupSlot(slotSetupDTO)) {
-                createSlotResp.setErrorMsg("create slot failed");
-                createSlotResp.setSuccess(false);
-                return createSlotResp;
+            try {
+                if (!slotDomain.setupSlot(slotSetupDTO)) {
+                    errorMessage = "setup slot failed";
+                    isSuccess = false;
+                }
+            }catch (Exception e){
+                log.error("setup slot failed, slotId:{}, error:{}", slotId, e.getMessage());
+                errorMessage = e.getMessage();
+                isSuccess = false;
             }
         }
 
-        createSlotResp.setSuccess(true);
+        createSlotResp.setSuccess(isSuccess);
+        createSlotResp.setErrorMsg(errorMessage);
         return createSlotResp;
     }
 
