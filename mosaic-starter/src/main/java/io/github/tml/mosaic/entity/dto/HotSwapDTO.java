@@ -1,10 +1,7 @@
 package io.github.tml.mosaic.entity.dto;
 
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author welsir
@@ -13,19 +10,13 @@ import lombok.Setter;
  */
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class HotSwapDTO {
 
-    @Getter
-    @Setter
     String fullName;
-    @Getter
-    @Setter
     int targetLine;
-    @Getter
-    @Setter
     HotSwapContext.InsertType type;
-    @Getter
-    @Setter
+
     String proxyCode;
 
 }
