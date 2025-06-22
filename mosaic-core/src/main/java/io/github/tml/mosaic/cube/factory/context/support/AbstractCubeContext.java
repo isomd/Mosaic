@@ -11,9 +11,7 @@ import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import io.github.tml.mosaic.cube.factory.support.ListableCubeFactory;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,15 @@ public abstract class AbstractCubeContext implements CubeContext {
 
     @Override
     public Cube getCube(GUID cubeId) throws CubeException {
-        return getBeanFactory().getCube(cubeId);
+        if (cubeId == null) {
+            throw new CubeException("CubeId cannot be null");
+        }
+
+        // 将JSONObject转换为Map<String, Object>作为参数
+        Map<String, Object> configMap = convertJsonObjectToMap(getConfiguration(cubeId.toString()));
+
+        // 调用带参数的getCube方法
+        return getCube(cubeId, configMap);
     }
 
     @Override
@@ -91,30 +97,58 @@ public abstract class AbstractCubeContext implements CubeContext {
     }
 
     /**
-     * 获取所有配置信息的只读视图
-     *
-     * @return 配置信息的不可变映射
+     * 将JSONObject转换为Map<String, Object>
+     * 支持嵌套对象的递归转换，确保类型安全和性能优化
      */
-    public Map<String, JSONObject> getAllConfigurations() {
-        return Collections.unmodifiableMap(configurationMap);
+    private Map<String, Object> convertJsonObjectToMap(JSONObject jsonObject) {
+        if (jsonObject == null || jsonObject.isEmpty()) {
+            log.debug("Empty or null JSONObject provided, returning empty map");
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> resultMap = new HashMap<>(jsonObject.size());
+
+        try {
+            for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                if (value instanceof JSONObject) {
+                    resultMap.put(key, convertJsonObjectToMap((JSONObject) value));
+                } else if (value instanceof com.alibaba.fastjson.JSONArray) {
+                    resultMap.put(key, convertJsonArrayToList((com.alibaba.fastjson.JSONArray) value));
+                } else {
+                    resultMap.put(key, value);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error converting JSONObject to Map for configuration: {}", jsonObject, e);
+            throw new CubeException("Failed to convert configuration to map", e);
+        }
+
+        return resultMap;
     }
 
     /**
-     * 检查是否存在指定的配置键
-     *
-     * @param configKey 配置键
-     * @return 是否存在
+     * 处理JSONArray到List的转换
      */
-    public boolean hasConfiguration(String configKey) {
-        return configKey != null && configurationMap.containsKey(configKey);
-    }
+    private List<Object> convertJsonArrayToList(com.alibaba.fastjson.JSONArray jsonArray) {
+        if (jsonArray == null || jsonArray.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-    /**
-     * 获取配置数量
-     *
-     * @return 配置项数量
-     */
-    public int getConfigurationCount() {
-        return configurationMap.size();
+        List<Object> resultList = new ArrayList<>(jsonArray.size());
+
+        for (Object item : jsonArray) {
+            if (item instanceof JSONObject) {
+                resultList.add(convertJsonObjectToMap((JSONObject) item));
+            } else if (item instanceof com.alibaba.fastjson.JSONArray) {
+                resultList.add(convertJsonArrayToList((com.alibaba.fastjson.JSONArray) item));
+            } else {
+                resultList.add(item);
+            }
+        }
+
+        return resultList;
     }
 }
