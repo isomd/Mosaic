@@ -23,6 +23,9 @@ mosaic:
 system.log.cube.p:
   outputFormat: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
   retentionDays: 7
+  logLevel: DEBUG
+  maxFileSize: 1024
+  
 
 ai.chat.cube:
   apiEndpoint: https://api.siliconflow.cn/v1/chat/completions

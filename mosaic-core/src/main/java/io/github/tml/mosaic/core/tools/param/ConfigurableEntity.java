@@ -54,8 +54,7 @@ public abstract class ConfigurableEntity extends UniqueEntity {
             // 4. 设置默认值（始终执行）
             setDefaultValues();
 
-            log.debug("✓ Config processing completed | Provided: {}, Final: {}",
-                    safeConfigs.size(), configValues.size());
+            log.debug("✓ Config processing completed | Provided: {}, Final: {}", safeConfigs.size(), configValues.size());
 
         } catch (CubeException e) {
             throw e;

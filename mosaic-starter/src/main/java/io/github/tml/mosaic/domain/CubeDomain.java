@@ -9,8 +9,10 @@ import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
+import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
+import io.github.tml.mosaic.entity.vo.cube.CubeConfigVO;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.ReaderType;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,6 @@ public class CubeDomain {
     private final CubeContext cubeContext;
     private final InfoContextInstaller installer;
 
-
     /**
      * 获取所有Cube列表
      */
@@ -52,6 +54,48 @@ public class CubeDomain {
         
         log.info("Domain: Successfully retrieved {} cube definitions", result.size());
         return result;
+    }
+
+    /**
+     * 获取Cube配置信息
+     * @param cubeId Cube标识
+     */
+    public Map<String, Object> getCubeConfiguration(String cubeId) {
+        log.debug("Domain: Fetching configuration for cube ID: {}", cubeId);
+
+        try {
+            // 从上下文获取配置
+            Map<String, Object> configurations = cubeContext.getCubeConfiguration(cubeId);
+
+            log.info("Domain: Successfully retrieved configuration for cube ID: {}", cubeId);
+            return configurations;
+        } catch (Exception e) {
+            log.error("Domain: Failed to fetch configuration for cube ID: {}", cubeId, e);
+            throw new RuntimeException("获取Cube配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 更新Cube配置信息
+     * @param cubeId Cube标识
+     * @param configReq 配置更新请求
+     */
+    public Map<String, Object> updateCubeConfiguration(String cubeId, CubeConfigUpdateReq configReq) {
+        log.debug("Domain: Updating configuration for cube ID: {} with request: {}", cubeId, configReq);
+
+        try {
+            // 执行配置更新
+            Map<String, Object> updatedConfigurations = cubeContext.updateConfigurations(
+                    cubeId,
+                    configReq.getConfigurations()
+            );
+
+            log.info("Domain: Successfully updated configuration for cube ID: {}", cubeId);
+            return updatedConfigurations;
+        } catch (Exception e) {
+            log.error("Domain: Failed to update configuration for cube ID: {}", cubeId, e);
+            throw new RuntimeException("更新Cube配置失败: " + e.getMessage(), e);
+        }
     }
 
     /**

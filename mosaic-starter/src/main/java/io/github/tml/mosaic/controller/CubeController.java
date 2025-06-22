@@ -1,4 +1,5 @@
 package io.github.tml.mosaic.controller;
+import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.service.CubeService;
 import io.github.tml.mosaic.util.R;
@@ -57,5 +58,21 @@ public class CubeController {
     @GetMapping("/{cubeId}/exists")
     public R<?> checkCubeExists(@PathVariable String cubeId) {
         return cubeService.checkCubeExists(cubeId);
+    }
+
+    /**
+     * 获取指定Cube的配置信息
+     */
+    @GetMapping("/{cubeId}/getConfiguration")
+    public R<?> getCubeConfiguration(@PathVariable String cubeId) {
+        return cubeService.getCubeConfiguration(cubeId);
+    }
+
+    /**
+     * 更新指定Cube的配置信息
+     */
+    @PostMapping("/updateConfiguration")
+    public R<?> updateCubeConfiguration(@RequestBody CubeConfigUpdateReq configReq) {
+        return cubeService.updateCubeConfiguration(configReq);
     }
 }

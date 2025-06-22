@@ -20,7 +20,8 @@ public abstract class AbstractCubeFactory extends DefaultSingletonCubeRegistry i
      */
     @Override
     public Cube getCube(GUID cubeId, Object[] args) throws CubeException {
-        // 获取Cube实例
+
+        // 1. 获取Cube实例
         Cube singletonCube = getSingleton(cubeId);
         if (singletonCube != null) {
             return singletonCube;

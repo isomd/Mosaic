@@ -7,7 +7,7 @@ import java.util.List;
  * @description :
  * @date 2025/6/8
  */
-public class CubeTemplateUtil {
+public class CodeTemplateUtil {
 
     public static String buildCodeTemplate(String slotId, List<String> params){
         StringBuilder sb = new StringBuilder("GoldenShovel");

@@ -7,11 +7,10 @@ import io.github.tml.mosaic.core.event.event.CubeDefinitionRegisteredEvent;
  * @author suifeng
  * 日期: 2025/6/13
  */
-public interface CubeDefinitionRegisteredEventListener extends CubeEventListener<CubeDefinitionRegisteredEvent> {
+public interface CubeDefinitionRegisteredEventListener extends MosaicEventListener<CubeDefinitionRegisteredEvent> {
 
     @Override
     default Class<CubeDefinitionRegisteredEvent> getEventType() {
         return CubeDefinitionRegisteredEvent.class;
     }
-
 }

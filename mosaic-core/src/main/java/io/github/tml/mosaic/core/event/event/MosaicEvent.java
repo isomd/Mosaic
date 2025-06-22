@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
  * 日期: 2025/6/13
  */
 @Data
-public abstract class CubeEvent {
+public abstract class MosaicEvent {
 
     private final GUID eventId;
     private final LocalDateTime timestamp;
     private final Object source;
     
-    protected CubeEvent(Object source) {
+    protected MosaicEvent(Object source) {
         this.eventId = CommonComponent.GuidAllocator().nextGUID();
         this.timestamp = LocalDateTime.now();
         this.source = source;
