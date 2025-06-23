@@ -60,12 +60,8 @@ public class HotSwapServiceImpl implements HotSwapService {
         if(res.isSuccess()){
             //2.热更新代码
             HotSwapContext.InsertType type = hotSwapDomain.matchType(dto.getChangeType());
-            String needInsertCode = "";
-            if (HotSwapContext.InsertType.INSERT_AFTER.equals(type)) {
-                needInsertCode = CodeTemplateUtil.generateCubeTemplateBySlotName(dto.getSlotId());
-            }else{
-                needInsertCode = CodeTemplateUtil.generateCubeTemplateByParams(dto.getArgs());
-            }
+            String needInsertCode = CodeTemplateUtil.buildCodeTemplate(dto.getSlotId(), dto.getArgs());
+            ;
             HotSwapDTO hotSwapDTO = new HotSwapDTO();
             BeanUtils.copyProperties(dto, hotSwapDTO);
             hotSwapDTO.setType(type);
