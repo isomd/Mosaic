@@ -5,7 +5,10 @@
   "common": {
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "confirmTitle": "Confirm the execution?"
+    "confirmTitle": "Confirm the execution?",
+    "search": "Search",
+    "close": "Close",
+    "save": "Save"
   },
   "menu": {
     "craftingTable": "Crafting Table",
@@ -58,5 +61,10 @@
     "setup": "Setup",
     "confirmDelete": "Delete Slot?",
     "confirmUnSetup": "UnSetup plugin?"
+  },
+  "hotSwap": {
+    "lineNumber": "Line Number",
+    "slot": "Slot",
+    "className": "ClassName"
   }
 }
