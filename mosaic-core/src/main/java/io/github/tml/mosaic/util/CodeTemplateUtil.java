@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.util;
 
-import io.github.tml.mosaic.GoldenShovel;
-
 import java.util.List;
 
 /**
