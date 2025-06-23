@@ -1,6 +1,6 @@
-package io.github.tml.mosaic.doc.part;
+package io.github.tml.mosaic.core.doc.part;
 
-import io.github.tml.mosaic.doc.core.AbstractTmlDoc;
+import io.github.tml.mosaic.core.doc.core.AbstractTmlDoc;
 
 import java.util.Map;
 
