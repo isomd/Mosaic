@@ -2,6 +2,8 @@ package io.github.tml.mosaic.entity.req;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author welsir
  * @description :
@@ -26,6 +28,7 @@ public class HotSwapPointRequest {
     //----------------------------------------
 
     private String className;
-    private int lineNumber;
-    private String ChangeType;
+    private int targetLine;
+    private String changeType;
+    private List<String> args;
 }
