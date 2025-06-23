@@ -15,7 +15,7 @@ public class CodeTemplateUtil {
         StringBuilder sb = new StringBuilder("GoldenShovel");
         sb.append(".executeBootStrap()")
                 .append(".slotId(\""+slotId+"\")")
-                .append(".run("+buildParamsStr(params)+");");
+                .append(".run("+buildParamsStr(params)+")");
 
         return sb.toString();
     }

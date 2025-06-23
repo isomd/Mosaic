@@ -21,7 +21,7 @@ public class HotSwapPointDTO {
     private String oldSourceCode;
 
 
-    public static HotSwapPointDTO convert(HotSwapPointRequest dto,String oldSourceCode,String newSourceCode,HotSwapContext.InsertType type) {
+    public static HotSwapPointDTO convert(HotSwapPointRequest dto,String oldSourceCode,String newSourceCode,HotSwapContext.InsertType type,String methodName) {
 
         HotSwapPointDTO hotSwapPointDTO = new HotSwapPointDTO();
 
@@ -30,6 +30,7 @@ public class HotSwapPointDTO {
         hotSwapPointDTO.setChangeType(type);
         hotSwapPointDTO.setOldSourceCode(oldSourceCode);
         hotSwapPointDTO.setNewSourceCode(newSourceCode);
+        hotSwapPointDTO.setMethodName(methodName);
         return hotSwapPointDTO;
     }
 }
