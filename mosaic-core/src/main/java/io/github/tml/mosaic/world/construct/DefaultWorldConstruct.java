@@ -1,35 +1,39 @@
 package io.github.tml.mosaic.world.construct;
 
-import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.component.WorldComponentManager;
+import io.github.tml.mosaic.world.container.WorldContainer;
+import io.github.tml.mosaic.world.manager.WorldContainerManager;
 import io.github.tml.mosaic.world.replace.ComponentReplace;
 
 import java.util.List;
 
-public class DefaultWorldConstruct extends WorldConstruct{
-
+public class DefaultWorldConstruct extends GenerateWorldConstruct{
     private List<ComponentReplace> replaceList;
+
+    private WorldComponentManager worldComponentManager;
+
+    public DefaultWorldConstruct(WorldContainer runningWorldContainer, List<ComponentReplace> replaceList) {
+        super(runningWorldContainer);
+        this.replaceList = replaceList;
+        this.worldComponentManager = new WorldComponentManager();
+        worldComponentManager.init(runningWorldContainer);
+    }
 
     public DefaultWorldConstruct(List<ComponentReplace> replaceList) {
         this.replaceList = replaceList;
+        this.worldComponentManager = new WorldComponentManager();
+        worldComponentManager.init(WorldContainerManager.getOriginalWorldContainer());
     }
 
-    public DefaultWorldConstruct(List<ComponentReplace> replaceList, WorldContainer runningWorldContainer) {
-        super(runningWorldContainer);
-        this.replaceList = replaceList;
-    }
     @Override
-    public void constructWorld() {
-        // TODO: 热加载
-
-        // 更新spring bean
+    protected void replaceBeans() {
         for (ComponentReplace replace : replaceList){
-
+            replace.replace(worldComponentManager);
         }
     }
 
     @Override
-    public Boolean saveWorld() {
-        return Boolean.TRUE;
+    protected void hotReplaceCode() {
+
     }
 }
