@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @Getter
-public class MosaicChunkConfig {
+public class MosaicHotSwapConfig {
 
     @Value("${mosaic.chunk.bind.port:9999}")
     private int port;
