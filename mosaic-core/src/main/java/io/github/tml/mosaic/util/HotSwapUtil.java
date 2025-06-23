@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import io.github.tml.mosaic.core.execption.HotSwapException;
 import io.github.tml.mosaic.entity.vo.hotSwap.MethodMapVO;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import org.benf.cfr.reader.api.CfrDriver;
@@ -115,12 +116,20 @@ public class HotSwapUtil {
         }
     }
 
+    /**
+     * 遍历所有方法体，查找位于指定行号（targetLine）的语句，并对其进行指定的操作（如插入、删除、替换等）
+     * @param cu
+     * @param targetLine
+     * @param operation
+     * @param codeSupplier
+     */
     private static void processMethodStatements(
             CompilationUnit cu,
             int targetLine,
             HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier
     ) {
+        boolean[] flag = {false};
         cu.findAll(MethodDeclaration.class).forEach(method -> {
             method.getBody().ifPresent(body -> {
                 NodeList<Statement> stmts = body.getStatements();
@@ -129,9 +138,13 @@ public class HotSwapUtil {
                     if (stmt.getBegin().isEmpty() || stmt.getBegin().get().line != targetLine) continue;
 
                     applyOperation(stmts, i, stmt, operation, codeSupplier);
+                    flag[0] = true;
                 }
             });
         });
+        if (!flag[0]) {
+            throw new HotSwapException("修改的行号不正确: " + targetLine);
+        }
     }
 
     private static void applyOperation(
@@ -159,6 +172,13 @@ public class HotSwapUtil {
         }
     }
 
+    /**
+     * 判断 stmt 是否为赋值或变量声明
+     * 将赋值语句或变量声明的右边部分（即等号右侧）替换为新的表达式
+     * 不支持（直接抛异常）
+     * @param stmt
+     * @param newCode
+     */
     private static void replaceAssignmentRight(Statement stmt, String newCode) {
         if (!stmt.isExpressionStmt()) throw new RuntimeException("目标行非表达式语句");
 
