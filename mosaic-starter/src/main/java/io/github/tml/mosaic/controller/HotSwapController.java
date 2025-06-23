@@ -34,6 +34,11 @@ public class HotSwapController {
         return R.success(hotSwapService.getClassStrByClassFullName(classFullName));
     }
 
+    /**
+     * 热更新点创建
+     * @param hotSwapPointRequest
+     * @return
+     */
     @PostMapping("/create/point")
     public R<?> createPoint(@RequestBody HotSwapPointRequest hotSwapPointRequest){
         CreateHotSwapPointResp resp = hotSwapService.createHotSwapPoint(hotSwapPointRequest);
@@ -43,4 +48,24 @@ public class HotSwapController {
         return R.error(resp.getErrorMsg());
     }
 
+    /**
+     * 获取当前类下所有热更新点
+     * @param classFullName
+     * @return
+     */
+    @GetMapping("/getHotSwapPoints")
+    public R<?> getHotSwapPoints(@RequestParam("className") String classFullName){
+        return  R.success(hotSwapService.getHotSwapPoints(classFullName));
+    }
+
+    /**
+     * 热更新点回滚
+     * @param classFullName
+     * @param method
+     * @return
+     */
+    @PostMapping("/rollBackHotSwapPoint")
+    public R<?> rollBackHotSwapPoint(@RequestParam("className")String classFullName,@RequestParam("method")String method){
+        return R.success(hotSwapService.rollBackClassHotSwapPoint(classFullName,method));
+    }
 }
