@@ -113,20 +113,12 @@ const formatConfigValue = (value) => {
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <v-card outlined class="mb-4">
-          <v-card-title class="subtitle-1">统计信息</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-simple-table dense>
-              <tbody>
-              <tr v-for="(value, key) in pluginData.statistics" :key="key">
-                <td class="font-weight-bold">{{ statisticsItemName[$t(`plugins.cube.${key}`)] }}</td>
-                <td class="text-right">{{ value }}</td>
-              </tr>
-              </tbody>
-            </v-simple-table>
-          </v-card-text>
-        </v-card>
+        <PluginStatisticsChart
+            :statistics="pluginData.statistics"
+            :theme="isDark ? 'dark' : 'light'"
+            :animated="true"
+            :show-details="true"
+        />
 
         <ConfigDisplay :config="pluginData.config" />
 
