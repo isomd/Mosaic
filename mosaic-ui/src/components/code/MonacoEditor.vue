@@ -18,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'editor-mounted'])
+const emit = defineEmits(['update:modelValue', 'editor-mounted','clickAdd'])
 
 const container = ref(null)
 let editor = ref(null)
@@ -62,7 +62,7 @@ onMounted(() => {
 
   </div>
   <div class="line" v-for="i in lineCount">
-    <div class="add" @click="console.log(i)">＋</div>
+    <div class="add" @click="$emit('clickAdd',i)">＋</div>
     <div class="underline"></div>
   </div>
 </template>

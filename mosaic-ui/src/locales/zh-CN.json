@@ -5,7 +5,10 @@
   "common": {
     "confirm": "确认",
     "cancel": "取消",
-    "confirmTitle": "确认执行？"
+    "confirmTitle": "确认执行？",
+    "search": "搜索",
+    "close": "关闭",
+    "save": "保存"
   },
   "menu": {
     "craftingTable": "工作台",
@@ -58,5 +61,10 @@
     "setup": "安装",
     "confirmDelete": "删除槽？",
     "confirmUnSetup": "卸载插件？"
+  },
+  "hotSwap": {
+    "lineNumber": "行号",
+    "slot": "槽",
+    "className": "类名"
   }
 }
