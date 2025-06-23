@@ -26,7 +26,7 @@ const formatConfigValue = (value) => {
 
 </script>
 <template>
-  <v-dialog v-model="dialog" max-width="800">
+  <v-dialog v-model="dialog" max-width="1200">
     <v-card>
       <v-toolbar color="primary" dark>
         <v-toolbar-title>{{ pluginData.name }} ({{ pluginData.id }})</v-toolbar-title>
@@ -128,21 +128,8 @@ const formatConfigValue = (value) => {
           </v-card-text>
         </v-card>
 
-        <v-card outlined>
-          <v-card-title class="subtitle-1">配置信息</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text style="white-space: break-spaces">
-<!--            <v-simple-table dense>-->
-<!--              <tbody>-->
-<!--              <tr v-for="(value, key) in pluginData.config" :key="key">-->
-<!--                <td class="font-weight-bold">{{ $t(`plugins.cube.${key}`) }}</td>-->
-<!--                <td class="text-right">{{ formatConfigValue(value) }}</td>-->
-<!--              </tr>-->
-<!--              </tbody>-->
-<!--            </v-simple-table>-->
-            {{pluginData.config}}
-          </v-card-text>
-        </v-card>
+        <ConfigDisplay :config="pluginData.config" />
+
       </v-card-text>
 
       <v-card-actions>
@@ -152,8 +139,6 @@ const formatConfigValue = (value) => {
     </v-card>
   </v-dialog>
 </template>
-
-
 
 <style scoped>
 .code-font {

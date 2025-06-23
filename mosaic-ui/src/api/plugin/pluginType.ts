@@ -20,13 +20,35 @@ export interface Cube {
 }
 
 export interface Config {
-    dependencies: string[];
-    destroyMethod: null | string;
-    initMethod: null | string;
-    lazyInit: boolean;
-    properties: null;
-    singleton: boolean;
+    configInfo?: ConfigInfo | null;
+    dependencies?: string[];
+    destroyMethod?: string | null;
+    initMethod?: string | null;
+    lazyInit?: boolean;
+    properties?: any;
+    singleton?: boolean;
     [property: string]: any;
+}
+
+
+export interface ConfigItem {
+    name: string;
+    type: 'string' | 'integer' | 'double' | 'boolean' | 'array' | 'object';
+    desc: string;
+    required: boolean;
+    defaultValue: any;
+    validation?: {
+        allowedValues?: string[];
+        minValue?: number;
+        maxValue?: number;
+        pattern?: string;
+        [key: string]: any;
+    };
+}
+
+export interface ConfigInfo {
+    id: string;
+    config: ConfigItem[];
 }
 
 export interface ExtensionPackage {
