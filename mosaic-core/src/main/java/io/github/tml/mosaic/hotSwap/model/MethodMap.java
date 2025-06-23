@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.entity.vo.hotSwap;
+package io.github.tml.mosaic.hotSwap.model;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2025/6/23
  */
 @Data
-public class MethodMapVO {
+public class MethodMap {
 
     String methodName;
     String methodCode;

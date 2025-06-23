@@ -83,7 +83,7 @@ public class HotSwapDomain {
 
         LocalDateTime now = LocalDateTime.now();
 
-        HotSwapPoint hotSwapPoint = new HotSwapPoint(new GUUID(pointDTO.getClassName()+pointDTO.getMethodName()+ now), now,pointDTO.getClassName(),pointDTO.getChangeType(),record);
+        HotSwapPoint hotSwapPoint = new HotSwapPoint(new GUUID(pointDTO.getClassName()+pointDTO.getMethodName()+ now).toString(), now,pointDTO.getClassName(),pointDTO.getChangeType(),record);
 
         setHotSwapPoint(hotSwapPoint);
 
