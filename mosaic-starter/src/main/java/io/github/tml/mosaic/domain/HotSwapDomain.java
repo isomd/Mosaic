@@ -117,6 +117,7 @@ public class HotSwapDomain {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
             writer.write(json);
+            writer.newLine();
             writer.flush();
 
             String response = reader.readLine();
