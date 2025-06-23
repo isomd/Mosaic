@@ -2,7 +2,7 @@
 import {defineProps,defineEmits} from "vue";
 import {type Cube, statisticsItemName} from "@/api/plugin/pluginType";
 
-const emit = defineEmits(['input'])
+const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   value: Boolean,
   pluginData: {
@@ -11,7 +11,7 @@ const props = defineProps({
 })
 const dialog = computed({
   get() { return props.value },
-  set(val) { emit('input', val) }
+  set(val) { emit('update:modelValue', val) }
 })
 
 const formatDate = (dateString) => {
@@ -84,30 +84,31 @@ const formatConfigValue = (value) => {
               {{ pkg.name }} <v-chip small class="ml-2">{{ pkg.id }}</v-chip>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <v-list dense>
-                <v-list-item>
-                    <v-list-item-title>类名</v-list-item-title>
-                    <v-list-item-subtitle class="code-font">{{ pkg.className }}</v-list-item-subtitle>
-                </v-list-item>
-                <v-divider></v-divider>
-
-                <v-list-item v-for="(point, j) in pkg.extensionPoints" :key="j">
-                    <v-list-item-title>{{ point.extensionName }}</v-list-item-title>
-                    <v-list-item-subtitle class="d-flex align-center">
-                      <v-chip x-small label class="mr-2">{{ point.methodName }}()</v-chip>
-                      <v-chip x-small label color="indigo" text-color="white">
-                        {{ point.returnType }}
-                      </v-chip>
-                    </v-list-item-subtitle>
-
-                    <div class="mt-2">
-                      <span class="text-caption">参数: </span>
-                      <v-chip v-for="(param, k) in point.parameterTypes" :key="k" x-small class="mr-1">
-                        {{ param }}
-                      </v-chip>
-                    </div>
-                </v-list-item>
-              </v-list>
+                <v-expansion-panels class="mb-5">
+                  <v-card-title class="subtitle-2">拓展点列表</v-card-title>
+                  <v-expansion-panel  v-for="(point, j) in pkg.extensionPoints" :key="j">
+                    <v-expansion-panel-title>
+                      {{ point.extensionName }} <v-chip small class="ml-2">{{ point.id }}</v-chip>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <div class="mt-2">
+                        <p class="text-caption">入参说明: </p>
+                        <v-chip v-if="point.parameterTypes.length > 0" v-for="(param, k) in point.parameterTypes" :key="k" x-small class="mr-1">
+                          {{ param }}
+                        </v-chip>
+                        <v-chip v-else x-small class="mr-1">
+                          void
+                        </v-chip>
+                      </div>
+                      <div class="mt-2">
+                        <p class="text-caption">出参说明: </p>
+                        <v-chip v-for="(result, k) in point.pointResult.pointItems" :key="k" x-small class="mr-2">
+                          {{ result.itemName }}: {{ result.itemClass }} | {{ result.description }}
+                        </v-chip>
+                      </div>
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -146,7 +147,7 @@ const formatConfigValue = (value) => {
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="dialog = false">关闭</v-btn>
+        <v-btn color="primary" text @click="$emit('update:modelValue', false)">关闭</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

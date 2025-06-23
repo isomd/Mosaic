@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.cube.factory.support;
 
-import io.github.tml.mosaic.core.event.CubeEventBroadcaster;
-import io.github.tml.mosaic.core.event.DefaultCubeEventBroadcaster;
+import io.github.tml.mosaic.core.event.MosaicEventBroadcaster;
+import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.event.CubeDefinitionRegisteredEvent;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUID;
@@ -23,10 +23,10 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
 
     // 使用ConcurrentHashMap保证线程安全
     private final Map<GUID, CubeDefinition> cubeDefinitionMap = new ConcurrentHashMap<>();
-    private final CubeEventBroadcaster eventBroadcaster;
+    private final MosaicEventBroadcaster eventBroadcaster;
 
     public DefaultDefinitionListableCubeFactory() {
-        this.eventBroadcaster = DefaultCubeEventBroadcaster.broadcaster();
+        this.eventBroadcaster = DefaultMosaicEventBroadcaster.broadcaster();
     }
 
     @Override
@@ -67,11 +67,6 @@ public class DefaultDefinitionListableCubeFactory extends ListableCubeFactory {
             log.warn("CubeDefinition not found for cubeId: {}", cubeId);
         }
         return cubeDefinition;
-    }
-
-    @Override
-    public void preInstantiateSingletons() throws CubeException {
-        cubeDefinitionMap.keySet().forEach(this::getCube);
     }
 
     // ==================== CubeDefinitionAccessor实现 ====================

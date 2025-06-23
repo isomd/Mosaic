@@ -9,7 +9,9 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import io.github.tml.mosaic.core.execption.HotSwapException;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
+import io.github.tml.mosaic.hotSwap.model.MethodMap;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 
@@ -26,7 +28,7 @@ import java.util.function.Supplier;
  * @description :
  * @date 2025/6/13
  */
-public class ChunkHotSwapUtil {
+public class HotSwapUtil {
 
     private static final JavaParser parser = new JavaParser();
 
@@ -78,7 +80,7 @@ public class ChunkHotSwapUtil {
     }
 
     private static byte[] getBytes(String className, String classResourcePath) throws IOException {
-        ClassLoader loader = ChunkHotSwapUtil.class.getClassLoader();
+        ClassLoader loader = HotSwapUtil.class.getClassLoader();
         InputStream inputStream = loader.getResourceAsStream(classResourcePath);
         if (inputStream == null) {
             throw new IllegalArgumentException("Cannot find class file for: " + className);
@@ -97,6 +99,11 @@ public class ChunkHotSwapUtil {
         return classBytes;
     }
 
+    /**
+     * 解析源码为数据结构
+     * @param sourceCode
+     * @return
+     */
     private static CompilationUnit parseSourceCode(String sourceCode) {
         ParseResult<CompilationUnit> result = parser.parse(sourceCode);
         return result.getResult().orElseThrow(() -> new IllegalArgumentException("无法解析源码"));
@@ -109,12 +116,20 @@ public class ChunkHotSwapUtil {
         }
     }
 
+    /**
+     * 遍历所有方法体，查找位于指定行号（targetLine）的语句，并对其进行指定的操作（如插入、删除、替换等）
+     * @param cu
+     * @param targetLine
+     * @param operation
+     * @param codeSupplier
+     */
     private static void processMethodStatements(
             CompilationUnit cu,
             int targetLine,
             HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier
     ) {
+        boolean[] flag = {false};
         cu.findAll(MethodDeclaration.class).forEach(method -> {
             method.getBody().ifPresent(body -> {
                 NodeList<Statement> stmts = body.getStatements();
@@ -123,9 +138,13 @@ public class ChunkHotSwapUtil {
                     if (stmt.getBegin().isEmpty() || stmt.getBegin().get().line != targetLine) continue;
 
                     applyOperation(stmts, i, stmt, operation, codeSupplier);
+                    flag[0] = true;
                 }
             });
         });
+        if (!flag[0]) {
+            throw new HotSwapException("修改的行号不正确: " + targetLine);
+        }
     }
 
     private static void applyOperation(
@@ -153,6 +172,13 @@ public class ChunkHotSwapUtil {
         }
     }
 
+    /**
+     * 判断 stmt 是否为赋值或变量声明
+     * 将赋值语句或变量声明的右边部分（即等号右侧）替换为新的表达式
+     * 不支持（直接抛异常）
+     * @param stmt
+     * @param newCode
+     */
     private static void replaceAssignmentRight(Statement stmt, String newCode) {
         if (!stmt.isExpressionStmt()) throw new RuntimeException("目标行非表达式语句");
 
@@ -180,6 +206,15 @@ public class ChunkHotSwapUtil {
         return code.endsWith(";") ? code : code + ";";
     }
 
+    /**
+     * 源码增强方法入口
+     * @param sourceCode
+     * @param targetLine
+     * @param operation
+     * @param codeSupplier
+     * @param importsToAdd
+     * @return
+     */
     public static String modify(
             String sourceCode,
             int targetLine,
@@ -192,4 +227,79 @@ public class ChunkHotSwapUtil {
         processMethodStatements(cu, targetLine, operation, codeSupplier);
         return cu.toString();
     }
+
+    /**
+     *  获取类中对应方法源码字符串
+     * @param sourceCode
+     * @param methodName
+     * @return
+     */
+    public static String extractMethodSource(String sourceCode, String methodName) {
+        CompilationUnit cu = parseSourceCode(sourceCode);
+        return cu.findAll(MethodDeclaration.class).stream()
+                .filter(m -> m.getNameAsString().equals(methodName))
+                .map(MethodDeclaration::toString) // 源码字符串
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * 提取指定行号所在的方法源码
+     * @param sourceCode Java源码字符串
+     * @param targetLine 要提取的方法中包含的行号（从1开始）
+     * @return Map，包含methodCode和targetLine
+     * @throws IllegalArgumentException 如果找不到包含该行号的方法
+     */
+    public static MethodMap extractMethodByLine(String sourceCode, int targetLine) {
+        CompilationUnit cu = parseSourceCode(sourceCode);
+
+        Optional<MethodDeclaration> methodOpt = cu.findAll(MethodDeclaration.class).stream()
+                .filter(md -> md.getRange().isPresent() &&
+                        md.getRange().get().begin.line <= targetLine &&
+                        md.getRange().get().end.line >= targetLine)
+                .findFirst();
+
+        if (methodOpt.isEmpty()) {
+            throw new IllegalArgumentException("找不到包含该行号的方法: " + targetLine);
+        }
+
+        MethodDeclaration method = methodOpt.get();
+        MethodMap resp = new MethodMap();
+        resp.setMethodName(method.getNameAsString());
+        resp.setMethodCode(method.toString());
+        return resp;
+    }
+
+    /**
+     * 将 sourceCode 中的某个方法体，替换为 methodCode 中对应的方法体
+     * @param sourceCode 原始类完整源码
+     * @param methodCode 需要替换的完整方法（用于提供新方法体）
+     * @return 替换后的完整类源码
+     */
+    public static String enhanceMethodBody(String sourceCode, String methodCode) {
+        CompilationUnit originalCU = parseSourceCode(sourceCode);
+        CompilationUnit methodCU = parseSourceCode("public class Temp { " + methodCode + " }");
+
+        // 从 methodCode 中解析出新的方法体
+        MethodDeclaration newMethod = methodCU.findFirst(MethodDeclaration.class)
+                .orElseThrow(() -> new IllegalArgumentException("methodCode 中无法解析方法"));
+
+        // 在原始代码中找出同名方法进行替换（方法名 + 参数列表匹配）
+        Optional<MethodDeclaration> toReplaceOpt = originalCU.findAll(MethodDeclaration.class).stream()
+                .filter(md -> md.getNameAsString().equals(newMethod.getNameAsString()) &&
+                        md.getParameters().size() == newMethod.getParameters().size()) // 简单参数匹配
+                .findFirst();
+
+        if (toReplaceOpt.isEmpty()) {
+            throw new IllegalArgumentException("在源代码中未找到要替换的方法");
+        }
+
+        MethodDeclaration toReplace = toReplaceOpt.get();
+
+        // 替换方法体
+        toReplace.setBody(newMethod.getBody().orElse(null));
+
+        return originalCU.toString();
+    }
+
 }

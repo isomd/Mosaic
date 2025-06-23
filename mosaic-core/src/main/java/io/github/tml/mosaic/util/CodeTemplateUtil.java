@@ -7,24 +7,17 @@ import java.util.List;
  * @description :
  * @date 2025/6/8
  */
-public class CubeTemplateUtil {
+public class CodeTemplateUtil {
+
+    //  GoldenShovel.executeBootStrap().slotId("xxxxx").run("xxxxx");
 
     public static String buildCodeTemplate(String slotId, List<String> params){
         StringBuilder sb = new StringBuilder("GoldenShovel");
         sb.append(".executeBootStrap()")
                 .append(".slotId(\""+slotId+"\")")
-                .append(".run("+buildParamsStr(params)+");");
+                .append(".run("+buildParamsStr(params)+")");
 
         return sb.toString();
-    }
-
-    public static String generateCubeTemplateBySlotName(String slotName){
-        return "TestUtil.setSlotName(\""+slotName+"\")";
-    }
-
-    public static String generateCubeTemplateByParams(List<String> params){
-        String joined = buildParamsStr(params);
-        return "TestUtil.execute(new String[]{" + joined + "})";
     }
 
     private static String buildParamsStr(List<String> params) {

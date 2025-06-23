@@ -51,8 +51,8 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
             log.info("Configuration resources refreshed successfully");
 
             // 3. 提前实例化单例Bean对象
-//            cubeFactory.preInstantiateSingletons();
-//            log.info("Singleton beans pre-instantiated successfully");
+            preInstantiateSingletons();
+            log.info("Singleton beans pre-instantiated successfully");
 
         } catch (Exception e) {
             log.error("Failed to refresh context", e);

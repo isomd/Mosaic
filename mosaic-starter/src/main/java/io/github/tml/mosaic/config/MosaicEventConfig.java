@@ -1,8 +1,8 @@
 package io.github.tml.mosaic.config;
 
-import io.github.tml.mosaic.core.event.CubeEventBroadcaster;
-import io.github.tml.mosaic.core.event.DefaultCubeEventBroadcaster;
-import io.github.tml.mosaic.core.event.listener.CubeEventListener;
+import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
+import io.github.tml.mosaic.core.event.MosaicEventBroadcaster;
+import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public class MosaicEventConfig {
     
     @Bean
-    public CubeEventBroadcaster cubeEventBroadcaster(List<CubeEventListener> cubeEventListeners) {
-        DefaultCubeEventBroadcaster broadcaster = DefaultCubeEventBroadcaster.broadcaster();
+    public MosaicEventBroadcaster cubeEventBroadcaster(List<MosaicEventListener> mosaicEventListeners) {
+        DefaultMosaicEventBroadcaster broadcaster = DefaultMosaicEventBroadcaster.broadcaster();
         // 注册默认监听器
-        for (CubeEventListener cubeEventListener : cubeEventListeners) {
-            broadcaster.registerListener(cubeEventListener);
+        for (MosaicEventListener mosaicEventListener : mosaicEventListeners) {
+            broadcaster.registerListener(mosaicEventListener);
         }
         return broadcaster;
     }

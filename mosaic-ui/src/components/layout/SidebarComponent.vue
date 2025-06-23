@@ -46,9 +46,12 @@ onMounted(()=>{
     </v-list>
 
     <template v-slot:append>
-      <div class="CraftingTable">
-        <span>{{ $t('menu.craftingTable') }}</span>
-      </div>
+      <router-link to="/craftingTable">
+        <div class="CraftingTable">
+          <span>{{ $t('menu.craftingTable') }}</span>
+        </div>
+      </router-link>
+
     </template>
   </v-navigation-drawer>
 </template>

@@ -10,5 +10,9 @@ import io.github.tml.mosaic.cube.Cube;
  */
 public interface SingletonCubeRegistry {
 
+    void addSingleton(GUID cubeId, Cube cube);
+
     Cube getSingleton(GUID cubeId);
+
+    void removeSingleton(GUID cubeId);
 }

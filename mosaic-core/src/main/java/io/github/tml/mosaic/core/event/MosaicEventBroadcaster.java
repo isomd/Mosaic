@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.core.event;
 
-import io.github.tml.mosaic.core.event.event.CubeEvent;
-import io.github.tml.mosaic.core.event.listener.CubeEventListener;
+import io.github.tml.mosaic.core.event.event.MosaicEvent;
+import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import java.util.Set;
 
 /**
@@ -9,22 +9,22 @@ import java.util.Set;
  * @author suifeng
  * 日期: 2025/6/13
  */
-public interface CubeEventBroadcaster {
+public interface MosaicEventBroadcaster {
     
     /**
      * 注册事件监听器
      */
-    <T extends CubeEvent> void registerListener(CubeEventListener<T> listener);
+    <T extends MosaicEvent> void registerListener(MosaicEventListener<T> listener);
     
     /**
      * 注销事件监听器
      */
-    <T extends CubeEvent> boolean unregisterListener(CubeEventListener<T> listener);
+    <T extends MosaicEvent> boolean unregisterListener(MosaicEventListener<T> listener);
     
     /**
      * 广播事件
      */
-    void broadcastEvent(CubeEvent event);
+    void broadcastEvent(MosaicEvent event);
     
     /**
      * 获取监听器总数
@@ -34,12 +34,12 @@ public interface CubeEventBroadcaster {
     /**
      * 获取指定事件类型的监听器数量
      */
-    int getListenerCount(Class<? extends CubeEvent> eventType);
+    int getListenerCount(Class<? extends MosaicEvent> eventType);
     
     /**
      * 获取支持的事件类型
      */
-    Set<Class<? extends CubeEvent>> getSupportedEventTypes();
+    Set<Class<? extends MosaicEvent>> getSupportedEventTypes();
     
     /**
      * 关闭广播器
