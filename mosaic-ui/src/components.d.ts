@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     ConfirmComponent: typeof import('./components/common/ConfirmComponent.vue')['default']
     CreateSlotComponent: typeof import('./components/slot/CreateSlotComponent.vue')['default']
-    CubeDetail: typeof import('./components/plugin/CubeDetail.vue')['default']
     CubeDetailsComponent: typeof import('./components/plugin/CubeDetailsComponent.vue')['default']
     CubeListItemComponent: typeof import('./components/plugin/CubeListItemComponent.vue')['default']
     FooterComponent: typeof import('./components/layout/FooterComponent.vue')['default']

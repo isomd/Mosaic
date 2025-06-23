@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.chunk;
 
-import io.github.tml.mosaic.config.MosaicChunkConfig;
+import io.github.tml.mosaic.config.MosaicHotSwapConfig;
 import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -22,7 +22,7 @@ import java.lang.management.ManagementFactory;
 public class ChunkLoaderInstaller implements ApplicationListener<ApplicationReadyEvent> {
 
     @Resource
-    MosaicChunkConfig mosaicChunkConfig;
+    MosaicHotSwapConfig mosaicHotSwapConfig;
 
     private String getCurrentPid() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -49,9 +49,9 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
                     "-jar", agentPath,
                     pid,
                     agentPath,
-                    String.valueOf(mosaicChunkConfig.getPort())
+                    String.valueOf(mosaicHotSwapConfig.getPort())
             );
-            log.info("attach agent to target project, listen port is : {}", mosaicChunkConfig.getPort());
+            log.info("attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
             pb.inheritIO();
             Process process = pb.start();
         } catch (IOException | ClassNotFoundException e) {

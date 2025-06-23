@@ -9,6 +9,7 @@ import io.github.classgraph.ScanResult;
 import io.github.tml.mosaic.MosaicAgent;
 import io.github.tml.mosaic.core.components.DeployContextHolder;
 import io.github.tml.mosaic.entity.req.AgentServerRequestDTO;
+import io.github.tml.mosaic.entity.resp.AgentServerResp;
 import io.github.tml.mosaic.util.AgentUtil;
 
 import java.io.*;
@@ -18,6 +19,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -30,46 +32,53 @@ import java.util.jar.JarFile;
  */
 public class MosaicAgentSocketServer {
 
-    public void start(int port) throws IOException {
-        try(ServerSocket serverSocket = new ServerSocket(port)){
-            while (true) {
-                Socket socket = serverSocket.accept();
+    public void start(Socket socket) {
+        AgentServerResp resp = new AgentServerResp();
+        try (
+                socket;
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
+                DataOutputStream dos = new DataOutputStream(socket.getOutputStream())
+        ) {
+            // 读取请求
+            int length = dis.readInt();
+            byte[] jsonBytes = new byte[length];
+            dis.readFully(jsonBytes);
+            String json = new String(jsonBytes, StandardCharsets.UTF_8);
 
-                int length = dis.readInt();
-                byte[] jsonBytes = new byte[length];
-                dis.readFully(jsonBytes);
+            // 加载请求类 & 反序列化
+            Class<?> req = AgentUtil.getClassByInst("io.github.tml.mosaic.entity.req.AgentServerRequestDTO");
+            ClassLoader targetClassLoader = req.getClassLoader();
+            Thread.currentThread().setContextClassLoader(targetClassLoader);
 
-                String json = new String(jsonBytes, StandardCharsets.UTF_8);
+            ParserConfig parserConfig = new ParserConfig();
+            parserConfig.setDefaultClassLoader(targetClassLoader);
+            Object reqObj = JSON.parseObject(json, req, parserConfig, Feature.SupportAutoType);
 
-                Class<?> req = AgentUtil.getClassByInst("io.github.tml.mosaic.entity.req.AgentServerRequestDTO");
-                ClassLoader targetClassLoader = req.getClassLoader();
+            // 获取参数
+            Method getClassNameMethod = req.getMethod("getClassName");
+            String className = (String) getClassNameMethod.invoke(reqObj);
+            Method getClassCodeMethod = req.getMethod("getClassCode");
+            String classCode = (String) getClassCodeMethod.invoke(reqObj);
 
-                Thread.currentThread().setContextClassLoader(targetClassLoader);
+            DeployContextHolder.set(Map.of("code", classCode));
 
-                ParserConfig parserConfig = new ParserConfig();
-                parserConfig.setDefaultClassLoader(targetClassLoader);
+            // 热替换逻辑
+            AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
+            DeployContextHolder.clear();
 
-                Object reqObj = JSON.parseObject(json, req, parserConfig, Feature.SupportAutoType);
-                Method getClassNameMethod = req.getMethod("getClassName");
-                String className = (String) getClassNameMethod.invoke(reqObj);
+            // 构造成功响应
+            resp.setIsSuccess(Boolean.TRUE);
+            resp.setErrorMessage("Class :" + className + " 更新成功");
 
-                Method getClassCodeMethod = req.getMethod("getClassCode");
-                String classCode = (String) getClassCodeMethod.invoke(reqObj);
+            String responseJson = JSON.toJSONString(resp);
+            byte[] bytes = responseJson.getBytes(StandardCharsets.UTF_8);
+            dos.write(bytes);
+            dos.flush();
 
-                DeployContextHolder.set(Map.of("code", classCode));
-
-                //热替换
-                AgentUtil.instrumentation
-                        .retransformClasses(AgentUtil.getClassByInst(className));
-
-                DeployContextHolder.clear();
-                System.out.println("Mosaic agent proxy finished...");
-            }
         } catch (InvocationTargetException | UnmodifiableClassException | NoSuchMethodException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
+                 IllegalAccessException | IOException e) {
+            resp.setIsSuccess(Boolean.FALSE);
+            resp.setErrorMessage("更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
-
     }
 }
