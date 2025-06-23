@@ -6,6 +6,12 @@ import io.github.tml.mosaic.doc.part.Value;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 描述: 扩展特征（value）
+ *
+ * @author suifeng
+ * 日期: 2025/6/23
+ */
 public interface TmValue extends TmlDoc {
 
     String VALUE_PROPERTY = "value";

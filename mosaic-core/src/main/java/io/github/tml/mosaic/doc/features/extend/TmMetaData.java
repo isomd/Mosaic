@@ -6,6 +6,12 @@ import io.github.tml.mosaic.doc.part.MetaData;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 描述: 扩展特征（元数据）
+ *
+ * @author suifeng
+ * 日期: 2025/6/23
+ */
 public interface TmMetaData extends TmlDoc {
 
     String METADATA_PROPERTY = "metadata";
