@@ -7,6 +7,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
 
     @Resource
     MosaicHotSwapConfig mosaicHotSwapConfig;
+
+    private Process agentProcess;
 
     private String getCurrentPid() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -53,10 +56,18 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
             );
             log.info("attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
             pb.inheritIO();
-            Process process = pb.start();
+            agentProcess = pb.start();
         } catch (IOException | ClassNotFoundException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
+        }
+    }
+
+    @PreDestroy
+    public void onDestroy() {
+        if (agentProcess != null) {
+            log.info("Shutting down agent process...");
+            agentProcess.destroy(); // 停止 agent 进程
         }
     }
 }
