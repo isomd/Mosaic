@@ -614,6 +614,12 @@ body {
     background: linear-gradient(145deg, var(--mc-gold), var(--mc-acacia));
   }
 }
+
+// 按钮样式
+.stone-btn { // 石头
+  @include  minecraft-button(#808080)
+}
+
 // slot.vue
 .slot-list{
   .add-slot{
@@ -624,4 +630,15 @@ body {
 // SlotListItemComponent.vue
 .slot-title{
   @include minecraft-block(#808080); // stone
+}
+
+// CreateHotSwapInfoDialog.vue
+.hotSwap{
+  .v-card{
+    padding: 8px;
+    @include minecraft-panel(#F5DEB3);
+    .v-btn{
+      @include minecraft-panel(#808080)
+    }
+  }
 }

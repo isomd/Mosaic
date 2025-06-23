@@ -2,7 +2,7 @@
 import {defineProps,defineEmits} from "vue";
 import {type Cube, statisticsItemName} from "@/api/plugin/pluginType";
 
-const emit = defineEmits(['input'])
+const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   value: Boolean,
   pluginData: {
@@ -11,7 +11,7 @@ const props = defineProps({
 })
 const dialog = computed({
   get() { return props.value },
-  set(val) { emit('input', val) }
+  set(val) { emit('update:modelValue', val) }
 })
 
 const formatDate = (dateString) => {
@@ -147,7 +147,7 @@ const formatConfigValue = (value) => {
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="dialog = false">关闭</v-btn>
+        <v-btn color="primary" text @click="$emit('update:modelValue', false)">关闭</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
