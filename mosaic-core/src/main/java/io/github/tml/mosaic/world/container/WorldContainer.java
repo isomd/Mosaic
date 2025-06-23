@@ -1,16 +1,13 @@
-package io.github.tml.mosaic.world;
+package io.github.tml.mosaic.world.container;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
-import io.github.tml.mosaic.core.tools.guid.WUUID;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
 
 @Setter
 @Getter

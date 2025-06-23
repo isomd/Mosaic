@@ -4,9 +4,8 @@ import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.world.MosaicWorldContainer;
-import io.github.tml.mosaic.world.WorldContainer;
-import io.github.tml.mosaic.world.construct.WorldConstruct;
+import io.github.tml.mosaic.world.container.MosaicWorldContainer;
+import io.github.tml.mosaic.world.container.WorldContainer;
 
 public class WorldContainerFactory {
     public static WorldContainer createWorldContainer(String name) {

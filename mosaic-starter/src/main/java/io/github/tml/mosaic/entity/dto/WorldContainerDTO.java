@@ -1,10 +1,6 @@
 package io.github.tml.mosaic.entity.dto;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.cube.factory.context.CubeContext;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.world.MosaicWorldContainer;
-import io.github.tml.mosaic.world.WorldContainer;
 import lombok.Getter;
 import lombok.Setter;
 

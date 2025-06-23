@@ -19,13 +19,16 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
     /**
      * Cube工厂实例
      */
-    private final DefaultDefinitionListableCubeFactory cubeFactory;
+    private static final DefaultDefinitionListableCubeFactory cubeFactory;
+
+    static {
+        cubeFactory = new DefaultDefinitionListableCubeFactory();
+    }
 
     /**
      * 构造函数，初始化Cube工厂
      */
     public AbstractRefreshableCubeContext() {
-        this.cubeFactory = createCubeFactory();
         log.info("AbstractRefreshableCubeContext initialized with factory: {}", cubeFactory.getClass().getSimpleName());
     }
 

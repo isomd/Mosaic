@@ -3,7 +3,7 @@ package io.github.tml.mosaic.domain;
 import io.github.tml.mosaic.convert.WorldContainerConvert;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.entity.dto.WorldContainerDTO;
-import io.github.tml.mosaic.world.WorldContainer;
+import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.construct.WorldConstruct;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;

@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.world.construct;
 
-import io.github.tml.mosaic.world.WorldContainer;
+import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;
 import lombok.Getter;
 import lombok.Setter;
