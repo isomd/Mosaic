@@ -1,9 +1,6 @@
-package io.github.tml.mosaic.doc;
+package io.github.tml.mosaic.core.doc;
 
-import io.github.tml.mosaic.doc.part.Config;
-import io.github.tml.mosaic.doc.part.MetaData;
-import io.github.tml.mosaic.doc.part.Value;
-import io.github.tml.mosaic.doc.part.Validation;
+import io.github.tml.mosaic.core.doc.part.Config;
 
 import java.util.Arrays;
 import java.util.HashMap;

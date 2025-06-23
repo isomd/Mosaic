@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.doc.core;
+package io.github.tml.mosaic.core.doc.core;
 
 import java.util.Map;
 import java.util.function.Function;

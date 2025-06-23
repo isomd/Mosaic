@@ -7,7 +7,7 @@ import io.github.tml.mosaic.entity.req.AppendSlotReq;
 import io.github.tml.mosaic.entity.req.HotSwapPointRequest;
 import io.github.tml.mosaic.entity.resp.CreateHotSwapPointResp;
 import io.github.tml.mosaic.entity.resp.CreateSlotResp;
-import io.github.tml.mosaic.entity.vo.hotSwap.MethodMapVO;
+import io.github.tml.mosaic.hotSwap.model.MethodMap;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import io.github.tml.mosaic.service.HotSwapService;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -60,24 +59,24 @@ public class HotSwapServiceImpl implements HotSwapService {
         if(res.isSuccess()){
             //2.热更新代码
             HotSwapContext.InsertType type = hotSwapDomain.matchType(dto.getChangeType());
-            String needInsertCode = CodeTemplateUtil.buildCodeTemplate(dto.getSlotId(), dto.getArgs());
-            ;
+            String needInsertCode = CodeTemplateUtil.buildCodeTemplate(dto.getSlotId(),dto.getArgs());
             HotSwapDTO hotSwapDTO = new HotSwapDTO();
             BeanUtils.copyProperties(dto, hotSwapDTO);
             hotSwapDTO.setType(type);
             hotSwapDTO.setProxyCode(needInsertCode);
-            String proxySourceCode = hotSwapDomain.proxyCodeByFullName(hotSwapDTO);
-
             //2.1 获取类当前源代码
             String oldSourceCode = hotSwapDomain.getProxyCodeByClassFullName(hotSwapDTO.getClassName());
+
+            String proxySourceCode = hotSwapDomain.proxyCodeByFullName(hotSwapDTO);
+
             //2.2 获取当前更新的方法 为下文热更新点做准备
-            MethodMapVO methodMapVO = HotSwapUtil.extractMethodByLine(oldSourceCode, dto.getTargetLine());
+            MethodMap methodMapVO = HotSwapUtil.extractMethodByLine(oldSourceCode, dto.getTargetLine());
             String method = methodMapVO.getMethodName();
             String oldSourceMethodCode = methodMapVO.getMethodCode();
 
             String proxyMethodCode = HotSwapUtil.extractMethodSource(proxySourceCode, method);
             //3.生成热更新点
-            HotSwapPointDTO hotSwapPointDTO = HotSwapPointDTO.convert(dto, oldSourceMethodCode, proxyMethodCode, type);
+            HotSwapPointDTO hotSwapPointDTO = HotSwapPointDTO.convert(dto, oldSourceMethodCode, proxyMethodCode, type,method);
             hotSwapDomain.generateHotSwapPoint(hotSwapPointDTO);
             resp.setCode(proxySourceCode);
         }else{

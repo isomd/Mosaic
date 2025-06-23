@@ -10,8 +10,8 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import io.github.tml.mosaic.core.execption.HotSwapException;
-import io.github.tml.mosaic.entity.vo.hotSwap.MethodMapVO;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
+import io.github.tml.mosaic.hotSwap.model.MethodMap;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 
@@ -250,7 +250,7 @@ public class HotSwapUtil {
      * @return Map，包含methodCode和targetLine
      * @throws IllegalArgumentException 如果找不到包含该行号的方法
      */
-    public static MethodMapVO extractMethodByLine(String sourceCode, int targetLine) {
+    public static MethodMap extractMethodByLine(String sourceCode, int targetLine) {
         CompilationUnit cu = parseSourceCode(sourceCode);
 
         Optional<MethodDeclaration> methodOpt = cu.findAll(MethodDeclaration.class).stream()
@@ -264,7 +264,7 @@ public class HotSwapUtil {
         }
 
         MethodDeclaration method = methodOpt.get();
-        MethodMapVO resp = new MethodMapVO();
+        MethodMap resp = new MethodMap();
         resp.setMethodName(method.getNameAsString());
         resp.setMethodCode(method.toString());
         return resp;

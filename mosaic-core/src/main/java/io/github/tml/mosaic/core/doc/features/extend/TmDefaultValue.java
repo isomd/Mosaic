@@ -1,6 +1,6 @@
-package io.github.tml.mosaic.doc.features.extend;
+package io.github.tml.mosaic.core.doc.features.extend;
 
-import io.github.tml.mosaic.doc.core.TmlDoc;
+import io.github.tml.mosaic.core.doc.core.TmlDoc;
 
 import java.util.Optional;
 
