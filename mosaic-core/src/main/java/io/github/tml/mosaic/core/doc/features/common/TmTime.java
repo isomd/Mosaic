@@ -1,6 +1,6 @@
-package io.github.tml.mosaic.doc.features.common;
+package io.github.tml.mosaic.core.doc.features.common;
 
-import io.github.tml.mosaic.doc.core.TmlDoc;
+import io.github.tml.mosaic.core.doc.core.TmlDoc;
 
 import java.util.Date;
 import java.util.Optional;
