@@ -7,6 +7,7 @@ import io.github.tml.mosaic.core.components.DeployContextHolder;
 import io.github.tml.mosaic.util.AgentUtil;
 
 import java.io.*;
+import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,8 +42,14 @@ public class MosaicAgentSocketServer {
 
             DeployContextHolder.set(Map.of("code", classCode));
 
+            Class<?> aClass = AgentUtil.getClassByInst(className);
+
+            String classPath = AgentUtil.generateClassPathByEnvironment(aClass);
+
+            byte[] bytes = AgentUtil.compile(className, DeployContextHolder.get().get("code"), classPath);
+
             // 热替换逻辑
-            AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
+            AgentUtil.instrumentation.redefineClasses(new ClassDefinition(aClass,bytes));
             DeployContextHolder.clear();
             // 拼成功响应字符串
             responseJson = "{\"isSuccess\":true,\"errorMessage\":\"Class :" + className + " 更新成功\"}";
@@ -54,6 +61,8 @@ public class MosaicAgentSocketServer {
                  IllegalAccessException | IOException e) {
             responseJson = "{\"isSuccess\":false,\"errorMessage\":\"更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage() + "\"}";
             throw new RuntimeException(responseJson);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
