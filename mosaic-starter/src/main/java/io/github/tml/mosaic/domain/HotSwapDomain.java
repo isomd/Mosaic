@@ -33,13 +33,13 @@ public class HotSwapDomain {
      */
     public String proxyCodeByFullName(HotSwapDTO dto) {
 
-        String code = getProxyCodeByClassFullName(dto.getFullName());
+        String code = getProxyCodeByClassFullName(dto.getClassName());
         String proxy = ChunkHotSwapUtil.modify(code,
                 dto.getTargetLine(),
                 dto.getType(),
                 dto::getProxyCode,
                 Set.of(CodeTemplateUtil.getCubeImportPath()));
-        context.putClassProxyCode(dto.getFullName(), proxy);
+        context.putClassProxyCode(dto.getClassName(), proxy);
         return proxy;
     }
 

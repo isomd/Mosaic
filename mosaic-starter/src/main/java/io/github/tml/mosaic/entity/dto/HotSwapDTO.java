@@ -13,7 +13,7 @@ import lombok.*;
 @Data
 public class HotSwapDTO {
 
-    String fullName;
+    String className;
     int targetLine;
     HotSwapContext.InsertType type;
 
