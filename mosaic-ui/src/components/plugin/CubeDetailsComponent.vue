@@ -138,42 +138,10 @@ const getStatusClass = (status: string) => {
           </v-card-text>
         </v-card>
 
-        <v-expansion-panels class="mb-4">
-          <v-card-title class="subtitle-1">插件功能拓展包</v-card-title>
-          <v-divider></v-divider>
-          <v-expansion-panel v-for="(pkg, i) in pluginData.extensionPackages" :key="i">
-            <v-expansion-panel-title>
-              {{ pkg.name }} <v-chip small class="ml-2">{{ pkg.id }}</v-chip>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-                <v-expansion-panels class="mb-5">
-                  <v-card-title class="subtitle-2">拓展点列表</v-card-title>
-                  <v-expansion-panel  v-for="(point, j) in pkg.extensionPoints" :key="j">
-                    <v-expansion-panel-title>
-                      {{ point.extensionName }} <v-chip small class="ml-2">{{ point.id }}</v-chip>
-                    </v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                      <div class="mt-2">
-                        <p class="text-caption">入参说明: </p>
-                        <v-chip v-if="point.parameterTypes.length > 0" v-for="(param, k) in point.parameterTypes" :key="k" x-small class="mr-1">
-                          {{ param }}
-                        </v-chip>
-                        <v-chip v-else x-small class="mr-1">
-                          void
-                        </v-chip>
-                      </div>
-                      <div class="mt-2">
-                        <p class="text-caption">出参说明: </p>
-                        <v-chip v-for="(result, k) in point.pointResult.pointItems" :key="k" x-small class="mr-2">
-                          {{ result.itemName }}: {{ result.itemClass }} | {{ result.description }}
-                        </v-chip>
-                      </div>
-                    </v-expansion-panel-text>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
+        <ExtensionPackageDisplay
+            :extension-packages="pluginData.extensionPackages"
+            class="mt-4"
+        />
 
         <PluginStatisticsChart
             :statistics="pluginData.statistics"

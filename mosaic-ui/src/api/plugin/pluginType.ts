@@ -76,9 +76,14 @@ export interface ExtensionPoint {
 }
 
 export interface PointResult {
+    pointItems: PointResultItem[];
+    [property: string]: any;
+}
+
+export interface PointResultItem {
+    itemName: string;
+    itemClass: string;
     description: string;
-    required: boolean;
-    resultType: string;
     [property: string]: any;
 }
 
