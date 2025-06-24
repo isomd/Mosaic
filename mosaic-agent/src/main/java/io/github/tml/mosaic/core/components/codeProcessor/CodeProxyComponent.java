@@ -16,11 +16,10 @@ public class CodeProxyComponent implements DeployComponent {
     public void execute(DeployContext context) {
 
         String className = context.getClassName();
-        Class<?> aClass = AgentUtil.getClassByInst(className);
 
-        String classPath = AgentUtil.generateClassPathByEnvironment(aClass);
-
-        byte[] bytes = AgentUtil.compile(className, DeployContextHolder.get().get("code"), classPath);
+        String classPath = AgentUtil.generateClassPathByEnvironment(context.getClassLoader());
+        String replace = className.replace("/", ".");
+        byte[] bytes = AgentUtil.compile(replace, DeployContextHolder.get().get("code"), classPath);
         context.setProxyBytes(bytes);
     }
 }

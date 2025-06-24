@@ -24,6 +24,7 @@ public class HotSwapContext {
      */
     private final Map<String, Map<String,List<HotSwapPoint>>> hotSwapPointRecord = new HashMap<>();
 
+
     public enum InsertType {
 
         REPLACE_ASSIGN_RIGHT,   //等号右边复制修改
@@ -37,6 +38,12 @@ public class HotSwapContext {
             }
             throw new IllegalArgumentException("Invalid InsertType: " + value);
         }
+    }
+
+    //todo: 考虑并发
+    public void removeLastHotSwapPoint(String className, String methodName) {
+        List<HotSwapPoint> hotSwapPoints = hotSwapPointRecord.get(className).get(methodName);
+        hotSwapPoints.remove(hotSwapPoints.size()-1);
     }
 
     public void putClassProxyCode(String className, String proxyCode) {

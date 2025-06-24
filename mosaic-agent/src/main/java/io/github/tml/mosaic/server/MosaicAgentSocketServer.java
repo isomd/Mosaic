@@ -7,6 +7,7 @@ import io.github.tml.mosaic.core.components.DeployContextHolder;
 import io.github.tml.mosaic.util.AgentUtil;
 
 import java.io.*;
+import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,18 +42,27 @@ public class MosaicAgentSocketServer {
 
             DeployContextHolder.set(Map.of("code", classCode));
 
+//            String classPath = AgentUtil.generateClassPathByEnvironment(targetClassLoader);
+//
+//            byte[] bytes = AgentUtil.compile(className, DeployContextHolder.get().get("code"), classPath);
+
             // 热替换逻辑
+//            AgentUtil.instrumentation.redefineClasses(new ClassDefinition(aClass,bytes));
             AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
+
+            if("true".equals(DeployContextHolder.get().get("flag"))){
+                responseJson = "{\"isSuccess\":true,\"message\":\"Class :" + className + " 更新成功\"}";
+            }else{
+                responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + DeployContextHolder.get().get("errorMsg") + "\"}";
+            }
             DeployContextHolder.clear();
-            // 拼成功响应字符串
-            responseJson = "{\"isSuccess\":true,\"errorMessage\":\"Class :" + className + " 更新成功\"}";
             writer.write(responseJson);
             writer.newLine();
             writer.flush();
 
         } catch (InvocationTargetException | UnmodifiableClassException | NoSuchMethodException |
                  IllegalAccessException | IOException e) {
-            responseJson = "{\"isSuccess\":false,\"errorMessage\":\"更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage() + "\"}";
+            responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage() + "\"}";
             throw new RuntimeException(responseJson);
         }
     }

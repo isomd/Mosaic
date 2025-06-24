@@ -30,9 +30,8 @@ public class AgentUtil {
     }
 
 
-    public static String generateClassPathByEnvironment(Class<?> targetClass) {
+    public static String generateClassPathByEnvironment(ClassLoader targetClassLoader) {
 
-        ClassLoader targetClassLoader = targetClass.getClassLoader();
         try {
             //解析当前classloader下所有依赖
             ScanResult scanResult = new ClassGraph()
@@ -119,7 +118,7 @@ public class AgentUtil {
     }
 
     /**
-     * @param fullClassName 全限定名
+     * @param fullClassName 全限定名 只接受格式如下：com.example.controller.xxx
      * @param sourceCode 源码字符串
      * @param classPath 依赖路径
      * @return class文件字节码
@@ -149,7 +148,6 @@ public class AgentUtil {
         if (!task.call()) {
             throw new RuntimeException("编译失败");
         }
-
         // 获取主类名对应的字节码
         ByteArrayOutputStream baos = compiledClassData.get(fullClassName);
         if (baos == null) {
