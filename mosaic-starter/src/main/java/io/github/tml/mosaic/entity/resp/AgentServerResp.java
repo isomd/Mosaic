@@ -11,6 +11,6 @@ import lombok.Data;
 public class AgentServerResp {
 
     Boolean isSuccess;
-    String errorMsg;
+    String message;
 
 }

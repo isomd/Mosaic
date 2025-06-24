@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {uploadPluginJar,getCubeList} from "@/api/plugin/pluginApi";
+import {uploadPluginJar, getCubeList} from "@/api/plugin/pluginApi";
 import {type Cube} from "@/api/plugin/pluginType";
 import {useCubeStore} from '@/store/data/useCubeStore'
 const cubeStore = useCubeStore()

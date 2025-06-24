@@ -25,6 +25,8 @@ onMounted(()=>{
   <v-navigation-drawer v-model="statusStore.showSidebar" app class="minecraft-drawer" width="320">
     <div class="minecraft-drawer-header">
       <div class="minecraft-logo">⛏️</div>
+      <div class="minecraft-title">Mosaic frame</div>
+      <div class="minecraft-version">v1.0.0</div>
     </div>
 
     <v-list nav class="minecraft-nav-list">
