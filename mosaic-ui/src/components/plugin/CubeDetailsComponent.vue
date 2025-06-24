@@ -143,14 +143,14 @@ const getStatusClass = (status: string) => {
             class="mt-4"
         />
 
+        <ConfigDisplay :config="pluginData.config" />
+
         <PluginStatisticsChart
             :statistics="pluginData.statistics"
             :theme="isDark ? 'dark' : 'light'"
             :animated="true"
             :show-details="true"
         />
-
-        <ConfigDisplay :config="pluginData.config" />
 
       </v-card-text>
 
