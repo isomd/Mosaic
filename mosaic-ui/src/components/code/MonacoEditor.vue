@@ -21,21 +21,31 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'editor-mounted','clickAdd'])
 
 const container = ref(null)
-let editor = ref(null)
+let editor
 
 
-watch(() => props.modelValue, (newValue) => {
-  if (editor.value && newValue !== editor.value.getValue()) {
-    editor.value.setValue(newValue)
-  }
-})
+// watch(() => props.modelValue, (newValue) => {
+//   if (editor.value && newValue !== editor.value.getValue()) {
+//     editor.value.setValue(newValue)
+//   }
+// })
 const lineCount = ref(0)
-const offsetHeight = computed(()=>{
-  return `translate(5px,-${editor.value?(editor.value._domElement.clientHeight + 1):'0'}px)`
+const containerHeight = computed(()=>{
+  return container.value?(container.value.getBoundingClientRect().height)+'px':'0'
+})
+const containerWidth = computed(()=>{
+  return container.value?(container.value.getBoundingClientRect().width)+'px':'0'
+})
+const translateY = computed(()=>{
+  return `-${container.value?container.value.getBoundingClientRect().height:'0'}px`
+})
+const scrollTop = ref(0)
+const scrollY = computed(()=>{
+  return `-${scrollTop.value}px`
 })
 onMounted(() => {
   if (!container.value) return
-  editor.value = monaco.editor.create(container.value, {
+  editor = monaco.editor.create(container.value, {
     value: props.modelValue,
     language: props.language,
     theme: props.theme,
@@ -43,27 +53,35 @@ onMounted(() => {
     minimap: {enabled: false},
     ...props.options,
   })
-  editor.value.onDidChangeModelContent(() => {
-    const value = editor.value.getValue()
-    lineCount.value = editor.value.getModel().getLineCount()
-    emit('update:modelValue', value)
+  editor.onDidChangeModelContent(() => {
+    const value = editor.getValue()
+    lineCount.value = editor.getModel().getLineCount()
+    // emit('update:modelValue', value)
   })
-  lineCount.value = editor.value.getModel().getLineCount()
-  emit('editor-mounted', editor.value)
+  editor.onDidScrollChange((val)=>{
+    scrollTop.value = val.scrollTop
+    console.log(JSON.stringify(val))
+  })
+  lineCount.value = editor.getModel().getLineCount()
+  emit('editor-mounted', editor)
 })
-// onUnmounted(() => {
-//   if (editor.value) {
-//     editor.value.dispose()
-//   }
-// })
+onUnmounted(() => {
+  if (editor) {
+    editor.dispose()
+  }
+})
 </script>
 <template>
-  <div ref="container" class="monaco-editor">
+  <div style="overflow: hidden;position: relative">
+    <div ref="container" class="monaco-editor">
 
-  </div>
-  <div class="line" v-for="i in lineCount">
-    <div class="add" @click="$emit('clickAdd',i)">＋</div>
-    <div class="underline"></div>
+    </div>
+    <div class="layer">
+      <div class="line" v-for="i in lineCount">
+        <div class="add" @click="$emit('clickAdd',i)">＋</div>
+        <div class="underline"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,48 +95,55 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-.line {
+.layer{
   position: relative;
-  transform: v-bind(offsetHeight);
-  display: flex;
-  width: 100%;
-  height: 0;
+  height: v-bind(containerHeight);
+  transform: translate(5px,v-bind(translateY));
   --line-number-width: 19px;
-  margin-bottom: 19px;
+  width: var(--line-number-width);
 
-  .add {
-    height: 19px;
-    width: var(--line-number-width);
-    font-size: 0.6rem;
-    border: 2px solid #282828;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 100;
-    color: #282828;
-    cursor: pointer;
-    opacity: 0;
-
-    &:hover {
-      opacity: 1;
-      border: 2px solid #007fd4;
-      color: #007fd4;
-    }
-
-    &:hover + .underline {
-      border-bottom: 2px solid #007fd4;
-    }
-  }
-
-  .underline {
+  .line {
     position: relative;
-    height: 2px;
-    top: 17px;
-    bottom: 0;
-    width: calc(100% - var(--line-number-width) - 5px);
-  }
-}
+    display: flex;
+    width: v-bind(containerWidth);
+    transform: translate(0,v-bind(scrollY));
+    height: 0;
+    margin-bottom: 19px;
 
+    .add {
+      height: 19px;
+      width: var(--line-number-width);
+      font-size: 0.6rem;
+      border: 2px solid #282828;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 100;
+      color: #282828;
+      cursor: pointer;
+      opacity: 0;
+
+      &:hover {
+        opacity: 1;
+        border: 2px solid #007fd4;
+        color: #007fd4;
+      }
+
+      &:hover + .underline {
+        border-bottom: 2px solid #007fd4;
+      }
+    }
+
+    .underline {
+      position: relative;
+      height: 2px;
+      top: 17px;
+      bottom: 0;
+      width: calc(v-bind(containerWidth) - var(--line-number-width) - 5px);
+    }
+  }
+
+}
 .view-line {
   border-bottom: 2px solid #007fd4 !important;
 }

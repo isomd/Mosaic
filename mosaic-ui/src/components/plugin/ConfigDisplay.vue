@@ -69,11 +69,10 @@
               <!-- 默认值 -->
               <div class="config-value-section">
                 <span class="value-label">默认值:</span>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
+                <v-tooltip location="right">
+                  <template v-slot:activator="{ props }">
                     <code
-                        v-bind="attrs"
-                        v-on="on"
+                        v-bind="props"
                         class="config-value-display"
                         :class="{ 'null-value': item.defaultValue === null }"
                     >
@@ -188,11 +187,11 @@
 import { computed, ref } from 'vue'
 import type { Config, ConfigItem } from '@/api/plugin/pluginType'
 
-interface Props {
-  config: Config
-}
+const props = defineProps({
+  config: {
 
-const props = defineProps<Props>()
+  } as Config
+})
 
 // 响应式数据
 const validationDialog = ref(false)
