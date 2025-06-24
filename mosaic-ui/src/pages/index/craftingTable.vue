@@ -46,7 +46,7 @@ const updateCode = (newCode:String)=>{
         @clickAdd="handleClickAdd"
     />
   </div>
-  <CreateHotSwapInfoDialog :key="targetLine" v-model="dialog" :targetLine="targetLine" :className="searchInput" @updateCode=""></CreateHotSwapInfoDialog>
+  <CreateHotSwapInfoDialog :key="targetLine" v-model="dialog" :targetLine="targetLine" :className="searchInput" @updateCode="updateCode"></CreateHotSwapInfoDialog>
 </template>
 <style scoped lang="scss">
 .input-container{

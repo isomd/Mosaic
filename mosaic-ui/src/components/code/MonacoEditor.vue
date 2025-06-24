@@ -21,7 +21,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'editor-mounted','clickAdd'])
 
 const container = ref(null)
-let editor = ref(null)
+let editor
 
 
 watch(() => props.modelValue, (newValue) => {
@@ -35,7 +35,7 @@ const offsetHeight = computed(()=>{
 })
 onMounted(() => {
   if (!container.value) return
-  editor.value = monaco.editor.create(container.value, {
+  editor = monaco.editor.create(container.value, {
     value: props.modelValue,
     language: props.language,
     theme: props.theme,
@@ -43,13 +43,13 @@ onMounted(() => {
     minimap: {enabled: false},
     ...props.options,
   })
-  editor.value.onDidChangeModelContent(() => {
-    const value = editor.value.getValue()
-    lineCount.value = editor.value.getModel().getLineCount()
+  editor.onDidChangeModelContent(() => {
+    const value = editor.getValue()
+    lineCount.value = editor.getModel().getLineCount()
     emit('update:modelValue', value)
   })
-  lineCount.value = editor.value.getModel().getLineCount()
-  emit('editor-mounted', editor.value)
+  lineCount.value = editor.getModel().getLineCount()
+  emit('editor-mounted', editor)
 })
 // onUnmounted(() => {
 //   if (editor.value) {
