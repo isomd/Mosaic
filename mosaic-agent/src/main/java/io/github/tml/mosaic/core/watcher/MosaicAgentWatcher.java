@@ -2,13 +2,16 @@ package io.github.tml.mosaic.core.watcher;
 
 import io.github.tml.mosaic.core.components.DeployComponent;
 import io.github.tml.mosaic.core.components.DeployContext;
+import io.github.tml.mosaic.core.components.DeployContextHolder;
 import io.github.tml.mosaic.core.components.codeProcessor.CodeProxyComponent;
 import io.github.tml.mosaic.core.components.inspector.SecurityChainComponent;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author welsir
@@ -33,17 +36,21 @@ public class MosaicAgentWatcher implements ClassFileTransformer {
         if (targetClass == null) {
             return classBytes; // 只处理重定义 忽略首次加载
         }
-
+        System.out.println("proxy classLoader : " + loader);
         // 创建上下文
         DeployContext context = new DeployContext(loader, className, classBytes);
 
         try {
             components.forEach(component -> {component.execute(context);});
+
             // 返回转换后的字节码
+            DeployContextHolder.set(Map.of("flag","true"));
             return context.getProxyBytes();
 
         } catch (Exception e) {
             // 返回原始字节码
+            DeployContextHolder.set(Map.of("flag","false"));
+            DeployContextHolder.set(Map.of("errorMsg",e.getMessage()));
             return context.getOriginalBytes();
         }
     }

@@ -66,7 +66,7 @@ public class HotSwapServiceImpl implements HotSwapService {
             hotSwapDTO.setProxyCode(needInsertCode);
             //2.1 获取类当前源代码
             String oldSourceCode = hotSwapDomain.getProxyCodeByClassFullName(hotSwapDTO.getClassName());
-
+            //2.2 热更新
             String proxySourceCode = hotSwapDomain.proxyCodeByFullName(hotSwapDTO);
 
             //2.2 获取当前更新的方法 为下文热更新点做准备

@@ -61,7 +61,7 @@ public class HotSwapDomain {
             context.putClassProxyCode(dto.getClassName(), proxy);
             return proxy;
         }else{
-            throw new HotSwapException(resp.getErrorMsg());
+            throw new HotSwapException(resp.getMessage());
         }
     }
 
