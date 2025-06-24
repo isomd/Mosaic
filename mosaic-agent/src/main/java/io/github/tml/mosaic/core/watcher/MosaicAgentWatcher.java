@@ -52,6 +52,7 @@ public class MosaicAgentWatcher implements ClassFileTransformer {
             DeployContextHolder.set(Map.of("flag","false"));
             DeployContextHolder.set(Map.of("errorMsg",e.getMessage()));
             return context.getOriginalBytes();
+
         }
     }
 
