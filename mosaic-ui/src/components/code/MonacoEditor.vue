@@ -31,7 +31,7 @@ watch(() => props.modelValue, (newValue) => {
 })
 const lineCount = ref(0)
 const offsetHeight = computed(()=>{
-  return `translate(5px,-${editor.value?(editor.value._domElement.clientHeight + 1):'0'}px)`
+  return `translate(5px,-${container.value?(container.value.getBoundingClientRect().height):'0'}px)`
 })
 onMounted(() => {
   if (!container.value) return
