@@ -1,6 +1,5 @@
 package io.github.tml.plugin.systemLog.cube;
 
-import cn.hutool.core.date.DateTime;
 import io.github.tml.mosaic.cube.CubeConfig;
 import io.github.tml.mosaic.cube.external.MCube;
 import io.github.tml.mosaic.cube.external.MosaicCube;
@@ -29,9 +28,6 @@ public class PropertySystemLogCube extends MosaicCube {
 
     @Override
     public boolean init() {
-
-        DateTime aaa = new DateTime();
-
         CubeConfig cubeConfig = getCubeConfig();
         outputFormat = cubeConfig.getConfig("outputFormat", String.class);
         maxFileSize = cubeConfig.getConfig("maxFileSize", Integer.class);
