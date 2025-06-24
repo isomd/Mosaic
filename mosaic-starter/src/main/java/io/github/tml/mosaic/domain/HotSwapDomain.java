@@ -47,21 +47,25 @@ public class HotSwapDomain {
      */
     public String proxyCodeByFullName(HotSwapDTO dto) {
 
-        String code = getProxyCodeByClassFullName(dto.getClassName());
-        //1.构建增强代码
-        String proxy = HotSwapUtil.modify(code,
-                dto.getTargetLine(),
-                dto.getType(),
-                dto::getProxyCode,
-                Set.of(CodeTemplateUtil.getCubeImportPath()));
-        //2.热部署注入
-        AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
-        //3.更新本地内存
-        if(resp.getIsSuccess()){
-            context.putClassProxyCode(dto.getClassName(), proxy);
-            return proxy;
-        }else{
-            throw new HotSwapException(resp.getMessage());
+        try {
+            String code = getProxyCodeByClassFullName(dto.getClassName());
+            //1.构建增强代码
+            String proxy = HotSwapUtil.modify(code,
+                    dto.getTargetLine(),
+                    dto.getType(),
+                    dto::getProxyCode,
+                    Set.of(CodeTemplateUtil.getCubeImportPath()));
+            //2.热部署注入
+            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
+            //3.更新本地内存
+            if(resp.getIsSuccess()){
+                context.putClassProxyCode(dto.getClassName(), proxy);
+                return proxy;
+            }else{
+                throw new HotSwapException(resp.getMessage());
+            }
+        }catch (Exception e){
+            throw new HotSwapException("热更新代码失败: "+e.getMessage());
         }
     }
 
@@ -147,7 +151,11 @@ public class HotSwapDomain {
             //3.构造对应的回滚代码
             String rollBack = HotSwapUtil.enhanceMethodBody(currentCode, hotSwapPoint.getChangeRecord().getOldSourceCode());
             //4.热更新当前类
-            NotifyAgentBySocket(rollBack,className);
+            AgentServerResp resp = NotifyAgentBySocket(rollBack, className);
+            if(resp.getIsSuccess()){
+                //5.删除当前最后一个热更新点
+                context.removeLastHotSwapPoint(className,methodName);
+            }
             return rollBack;
         }
         throw new HotSwapException("无法找到热更新点历史记录");
