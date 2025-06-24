@@ -69,6 +69,11 @@ public class Cube extends ConfigurableEntity implements CubeApi {
             boolean result = mosaicCube.init();
             if (result) {
                 initialized = true;
+                // 初始化扩展包，为mosaicPackage塞入mosaicCube
+                for (ExtensionPackage extensionPackage : this.getMetaData().extensionPackages) {
+                    Optional.ofNullable(extensionPackage.getMosaicExtPackage())
+                            .ifPresent(mosaicExtPackage -> mosaicExtPackage.initCube(mosaicCube));
+                }
             }
             return result;
         } catch (InstantiationException | IllegalAccessException |

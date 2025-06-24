@@ -51,6 +51,7 @@ public class HotSwapServiceImpl implements HotSwapService {
         //1.创建槽点
         AppendSlotReq slotReq = new AppendSlotReq();
         BeanUtils.copyProperties(dto, slotReq);
+        slotReq.setSetupFlag(true);
 
         CreateSlotResp res = slotService.createOrSetupSlot(slotReq);
 

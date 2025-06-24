@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/mosaic/test")
+@RequestMapping("/steve/test")
 public class TestOneController {
 
     @GetMapping("/context1")
