@@ -6,12 +6,13 @@ import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.world.container.MosaicWorldContainer;
 import io.github.tml.mosaic.world.container.WorldContainer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class WorldContainerManager {
     protected ConcurrentHashMap<GUID, WorldContainer> worldContainerMap;
-
-    public static final WorldContainer ORIGINAL = new MosaicWorldContainer("original", -1, new GenericSlotManager(), new ClassPathCubeContext());
 
     public WorldContainerManager() {
         this.worldContainerMap = new ConcurrentHashMap<>();
@@ -19,10 +20,6 @@ public class WorldContainerManager {
 
     public WorldContainerManager(ConcurrentHashMap<GUID, WorldContainer> worldContainerMap) {
         this.worldContainerMap = worldContainerMap;
-    }
-
-    public void init(){
-        worldContainerMap.put(ORIGINAL.getId(), ORIGINAL);
     }
 
     public void addWorldContainer(WorldContainer worldContainer) {
@@ -33,11 +30,11 @@ public class WorldContainerManager {
         return this.worldContainerMap.get(id);
     }
 
-    public void removeWorldContainer(GUID id) {
-        this.worldContainerMap.remove(id);
+    public WorldContainer removeWorldContainer(GUID id) {
+        return this.worldContainerMap.remove(id);
     }
 
-    public static WorldContainer getOriginalWorldContainer() {
-        return ORIGINAL;
+    public List<WorldContainer> getAllWorldContainer() {
+        return new ArrayList<>(this.worldContainerMap.values());
     }
 }

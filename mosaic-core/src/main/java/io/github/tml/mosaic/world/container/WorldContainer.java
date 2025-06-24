@@ -1,12 +1,18 @@
 package io.github.tml.mosaic.world.container;
 
+import io.github.tml.mosaic.core.infrastructure.CommonComponent;
 import io.github.tml.mosaic.core.tools.guid.GUID;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.world.component.WorldComponent;
+import io.github.tml.mosaic.world.component.WorldComponentManager;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
@@ -16,16 +22,16 @@ public abstract class WorldContainer extends UniqueEntity {
 
     protected String name;
 
-    protected SlotManager slotManager;
+    protected List<WorldComponent> components;
 
-    protected CubeContext cubeContext;
+    protected WorldComponentManager worldComponentManager;
 
-    public WorldContainer(GUID id,Integer version, String name, SlotManager slotManager, CubeContext cubeContext) {
-        super(id);
+    public WorldContainer(Integer version, String name, List<WorldComponent> components) {
+        super(CommonComponent.GuidAllocator().nextGUID());
         this.version = new AtomicInteger(version);
         this.name = name;
-        this.slotManager = slotManager;
-        this.cubeContext = cubeContext;
+        this.components = components;
+        this.worldComponentManager = new WorldComponentManager(components);
     }
 
     public void increaseVersion() {

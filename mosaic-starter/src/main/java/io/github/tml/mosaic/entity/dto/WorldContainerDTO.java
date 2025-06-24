@@ -7,15 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WorldContainerDTO {
-    private GUID id;
-
     private String name;
 
-    private Integer version;
-
-    public WorldContainerDTO(GUID id, String name, Integer version) {
-        this.id = id;
-        this.name = name;
-        this.version = version;
+    public WorldContainerDTO(String name) {
+        this.name = name == null || name.isBlank() ? "新世界" :name;
     }
 }
