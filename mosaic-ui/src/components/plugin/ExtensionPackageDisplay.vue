@@ -127,7 +127,7 @@
                   </v-btn>
                 </div>
 
-                <v-expand-transition group>
+                <v-expand-transition>
                   <div
                       v-show="isPointsSectionExpanded(pkg.id)"
                       class="extension-points-grid"
@@ -272,16 +272,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick } from 'vue'
+import {computed, ref, watch, nextTick, defineProps} from 'vue'
 import type { ExtensionPackage, PointResult } from '@/api/plugin/pluginType'
 
-interface Props {
-  extensionPackages: ExtensionPackage[]
-  loading?: boolean
-}
 
-const props = withDefaults(defineProps<Props>(), {
-  loading: false
+const props = defineProps({
+  extensionPackages: {
+    default: [] as ExtensionPackage[]
+  },
+  loading: {
+    default: false
+  }
 })
 
 // 响应式状态管理
@@ -313,15 +314,12 @@ const hasExtensions = computed(() => {
 })
 
 // 扩展包折叠控制方法
-const togglePackage = (packageId: string) => {
+const togglePackage = async (packageId: string) => {
   if (expandedPackages.value.has(packageId)) {
     expandedPackages.value.delete(packageId)
-    pointsSectionExpanded.value.delete(packageId)
     // 同时收起所有扩展点
-    expandedPoints.value.delete(packageId)
   } else {
     expandedPackages.value.add(packageId)
-    pointsSectionExpanded.value.add(packageId)
   }
 }
 
@@ -334,7 +332,7 @@ const toggleAllPoints = (packageId: string) => {
   if (pointsSectionExpanded.value.has(packageId)) {
     pointsSectionExpanded.value.delete(packageId)
     // 收起所有扩展点
-    expandedPoints.value.delete(packageId)
+    // expandedPoints.value.delete(packageId)
   } else {
     pointsSectionExpanded.value.add(packageId)
   }

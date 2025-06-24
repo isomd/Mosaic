@@ -53,7 +53,7 @@ const getStatusClass = (status: string) => {
   }
   return statusMap[status?.toLowerCase()] || 'status-pending'
 }
-
+const isDark = ref(true)
 </script>
 <template>
   <v-dialog v-model="dialog" max-width="1200">
