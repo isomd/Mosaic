@@ -128,8 +128,6 @@ public class HotSwapDomain {
             return JSON.parseObject(response, AgentServerResp.class);
 
 
-        }catch (UnknownHostException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -154,10 +152,12 @@ public class HotSwapDomain {
             AgentServerResp resp = NotifyAgentBySocket(rollBack, className);
             if(resp.getIsSuccess()){
                 //5.删除当前最后一个热更新点
-                context.removeLastHotSwapPoint(className,methodName);
+                if(isExistHotSwapPoint(className,methodName)){
+                    context.removeLastHotSwapPoint(className,methodName);
+                }
             }
             return rollBack;
         }
-        throw new HotSwapException("无法找到热更新点历史记录");
+        throw new HotSwapException("无法找到该热更新点历史记录");
     }
 }
