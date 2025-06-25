@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.domain;
 
+import io.github.tml.mosaic.config.MosaicInitConfig;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.entity.dto.WorldContainerDTO;
 import io.github.tml.mosaic.world.construct.MosaicWorld;
@@ -18,7 +19,7 @@ public class WorldDomain {
     private MosaicWorld mosaicWorld;
 
     public WorldContainer createWorld(WorldContainerDTO worldDTO){
-        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), mosaicWorld.getInfoContextInstaller());
+        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), MosaicInitConfig.replaceClasses());
 
         mosaicWorld.getWorldContainerManager().addWorldContainer(worldContainer);
 

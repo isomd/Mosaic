@@ -1,6 +1,5 @@
 package io.github.tml.mosaic.world.construct;
 
-import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
@@ -19,23 +18,23 @@ public class MosaicWorld {
 
     protected WorldContainerManager worldContainerManager;
 
-    protected InfoContextInstaller infoContextInstaller;
-
     protected WorldComponentManager worldComponentManager;
 
     private List<ComponentReplace> replaceList;
 
+    private List<Class<?>> replaceClasses;
+
     private final String ORIGINAL_WORLD_NAME = "original";
 
-    public MosaicWorld(InfoContextInstaller infoContextInstaller) {
-        this.infoContextInstaller = infoContextInstaller;
+    public MosaicWorld(List<Class<?>> replaceClasses) {
+        this.replaceClasses = replaceClasses;
         this.worldContainerManager = new WorldContainerManager();
         this.init();
     }
 
-    public MosaicWorld(WorldContainer runningWorldContainer, InfoContextInstaller infoContextInstaller) {
+    public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes) {
+        this.replaceClasses = classes;
         this.runningWorldContainer = runningWorldContainer;
-        this.infoContextInstaller = infoContextInstaller;
         this.worldContainerManager = new WorldContainerManager();
         this.init();
     }
@@ -51,7 +50,7 @@ public class MosaicWorld {
     // 初始化原始世界
     protected void init(){
         if(Objects.isNull(this.runningWorldContainer)){
-            this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.infoContextInstaller);
+            this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.replaceClasses);
         }
         this.worldContainerManager.addWorldContainer(this.runningWorldContainer);
 

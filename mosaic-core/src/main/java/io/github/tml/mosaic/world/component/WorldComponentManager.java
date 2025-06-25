@@ -4,22 +4,18 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldComponentManager {
-    private ConcurrentHashMap<String, WorldComponent> worldComponents;
+    private ConcurrentHashMap<Class<?>, String> worldComponents;
 
-    public WorldComponentManager(List<WorldComponent> components) {
+    public WorldComponentManager(List<WorldComponent> components, String worldUid) {
         this.worldComponents = components.stream()
-                .collect(ConcurrentHashMap::new, (map, component) -> map.put(component.getName(), component), ConcurrentHashMap::putAll);
+                .collect(ConcurrentHashMap::new, (map, component) -> map.put(component.getClazz(), component.getComponentClassName() + worldUid), ConcurrentHashMap::putAll);
     }
 
-    public WorldComponent get(String name) {
-        return worldComponents.get(name);
+    public String getComponentName(Class<?> clazz) {
+        return worldComponents.get(clazz);
     }
 
     public void put(WorldComponent component) {
-        worldComponents.put(component.getName(),component);
-    }
-
-    public Object getComponent(String name) {
-        return worldComponents.get(name).getComponent();
+        worldComponents.put(component.getClazz(),component.getComponentClassName());
     }
 }

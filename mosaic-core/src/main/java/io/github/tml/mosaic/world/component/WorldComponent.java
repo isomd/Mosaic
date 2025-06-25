@@ -6,12 +6,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class WorldComponent {
-    private String name;
 
-    private Object component;
+    private Class<?> clazz;
 
-    public WorldComponent(String name, Object component) {
-        this.name = name;
-        this.component = component;
+    private String componentClassName;
+
+    public WorldComponent(Class<?> clazz, String componentClassName) {
+        this.clazz = clazz;
+        this.componentClassName = componentClassName;
     }
 }

@@ -16,14 +16,12 @@ import java.util.List;
 
 public class WorldContainerFactory {
 
-    public static WorldContainer createWorldContainer(String name, InfoContextInstaller infoContextInstaller) {
-        // 世界组件初始化
-        SlotManager slotManager = CubeConfig.slotManager();
-        CubeContext cubeContext = CubeConfig.cubeContext(infoContextInstaller);
+    public static WorldContainer createWorldContainer(String name, List<Class<?>> classes) {
         // 塞入创建的世界的components中
         List<WorldComponent> components = new ArrayList<>();
-        components.add(new WorldComponent("slotManager", slotManager));
-        components.add(new WorldComponent("cubeContext", cubeContext));
+        for (Class<?> clazz : classes) {
+            components.add(new WorldComponent(clazz, clazz.getName()));
+        }
         return new MosaicWorldContainer(name, 0, components);
     }
 

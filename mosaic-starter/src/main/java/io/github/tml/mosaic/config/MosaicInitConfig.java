@@ -2,8 +2,13 @@ package io.github.tml.mosaic.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
+import io.github.tml.mosaic.converter.CubeDefinitionConverter;
+import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.cube.config.CubeConfig;
+import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
+import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
@@ -16,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,17 +35,31 @@ public class MosaicInitConfig {
     * 当前世界
     * */
     @Bean
-    @DependsOn({"infoContextInstaller", "cubeEventBroadcaster"})
-    public MosaicWorld mosaicWorld(InfoContextInstaller infoContextInstaller){
-        return new MosaicWorld(infoContextInstaller);
+    public MosaicWorld mosaicWorld(){
+        return new MosaicWorld(replaceClasses());
     }
+
     /**
      * cube上下文容器
      */
     @Bean
-    @DependsOn({"mosaicWorld"})
-    public CubeContext cubeContext(MosaicWorld mosaicWorld) {
-        return (CubeContext) mosaicWorld.getWorldComponentManager().getComponent("cubeContext");
+    @DependsOn({"infoContextInstaller"})
+    public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
+        ClassPathCubeContext context = new ClassPathCubeContext();
+
+        // 初始化安装项Context 收集 -> List<CubeInfo>
+        List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(infoContextInstaller.installCubeInfoContext());
+
+        // List<CubeInfo> -> List<CubeDefinition>
+        List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
+
+        // 注册进context容器
+        context.registerAllCubeDefinition(cubeDefinitions);
+
+        // 刷新容器
+        context.refresh();
+
+        return context;
     }
 
     /**
@@ -47,14 +67,25 @@ public class MosaicInitConfig {
      * @return 槽管理器
      */
     @Bean
-    @DependsOn({"mosaicWorld"})
-    public SlotManager slotManager(MosaicWorld mosaicWorld){
-        return (SlotManager) mosaicWorld.getWorldComponentManager().getComponent("slotManager");
+    public SlotManager slotManager(){
+        GenericSlotManager manager = GenericSlotManager.manager();
+        GoldenShovel.loadSlotManager(manager);
+        return manager;
     }
 
     @Bean
     @DependsOn({"cubeContext", "slotManager"})
     public CubeActuatorProxy cubeActuatorProxy(CubeContext cubeContext, SlotManager slotManager){
-        return CubeConfig.cubeActuatorProxy(cubeContext, slotManager);
+        CubeActuatorProxy cubeActuatorProxy = new CubeActuatorProxy();
+        cubeActuatorProxy.init(cubeContext, slotManager);
+        GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
+        return cubeActuatorProxy;
+    }
+
+    public static List<Class<?>> replaceClasses(){
+        List<Class<?>> list = new ArrayList<>();
+        list.add(CubeContext.class);
+        list.add(SlotManager.class);
+        return list;
     }
 }

@@ -31,7 +31,7 @@ public abstract class WorldContainer extends UniqueEntity {
         this.version = new AtomicInteger(version);
         this.name = name;
         this.components = components;
-        this.worldComponentManager = new WorldComponentManager(components);
+        this.worldComponentManager = new WorldComponentManager(components, this.getId().toString());
     }
 
     public void increaseVersion() {
