@@ -27,22 +27,25 @@ public class MosaicWorld {
 
     private final String ORIGINAL_WORLD_NAME = "original";
 
-    public MosaicWorld(List<ComponentReplace> list, InfoContextInstaller infoContextInstaller) {
-        this.replaceList = list;
+    public MosaicWorld(InfoContextInstaller infoContextInstaller) {
         this.infoContextInstaller = infoContextInstaller;
+        this.worldContainerManager = new WorldContainerManager();
         this.init();
     }
 
-    public MosaicWorld(WorldContainer runningWorldContainer, List<ComponentReplace> list, InfoContextInstaller infoContextInstaller) {
+    public MosaicWorld(WorldContainer runningWorldContainer, InfoContextInstaller infoContextInstaller) {
         this.runningWorldContainer = runningWorldContainer;
         this.infoContextInstaller = infoContextInstaller;
-        this.replaceList = list;
+        this.worldContainerManager = new WorldContainerManager();
         this.init();
     }
 
     public void traverse(WorldContainer worldContainer){
+        if(this.runningWorldContainer.equals(worldContainer)){
+            return;
+        }
         this.runningWorldContainer = worldContainer;
-
+        init();
         replaceList.forEach(componentReplace -> componentReplace.replace(worldComponentManager));
     }
     // 初始化原始世界
@@ -50,7 +53,6 @@ public class MosaicWorld {
         if(Objects.isNull(this.runningWorldContainer)){
             this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.infoContextInstaller);
         }
-        this.worldContainerManager = new WorldContainerManager();
         this.worldContainerManager.addWorldContainer(this.runningWorldContainer);
 
         this.worldComponentManager = this.runningWorldContainer.getWorldComponentManager();

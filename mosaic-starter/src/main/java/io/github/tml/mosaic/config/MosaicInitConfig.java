@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
@@ -23,21 +24,22 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class MosaicInitConfig {
+//    @Primary
     /*
     * 当前世界
     * */
     @Bean
     @DependsOn({"infoContextInstaller", "cubeEventBroadcaster"})
-    public MosaicWorld mosaicWorld(List<ComponentReplace> replaceList, InfoContextInstaller infoContextInstaller){
-        return new MosaicWorld(replaceList, infoContextInstaller);
+    public MosaicWorld mosaicWorld(InfoContextInstaller infoContextInstaller){
+        return new MosaicWorld(infoContextInstaller);
     }
     /**
      * cube上下文容器
      */
     @Bean
-    @DependsOn({"infoContextInstaller", "cubeEventBroadcaster"})
+    @DependsOn({"mosaicWorld"})
     public CubeContext cubeContext(MosaicWorld mosaicWorld) {
-        return (CubeContext) mosaicWorld.getWorldComponentManager().get("cubeContext");
+        return (CubeContext) mosaicWorld.getWorldComponentManager().getComponent("cubeContext");
     }
 
     /**
@@ -45,8 +47,9 @@ public class MosaicInitConfig {
      * @return 槽管理器
      */
     @Bean
+    @DependsOn({"mosaicWorld"})
     public SlotManager slotManager(MosaicWorld mosaicWorld){
-        return (SlotManager) mosaicWorld.getWorldComponentManager().get("slotManager");
+        return (SlotManager) mosaicWorld.getWorldComponentManager().getComponent("slotManager");
     }
 
     @Bean

@@ -13,4 +13,6 @@ public interface WorldService {
     List<WorldContainerVO> getAllWorlds();
 
     WorldContainerVO removeWorld(String uuid);
+
+    WorldContainerVO getNowWorld();
 }

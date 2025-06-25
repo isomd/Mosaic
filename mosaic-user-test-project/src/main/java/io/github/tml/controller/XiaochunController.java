@@ -21,11 +21,11 @@ public class XiaochunController extends WorldController implements ComponentRepl
 
     @Override
     public void replace(WorldComponentManager worldComponentManager) {
-        this.cubeContext = (CubeContext) worldComponentManager.get("cubeContext");
+        this.cubeContext = (CubeContext) worldComponentManager.getComponent("cubeContext");
     }
 
-    @GetMapping
-    public String getNowCubeContext() {
+    @GetMapping("/getCubeContext")
+    public String getCubeContext() {
         return cubeContext.toString();
     }
 }

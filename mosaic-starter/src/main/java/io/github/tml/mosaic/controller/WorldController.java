@@ -16,22 +16,27 @@ public class WorldController {
     private WorldService worldService;
 
     @PostMapping("/create")
-    public R<WorldContainerVO> createWorld(@RequestBody WorldContainerDTO worldContainerDTO){
+    public R<?> createWorld(@RequestBody WorldContainerDTO worldContainerDTO){
         return R.success(worldService.createWorld(worldContainerDTO));
     }
 
     @GetMapping("/getAll")
-    public R<List<WorldContainerVO>> getAllWorlds(){
+    public R<?> getAllWorlds(){
         return R.success(worldService.getAllWorlds());
     }
 
     @GetMapping("/traverse")
-    public R<WorldContainerVO> traverseWorld(@RequestPart String uuid){
+    public R<?> traverseWorld(@RequestParam String uuid){
         return R.success(worldService.traverseWorld(uuid));
     }
 
     @GetMapping("/remove")
-    public R<WorldContainerVO> removeWorld(@RequestPart String uuid){
+    public R<?> removeWorld(@RequestParam String uuid){
         return R.success(worldService.removeWorld(uuid));
+    }
+
+    @GetMapping("/getNowWorld")
+    public R<?> getNowWorld(){
+        return R.success(worldService.getNowWorld());
     }
 }

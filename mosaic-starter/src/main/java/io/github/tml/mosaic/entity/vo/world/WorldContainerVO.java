@@ -1,7 +1,12 @@
 package io.github.tml.mosaic.entity.vo.world;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.bind.annotation.GetMapping;
 
+@Getter
+@Setter
 public class WorldContainerVO {
     private GUID id;
 

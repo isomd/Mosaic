@@ -38,4 +38,9 @@ public class WorldServiceImpl implements WorldService {
     public WorldContainerVO removeWorld(String uuid) {
         return WorldContainerConvert.convert2VO(worldDomain.removeWorld(new GUUID(uuid)));
     }
+
+    @Override
+    public WorldContainerVO getNowWorld() {
+        return WorldContainerConvert.convert2VO(worldDomain.getNowWorld());
+    }
 }
