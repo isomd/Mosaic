@@ -14,7 +14,6 @@ public class CodeProxyComponent implements DeployComponent {
 
     @Override
     public void execute(DeployContext context) {
-        System.out.println("CodeProxyComponent");
 
         String className = context.getClassName();
 

@@ -148,7 +148,6 @@ public class AgentUtil {
         if (!task.call()) {
             throw new RuntimeException("编译失败");
         }
-        System.out.println("编译输出的所有 class 名字: " + compiledClassData.keySet());
         // 获取主类名对应的字节码
         ByteArrayOutputStream baos = compiledClassData.get(fullClassName);
         if (baos == null) {

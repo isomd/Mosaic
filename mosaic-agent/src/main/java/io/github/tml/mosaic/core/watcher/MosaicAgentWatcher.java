@@ -36,7 +36,6 @@ public class MosaicAgentWatcher implements ClassFileTransformer {
         if (targetClass == null) {
             return classBytes; // 只处理重定义 忽略首次加载
         }
-        System.out.println("proxy classLoader : " + loader);
         // 创建上下文
         DeployContext context = new DeployContext(loader, className, classBytes);
 

@@ -60,6 +60,11 @@ public class HotSwapUtil {
         return result.toString();
     }
 
+    /**
+     * 根据全限定类名解压class文件获取字符串源码(入口)
+     * @param className
+     * @return
+     */
     public static String decompileClassFromClassName(String className) {
         try {
             // 将类名转换为路径
@@ -75,7 +80,7 @@ public class HotSwapUtil {
             return decompileClassToString(tempFile.getAbsolutePath()).replaceFirst("(?s)^/\\*.*?\\*/\\s*", "");
 
         } catch (Exception e) {
-            throw new RuntimeException("Decompile failed: " + className, e);
+            throw new RuntimeException("解压类文件失败: " + className, e);
         }
     }
 
@@ -129,21 +134,25 @@ public class HotSwapUtil {
             HotSwapContext.InsertType operation,
             Supplier<String> codeSupplier
     ) {
-        boolean[] flag = {false};
-        cu.findAll(MethodDeclaration.class).forEach(method -> {
-            method.getBody().ifPresent(body -> {
-                NodeList<Statement> stmts = body.getStatements();
-                for (int i = 0; i < stmts.size(); i++) {
-                    Statement stmt = stmts.get(i);
-                    if (stmt.getBegin().isEmpty() || stmt.getBegin().get().line != targetLine) continue;
+        try {
+            boolean[] flag = {false};
+            cu.findAll(MethodDeclaration.class).forEach(method -> {
+                method.getBody().ifPresent(body -> {
+                    NodeList<Statement> stmts = body.getStatements();
+                    for (int i = 0; i < stmts.size(); i++) {
+                        Statement stmt = stmts.get(i);
+                        if (stmt.getBegin().isEmpty() || stmt.getBegin().get().line != targetLine) continue;
 
-                    applyOperation(stmts, i, stmt, operation, codeSupplier);
-                    flag[0] = true;
-                }
+                        applyOperation(stmts, i, stmt, operation, codeSupplier);
+                        flag[0] = true;
+                    }
+                });
             });
-        });
-        if (!flag[0]) {
-            throw new HotSwapException("修改的行号不正确: " + targetLine);
+            if (!flag[0]) {
+                throw new HotSwapException("修改的行号不正确: " + targetLine);
+            }
+        }catch (Exception e) {
+            throw new RuntimeException("无法根据行号匹配方法进行解析 :"+e.getMessage());
         }
     }
 
