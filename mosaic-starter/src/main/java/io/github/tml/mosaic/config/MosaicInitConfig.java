@@ -12,9 +12,11 @@ import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.construct.MosaicWorld;
 import io.github.tml.mosaic.world.replace.ComponentReplace;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class MosaicInitConfig {
+
 //    @Primary
     /*
     * 当前世界
@@ -69,13 +72,13 @@ public class MosaicInitConfig {
     @Bean
     public SlotManager slotManager(){
         GenericSlotManager manager = GenericSlotManager.manager();
-        GoldenShovel.loadSlotManager(manager);
+//        GoldenShovel.loadSlotManager(manager);
         return manager;
     }
 
     @Bean
-    @DependsOn({"cubeContext", "slotManager"})
-    public CubeActuatorProxy cubeActuatorProxy(CubeContext cubeContext, SlotManager slotManager){
+//    @DependsOn({"cubeContext", "slotManager"})
+    public CubeActuatorProxy cubeActuatorProxy(SlotManager slotManager, CubeContext cubeContext){
         CubeActuatorProxy cubeActuatorProxy = new CubeActuatorProxy();
         cubeActuatorProxy.init(cubeContext, slotManager);
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
@@ -83,9 +86,6 @@ public class MosaicInitConfig {
     }
 
     public static List<Class<?>> replaceClasses(){
-        List<Class<?>> list = new ArrayList<>();
-        list.add(CubeContext.class);
-        list.add(SlotManager.class);
-        return list;
+        return List.of(CubeContext.class, SlotManager.class);
     }
 }

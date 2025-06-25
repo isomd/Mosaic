@@ -19,7 +19,7 @@ public class WorldDomain {
     private MosaicWorld mosaicWorld;
 
     public WorldContainer createWorld(WorldContainerDTO worldDTO){
-        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), MosaicInitConfig.replaceClasses());
+        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), MosaicInitConfig.replaceClasses(), false);
 
         mosaicWorld.getWorldContainerManager().addWorldContainer(worldContainer);
 

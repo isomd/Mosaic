@@ -50,7 +50,7 @@ public class MosaicWorld {
     // 初始化原始世界
     protected void init(){
         if(Objects.isNull(this.runningWorldContainer)){
-            this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.replaceClasses);
+            this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.replaceClasses, true);
         }
         this.worldContainerManager.addWorldContainer(this.runningWorldContainer);
 
