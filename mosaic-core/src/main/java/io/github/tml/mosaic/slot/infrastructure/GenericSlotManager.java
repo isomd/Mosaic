@@ -13,8 +13,7 @@ public class GenericSlotManager implements SlotManager {
 
     private final static GenericSlotManager MANAGER  = new GenericSlotManager();
 
-    private GenericSlotManager(){
-
+    public GenericSlotManager(){
     }
 
     public static GenericSlotManager manager(){
