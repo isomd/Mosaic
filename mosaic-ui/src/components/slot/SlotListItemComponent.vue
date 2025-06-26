@@ -21,7 +21,6 @@ const props = defineProps({
 })
 onMounted(()=>{
   exPoint.value = cubeStore.getExPoint(props.slot.cubeId,props.slot.exPackageId,props.slot.exPointId)
-  console.log(exPoint.value)
 })
 const handleDelete = () => {
   deleteSlot(props.slot.slotId).then((res:any)=>{
