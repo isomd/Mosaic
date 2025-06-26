@@ -1,10 +1,9 @@
-package io.github.tml.mosaic.config;
+package io.github.tml.mosaic.cube.config;
 
 import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.converter.InfoContextConverter;
-import io.github.tml.mosaic.cube.config.CubeConfig;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
@@ -12,42 +11,11 @@ import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.world.component.WorldComponentManager;
-import io.github.tml.mosaic.world.construct.MosaicWorld;
-import io.github.tml.mosaic.world.replace.ComponentReplace;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Primary;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * mosaic框架初始化
- */
-@Slf4j
-@Configuration
-public class MosaicInitConfig {
-
-//    @Primary
-    /*
-    * 当前世界
-    * */
-    @Bean
-    public MosaicWorld mosaicWorld(){
-        return new MosaicWorld(replaceClasses());
-    }
-
-    /**
-     * cube上下文容器
-     */
-    @Bean
-    @DependsOn({"infoContextInstaller"})
-    public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
+public class CubeConfig {
+    public static CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
         ClassPathCubeContext context = new ClassPathCubeContext();
 
         // 初始化安装项Context 收集 -> List<CubeInfo>
@@ -69,23 +37,16 @@ public class MosaicInitConfig {
      * 槽管理器
      * @return 槽管理器
      */
-    @Bean
-    public SlotManager slotManager(){
+    public static SlotManager slotManager(){
         GenericSlotManager manager = GenericSlotManager.manager();
-//        GoldenShovel.loadSlotManager(manager);
+        GoldenShovel.loadSlotManager(manager);
         return manager;
     }
 
-    @Bean
-//    @DependsOn({"cubeContext", "slotManager"})
-    public CubeActuatorProxy cubeActuatorProxy(SlotManager slotManager, CubeContext cubeContext){
+    public static CubeActuatorProxy cubeActuatorProxy(CubeContext cubeContext, SlotManager slotManager){
         CubeActuatorProxy cubeActuatorProxy = new CubeActuatorProxy();
         cubeActuatorProxy.init(cubeContext, slotManager);
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
-    }
-
-    public static List<Class<?>> replaceClasses(){
-        return List.of(CubeContext.class, SlotManager.class);
     }
 }
