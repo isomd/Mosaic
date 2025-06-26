@@ -65,6 +65,17 @@
   "hotSwap": {
     "lineNumber": "行号",
     "slot": "槽",
-    "className": "类名"
+    "className": "类名",
+    "args": "参数",
+    "plugin": "插件 ID",
+    "exPackage": "拓展包 ID",
+    "exPoint": "拓展点 ID",
+    "parameterTypes": "参数类型",
+    "changeType": "改动类型",
+    "resName": "返回值",
+    "changeTypes": {
+      "REPLACE_ASSIGN_RIGHT": "替换等式右侧",
+      "INSERT_AFTER": "插入代码行"
+    }
   }
 }
