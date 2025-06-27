@@ -11,6 +11,8 @@ onMounted(()=>{
     <headerComponent></headerComponent>
     <sidebarComponent></sidebarComponent>
     <v-main>
+      <FloatingBallComponent></FloatingBallComponent>
+      <WorldPanelComponent></WorldPanelComponent>
       <v-container fluid>
         <router-view></router-view>
       </v-container>

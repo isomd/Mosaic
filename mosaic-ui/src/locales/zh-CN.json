@@ -77,5 +77,9 @@
       "REPLACE_ASSIGN_RIGHT": "替换等式右侧",
       "INSERT_AFTER": "插入代码行"
     }
+  },
+  "world": {
+    "worldName": "世界名",
+    "createWorld": "创建世界"
   }
 }
