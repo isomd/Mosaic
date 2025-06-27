@@ -336,26 +336,6 @@ const showValidationDialog = (config) => {
 </script>
 
 <style scoped lang="scss">
-.v-card {
-  border-radius: 8px !important;
-  overflow: visible !important;
-  .v-card-title {
-    font-size: 1em !important;
-    font-weight: 400 !important;
-    padding: 16px 20px !important;
-    text-align: center;
-    margin: -4px -4px 16px -4px;
-    text-shadow: 2px 2px 0 var(--mc-shadow);
-  }
-
-  .v-card-text {
-    padding: 20px !important;
-    color: var(--mc-obsidian) !important;
-    font-size: 1em !important;
-    line-height: 1.6;
-  }
-
-}
 /* 对话框基础样式 - 采用暖黄色调主题 */
 .config-dialog :deep(.v-overlay__content) {
   margin: 24px;
@@ -366,7 +346,7 @@ const showValidationDialog = (config) => {
   overflow: hidden;
   background: #FEFEFE;
   box-shadow: 0 8px 32px rgba(139, 115, 85, 0.15);
-  border: 2px solid #E6D3A3;
+  border: 2px solid #E6D3A3 !important;
 }
 
 /* 对话框标题栏 - 暖黄渐变主题 */
@@ -400,7 +380,7 @@ const showValidationDialog = (config) => {
 
 .header-icon-wrapper {
   background: linear-gradient(135deg, #4A9B8E, #6BB6B0);
-  border-radius: 50%;
+  border-radius: 25%;
   padding: 12px;
   display: flex;
   align-items: center;
