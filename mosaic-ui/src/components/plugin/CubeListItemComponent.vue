@@ -4,6 +4,7 @@ import { type Cube } from "../../api/plugin/pluginType";
 
 const dialog = ref(false)
 const isHovered = ref(false)
+const configDialog = ref(false)
 
 const props = defineProps({
   cube: {
@@ -168,6 +169,7 @@ onMounted(() => {
       <!-- 卡片操作区域 -->
       <v-card-actions class="cube-actions">
         <div class="action-buttons">
+
           <v-tooltip text="查看详情" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
               <v-btn
@@ -200,6 +202,7 @@ onMounted(() => {
                   class="config-btn icon-btn"
                   size="large"
                   variant="outlined"
+                  @click="configDialog = true"
               ></v-btn>
             </template>
           </v-tooltip>
@@ -217,11 +220,16 @@ onMounted(() => {
             <span class="meta-text">{{ new Date(props.cube.lastUpdatedTime).toLocaleDateString('zh-CN') }}</span>
           </div>
         </div>
+
       </v-card-actions>
     </v-card>
 
     <!-- Details对话框组件 -->
     <CubeDetailsComponent v-model="dialog" :pluginData="props.cube"></CubeDetailsComponent>
+
+    <!-- 配置对话框组件 -->
+    <CubeConfigComponent v-model="configDialog" :pluginData="props.cube"></CubeConfigComponent>
+
   </div>
 </template>
 

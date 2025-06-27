@@ -56,9 +56,10 @@ const getStatusClass = (status: string) => {
 const isDark = ref(true)
 </script>
 <template>
-  <v-dialog v-model="dialog" max-width="1200">
-    <v-card>
 
+  <v-dialog v-model="dialog" max-width="1200">
+
+    <v-card>
       <v-toolbar
           class="plugin-header-toolbar"
           height="90"
@@ -155,6 +156,7 @@ const isDark = ref(true)
       </v-card-text>
 
     </v-card>
+
   </v-dialog>
 </template>
 <style scoped lang="scss">
