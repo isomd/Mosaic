@@ -65,6 +65,17 @@
   "hotSwap": {
     "lineNumber": "Line Number",
     "slot": "Slot",
-    "className": "ClassName"
+    "className": "ClassName",
+    "args": "args",
+    "plugin": "Plugin ID",
+    "exPackage": "Extension Package ID",
+    "exPoint": "Extension Point ID",
+    "parameterTypes": "Parameter Types",
+    "resName": "Result Name",
+    "changeType": "Change Type",
+    "changeTypes": {
+      "REPLACE_ASSIGN_RIGHT": "REPLACE_ASSIGN_RIGHT",
+      "INSERT_AFTER": "INSERT_AFTER"
+    }
   }
 }
