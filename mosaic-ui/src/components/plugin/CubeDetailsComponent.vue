@@ -18,12 +18,6 @@ const dialog = computed({
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleString()
 }
-const formatConfigValue = (value) => {
-  if (value === null) return 'null'
-  if (Array.isArray(value)) return value.join(', ') || '空数组'
-  if (typeof value === 'object') return JSON.stringify(value)
-  return value.toString()
-}
 
 // 添加到 script 部分
 const getStatusText = (status: string) => {

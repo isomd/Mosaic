@@ -9,8 +9,19 @@
           </div>
           <div class="header-text-section">
             <h2 class="dialog-title">配置信息</h2>
-            <p class="dialog-subtitle">{{ pluginData?.name || '插件配置详情' }}</p>
           </div>
+
+          <p class="dialog-subtitle">{{ pluginData?.name || '插件配置详情' }}</p>
+
+          <v-chip
+              small
+              color="rgba(255,255,255,0.2)"
+              text-color="white"
+              class="config-count-chip"
+          >
+            {{ structuredConfigItems.length }} 项配置
+          </v-chip>
+
           <v-btn
               icon
               @click="closeDialog"
@@ -31,6 +42,7 @@
 
         <!-- 结构化配置信息卡片 -->
         <v-card class="config-structured-card" elevation="2" v-if="hasStructuredConfig">
+
           <v-card-title class="config-structured-header">
             <div class="header-content">
               <div class="icon-wrapper">
@@ -39,14 +51,7 @@
               <span class="header-text">详细配置项</span>
             </div>
             <v-spacer></v-spacer>
-            <v-chip
-                small
-                color="rgba(255,255,255,0.2)"
-                text-color="white"
-                class="config-count-chip"
-            >
-              {{ structuredConfigItems.length }} 项配置
-            </v-chip>
+
           </v-card-title>
 
           <v-card-text class="structured-content">
