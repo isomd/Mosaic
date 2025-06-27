@@ -144,8 +144,6 @@ const isDark = ref(true)
             class="mt-4"
         />
 
-        <ConfigDisplay :config="pluginData.config" />
-
         <PluginStatisticsChart
             :statistics="pluginData.statistics"
             :theme="isDark ? 'dark' : 'light'"

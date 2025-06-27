@@ -182,17 +182,17 @@ onMounted(() => {
             </template>
           </v-tooltip>
 
-          <v-tooltip text="移除插件" location="top">
-            <template v-slot:activator="{ props: tooltipProps }">
-              <v-btn
-                  v-bind="tooltipProps"
-                  icon="mdi-delete-outline"
-                  class="remove-btn icon-btn"
-                  size="large"
-                  variant="outlined"
-              ></v-btn>
-            </template>
-          </v-tooltip>
+<!--          <v-tooltip text="移除插件" location="top">-->
+<!--            <template v-slot:activator="{ props: tooltipProps }">-->
+<!--              <v-btn-->
+<!--                  v-bind="tooltipProps"-->
+<!--                  icon="mdi-delete-outline"-->
+<!--                  class="remove-btn icon-btn"-->
+<!--                  size="large"-->
+<!--                  variant="outlined"-->
+<!--              ></v-btn>-->
+<!--            </template>-->
+<!--          </v-tooltip>-->
 
           <v-tooltip text="插件配置" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
@@ -201,7 +201,6 @@ onMounted(() => {
                   icon="mdi-cog-outline"
                   class="config-btn icon-btn"
                   size="large"
-                  variant="outlined"
                   @click="configDialog = true"
               ></v-btn>
             </template>
