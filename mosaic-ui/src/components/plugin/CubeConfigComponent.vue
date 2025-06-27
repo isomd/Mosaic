@@ -336,13 +336,33 @@ const showValidationDialog = (config) => {
 </script>
 
 <style scoped lang="scss">
+.v-card {
+  border-radius: 8px !important;
+  overflow: visible !important;
+  .v-card-title {
+    font-size: 1em !important;
+    font-weight: 400 !important;
+    padding: 16px 20px !important;
+    text-align: center;
+    margin: -4px -4px 16px -4px;
+    text-shadow: 2px 2px 0 var(--mc-shadow);
+  }
+
+  .v-card-text {
+    padding: 20px !important;
+    color: var(--mc-obsidian) !important;
+    font-size: 1em !important;
+    line-height: 1.6;
+  }
+
+}
 /* 对话框基础样式 - 采用暖黄色调主题 */
 .config-dialog :deep(.v-overlay__content) {
   margin: 24px;
 }
 
 .config-dialog-card {
-  border-radius: 16px;
+  border-radius: 16px !important;
   overflow: hidden;
   background: #FEFEFE;
   box-shadow: 0 8px 32px rgba(139, 115, 85, 0.15);
@@ -351,6 +371,7 @@ const showValidationDialog = (config) => {
 
 /* 对话框标题栏 - 暖黄渐变主题 */
 .config-dialog-header {
+  border-radius: 16px 16px 0 0 !important;
   background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 50%, #D4A574 100%);
   color: #2D5A27;
   padding: 24px;
@@ -428,7 +449,7 @@ const showValidationDialog = (config) => {
 /* 配置卡片通用样式 - 暖色调主题 */
 .config-structured-card {
   margin-bottom: 24px;
-  border-radius: 12px;
+  border-radius: 12px !important;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(139, 115, 85, 0.12);
   border: 1px solid #E6D3A3;
@@ -442,6 +463,7 @@ const showValidationDialog = (config) => {
 
 /* 结构化配置卡片头部 */
 .config-structured-header {
+  border-radius: 16px 16px 0 0 !important;
   background: linear-gradient(135deg, #E6D3A3 0%, #F4E4BC 100%);
   color: #2D5A27;
   padding: 16px 20px;
@@ -503,26 +525,26 @@ const showValidationDialog = (config) => {
 .config-item-card {
   border-radius: 12px;
   transition: all 0.3s ease;
-  border: 2px solid #E6D3A3;
-  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
+  border: 2px solid #E6D3A3  !important;
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%) !important;
   position: relative;
   overflow: hidden;
 }
 
-.config-item-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #E6D3A3, #D4A574, #E6D3A3);
-}
+//.config-item-card::before {
+//  content: '';
+//  position: absolute;
+//  top: 0;
+//  left: 0;
+//  right: 0;
+//  height: 4px;
+//  background: linear-gradient(90deg, #E6D3A3, #D4A574, #E6D3A3);
+//}
 
 .config-item-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(139, 115, 85, 0.2);
-  background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 100%);
+  background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 100%) !important;
 }
 
 .config-item-content {
