@@ -25,7 +25,6 @@ system.log.cube.p:
   retentionDays: 7
   logLevel: DEBUG
   maxFileSize: 1024
-  
 
 ai.chat.cube:
   apiEndpoint: https://api.siliconflow.cn/v1/chat/completions
