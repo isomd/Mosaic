@@ -19,28 +19,26 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public WorldContainerVO createWorld(WorldContainerDTO worldContainerDTO) {
-        return WorldContainerConvert.convert2VO(worldDomain.createWorld(worldContainerDTO));
+        return worldDomain.createWorld(worldContainerDTO);
     }
 
     @Override
     public WorldContainerVO traverseWorld(String uuid) {
-        return WorldContainerConvert.convert2VO(worldDomain.traverseWorld(new GUUID(uuid)));
+        return worldDomain.traverseWorld(new GUUID(uuid));
     }
 
     @Override
     public List<WorldContainerVO> getAllWorlds() {
-        return worldDomain.getAllWorlds().stream()
-                .map(WorldContainerConvert::convert2VO)
-                .collect(Collectors.toList());
+        return worldDomain.getAllWorlds();
     }
 
     @Override
     public WorldContainerVO removeWorld(String uuid) {
-        return WorldContainerConvert.convert2VO(worldDomain.removeWorld(new GUUID(uuid)));
+        return worldDomain.removeWorld(new GUUID(uuid));
     }
 
     @Override
     public WorldContainerVO getNowWorld() {
-        return WorldContainerConvert.convert2VO(worldDomain.getNowWorld());
+        return worldDomain.getNowWorld();
     }
 }

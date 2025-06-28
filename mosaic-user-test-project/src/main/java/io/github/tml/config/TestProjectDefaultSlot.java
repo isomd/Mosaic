@@ -9,15 +9,14 @@ import org.springframework.core.annotation.Order;
 
 import javax.annotation.PostConstruct;
 
-//@DependsOn("slotManager")
+@DependsOn("mosaicInitConfig")
 @Configuration
 public class TestProjectDefaultSlot{
+    @PostConstruct
+    public void init() {
 
-    @Autowired
-    public TestProjectDefaultSlot(SlotManager slotManager) {
-        GoldenShovel.loadSlotManager(slotManager);
-        GoldenShovel.slotBootStrap()
-                .slotId("log.plugin.slot")
-                .build();
+//        GoldenShovel.slotBootStrap()
+//                .slotId("log.plugin.slot")
+//                .build();
     }
 }

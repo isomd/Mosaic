@@ -1,10 +1,12 @@
 package io.github.tml.mosaic.world.construct;
 
+import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;
 import io.github.tml.mosaic.world.replace.ComponentReplace;
+import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,21 +20,23 @@ public class MosaicWorld {
 
     protected WorldContainerManager worldContainerManager;
 
-    protected WorldComponentManager worldComponentManager;
-
-    private List<ComponentReplace> replaceList;
-
     private List<Class<?>> replaceClasses;
 
     private final String ORIGINAL_WORLD_NAME = "original";
 
-    public MosaicWorld(List<Class<?>> replaceClasses) {
+    private WorldContainer originalWorldContainer;
+
+    private ReplaceBeanContext replaceBeanContext;
+
+    public MosaicWorld(List<Class<?>> replaceClasses, ReplaceBeanContext replaceBeanContext) {
+        this.replaceBeanContext = replaceBeanContext;
         this.replaceClasses = replaceClasses;
         this.worldContainerManager = new WorldContainerManager();
         this.init();
     }
 
-    public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes) {
+    public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes, ReplaceBeanContext replaceBeanContext) {
+        this.replaceBeanContext = replaceBeanContext;
         this.replaceClasses = classes;
         this.runningWorldContainer = runningWorldContainer;
         this.worldContainerManager = new WorldContainerManager();
@@ -45,16 +49,19 @@ public class MosaicWorld {
         }
         this.runningWorldContainer = worldContainer;
         init();
-        replaceList.forEach(componentReplace -> componentReplace.replace(worldComponentManager));
+        replaceBeanContext.replaceBean(this.runningWorldContainer.getWorldComponentManager());
+    }
+
+    public Boolean isRunningWorld(GUID guid){
+        return this.runningWorldContainer.getId().equals(guid);
     }
     // 初始化原始世界
     protected void init(){
         if(Objects.isNull(this.runningWorldContainer)){
             this.runningWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, this.replaceClasses, true);
+            this.originalWorldContainer = this.runningWorldContainer;
         }
         this.worldContainerManager.addWorldContainer(this.runningWorldContainer);
-
-        this.worldComponentManager = this.runningWorldContainer.getWorldComponentManager();
 
         this.hotReplace();
     }

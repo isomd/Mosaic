@@ -6,7 +6,7 @@ import io.github.tml.mosaic.world.container.WorldContainer;
 
 public class WorldContainerConvert {
     public static WorldContainerVO convert2VO(WorldContainer worldContainer){
-        return new WorldContainerVO(worldContainer.getId(), worldContainer.getName(), worldContainer.getVersion().get());
+        return worldContainer != null ? new WorldContainerVO(worldContainer.getId(), worldContainer.getName(), worldContainer.getVersion().get()) : new WorldContainerVO(null, "当前世界不存在", null);
     }
 
 }
