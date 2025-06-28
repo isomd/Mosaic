@@ -765,6 +765,7 @@ const showErrorMessage = (message) => {
 </script>
 
 <style scoped lang="scss">
+
 /* 基础对话框样式保持不变 */
 .config-dialog :deep(.v-overlay__content) {
   margin: 24px;
@@ -772,9 +773,10 @@ const showErrorMessage = (message) => {
 
 .config-dialog-card {
   border-radius: 16px !important;
-  overflow: hidden;
+  overflow: hidden !important;
   background: #FEFEFE;
   box-shadow: 0 8px 32px rgba(139, 115, 85, 0.15);
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%) !important;
   border: 2px solid #E6D3A3 !important;
 }
 
@@ -856,7 +858,7 @@ const showErrorMessage = (message) => {
   padding: 20px;
   background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
   height: calc(100% - 80px);
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .documentation-grid {
@@ -866,10 +868,11 @@ const showErrorMessage = (message) => {
 }
 
 .doc-item-card {
-  border-radius: 8px;
   transition: all 0.3s ease;
   border: 2px solid #E6D3A3;
   cursor: pointer;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%) !important;
 }
 
 .doc-item-card:hover,
@@ -888,7 +891,7 @@ const showErrorMessage = (message) => {
   padding: 20px;
   background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
   height: calc(100% - 80px);
-  overflow-y: auto;
+  overflow:hidden;
 }
 
 .config-form {
@@ -900,9 +903,10 @@ const showErrorMessage = (message) => {
 .config-form-item {
   padding: 16px;
   border-radius: 8px;
-  border: 2px solid transparent;
+  border: 2px solid #E6D3A3;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%) !important;
 }
 
 .form-item-highlighted {
@@ -970,9 +974,13 @@ const showErrorMessage = (message) => {
     order: 1;
   }
 }
+.config-dialog-content{
+  overflow-y: scroll;
 
+}
 @media (max-width: 768px) {
   .config-dialog-content {
+    overflow-y: scroll;
     padding: 16px;
   }
 
