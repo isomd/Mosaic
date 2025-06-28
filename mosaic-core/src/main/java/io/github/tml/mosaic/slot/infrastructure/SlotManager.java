@@ -3,7 +3,6 @@ package io.github.tml.mosaic.slot.infrastructure;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.slot.Slot;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**

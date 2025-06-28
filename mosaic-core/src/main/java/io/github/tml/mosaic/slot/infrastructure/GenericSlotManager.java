@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.util.*;
 
-public class GenericSlotManager implements SlotManager, Serializable {
+public class GenericSlotManager implements SlotManager {
 
     private Map<GUID, Slot> slotMap = new HashMap<>();
 

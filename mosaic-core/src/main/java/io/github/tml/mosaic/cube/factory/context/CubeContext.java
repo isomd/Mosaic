@@ -6,7 +6,6 @@ import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
