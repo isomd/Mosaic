@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/world")
@@ -27,12 +28,14 @@ public class WorldController {
 
     @GetMapping("/traverse")
     public R<?> traverseWorld(@RequestParam String uuid){
-        return R.success(worldService.traverseWorld(uuid));
+        WorldContainerVO worldContainerVO = worldService.traverseWorld(uuid);
+        return Objects.isNull(worldContainerVO) ? R.error("未找到世界") : R.success(worldContainerVO);
     }
 
     @GetMapping("/remove")
     public R<?> removeWorld(@RequestParam String uuid){
-        return R.success(worldService.removeWorld(uuid));
+        WorldContainerVO worldContainerVO = worldService.removeWorld(uuid);
+        return Objects.isNull(worldContainerVO) ? R.error("未找到世界") : R.success(worldContainerVO);
     }
 
     @GetMapping("/getNowWorld")

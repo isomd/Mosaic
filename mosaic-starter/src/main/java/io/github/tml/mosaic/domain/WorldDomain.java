@@ -26,16 +26,18 @@ public class WorldDomain {
     private UniversalBeanHands universalBeanHands;
 
     public WorldContainerVO createWorld(WorldContainerDTO worldDTO){
+        // 创建新世界容器
         WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), MosaicComponentConfig.getComponentClasses(), false);
 
         mosaicWorld.getWorldContainerManager().addWorldContainer(worldContainer);
-
+        // 创建新世界的组件并注册
         universalBeanHands.createBeans(worldContainer);
 
         return WorldContainerConvert.convert2VO(worldContainer);
     }
 
     public WorldContainerVO traverseWorld(GUID guid){
+        // 当前切换的世界是否存在
         if(mosaicWorld.getWorldContainerManager().contains(guid)){
             if(!mosaicWorld.isRunningWorld(guid)){
                 WorldContainer worldContainer = mosaicWorld.getWorldContainerManager().getWorldContainer(guid);
@@ -46,7 +48,7 @@ public class WorldDomain {
             }
             return WorldContainerConvert.convert2VO(mosaicWorld.getRunningWorldContainer());
         }
-        return WorldContainerConvert.convert2VO(null);
+        return null;
     }
 
     public WorldContainerVO createQuickCopyWorld(GUID guid){

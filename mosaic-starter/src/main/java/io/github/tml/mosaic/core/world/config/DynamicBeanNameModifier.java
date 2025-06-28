@@ -36,7 +36,7 @@ public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProces
             beanDefinition.setPrimary(true);
 
             registry.registerBeanDefinition(newBeanName, beanDefinition);
-
+            // 保存现有的BeanDefinition，以便后续创建新的Bean实例
             map.put(clazz, beanDefinition);
         }
     }

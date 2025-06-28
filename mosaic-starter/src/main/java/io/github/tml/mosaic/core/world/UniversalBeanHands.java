@@ -32,6 +32,9 @@ public class UniversalBeanHands {
     @Resource
     private DynamicBeanNameModifier dynamicBeanNameModifier;
 
+    @Resource
+    private ConfigurableApplicationContext context;
+
     public void createBeans(WorldContainer newContainer) {
         List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
         for (Class<?> clazz : componentClasses){
@@ -53,9 +56,6 @@ public class UniversalBeanHands {
             }
         }
     }
-
-    @Resource
-    private ConfigurableApplicationContext context;
 
     public void registerBean(String beanName, Class<?> beanClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) context.getBeanFactory();

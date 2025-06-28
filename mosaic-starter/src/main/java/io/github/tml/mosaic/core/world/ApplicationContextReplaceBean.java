@@ -26,10 +26,11 @@ public class ApplicationContextReplaceBean implements ReplaceBeanContext {
     // 属性替换
     public void replaceBean(WorldComponentManager worldComponentManager) {
         List<ComponentReplace> beansOfType = new ArrayList<>(applicationContext.getBeansOfType(ComponentReplace.class).values());
+        // 遍历待替换的bean实例
         for (ComponentReplace bean : beansOfType){
             Class<? extends ComponentReplace> clazz = bean.getClass();
             Field[] fields = clazz.getDeclaredFields();
-
+            // 循环判断当前属性是否为需替换的属性
             for (Field field : fields) {
                 try {
                     field.setAccessible(true);
@@ -37,8 +38,8 @@ public class ApplicationContextReplaceBean implements ReplaceBeanContext {
                     if(!Objects.isNull(o)){
                         Class<?> fieldClass = o.getClass();
                         for (Class<?> componentClass : componentClasses){
+                            // 需替换 则反射替换
                             if (componentClass.isAssignableFrom(fieldClass)){
-
                                 field.set(bean, getNewComponent(componentClass, worldComponentManager));
                             }
                         }
