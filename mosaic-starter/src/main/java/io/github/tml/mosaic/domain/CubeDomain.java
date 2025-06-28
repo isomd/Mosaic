@@ -12,16 +12,16 @@ import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
-import io.github.tml.mosaic.entity.vo.cube.CubeConfigVO;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.ReaderType;
+import io.github.tml.mosaic.world.replace.ComponentReplace;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +34,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class CubeDomain {
+//@RequiredArgsConstructor
+public class CubeDomain implements ComponentReplace {
 
-    private final CubeContext cubeContext;
-    private final InfoContextInstaller installer;
+    @Resource
+    private CubeContext cubeContext;
+    @Resource
+    private InfoContextInstaller installer;
 
     /**
      * 获取所有Cube列表

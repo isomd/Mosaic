@@ -4,6 +4,7 @@ import { type Cube } from "../../api/plugin/pluginType";
 
 const dialog = ref(false)
 const isHovered = ref(false)
+const configDialog = ref(false)
 
 const props = defineProps({
   cube: {
@@ -168,6 +169,7 @@ onMounted(() => {
       <!-- 卡片操作区域 -->
       <v-card-actions class="cube-actions">
         <div class="action-buttons">
+
           <v-tooltip text="查看详情" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
               <v-btn
@@ -180,17 +182,17 @@ onMounted(() => {
             </template>
           </v-tooltip>
 
-          <v-tooltip text="移除插件" location="top">
-            <template v-slot:activator="{ props: tooltipProps }">
-              <v-btn
-                  v-bind="tooltipProps"
-                  icon="mdi-delete-outline"
-                  class="remove-btn icon-btn"
-                  size="large"
-                  variant="outlined"
-              ></v-btn>
-            </template>
-          </v-tooltip>
+<!--          <v-tooltip text="移除插件" location="top">-->
+<!--            <template v-slot:activator="{ props: tooltipProps }">-->
+<!--              <v-btn-->
+<!--                  v-bind="tooltipProps"-->
+<!--                  icon="mdi-delete-outline"-->
+<!--                  class="remove-btn icon-btn"-->
+<!--                  size="large"-->
+<!--                  variant="outlined"-->
+<!--              ></v-btn>-->
+<!--            </template>-->
+<!--          </v-tooltip>-->
 
           <v-tooltip text="插件配置" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
@@ -199,7 +201,7 @@ onMounted(() => {
                   icon="mdi-cog-outline"
                   class="config-btn icon-btn"
                   size="large"
-                  variant="outlined"
+                  @click="configDialog = true"
               ></v-btn>
             </template>
           </v-tooltip>
@@ -217,24 +219,29 @@ onMounted(() => {
             <span class="meta-text">{{ new Date(props.cube.lastUpdatedTime).toLocaleDateString('zh-CN') }}</span>
           </div>
         </div>
+
       </v-card-actions>
     </v-card>
 
     <!-- Details对话框组件 -->
     <CubeDetailsComponent v-model="dialog" :pluginData="props.cube"></CubeDetailsComponent>
+
+    <!-- 配置对话框组件 -->
+    <CubeConfigComponent v-model="configDialog" :pluginData="props.cube"></CubeConfigComponent>
+
   </div>
 </template>
 
 <style scoped lang="scss">
 // 沙漠绿洲配色变量
-$desert-sand: #F4E4BC;        // 沙漠沙子色
-$desert-dune: #E6D3A3;        // 沙丘色
-$oasis-green: #4A9B8E;        // 绿洲绿色
-$oasis-blue: #6BB6B0;         // 绿洲蓝绿色
-$palm-green: #2D5A27;         // 棕榈绿
+$desert-sand:   #F4E4BC;        // 沙漠沙子色
+$desert-dune:   #E6D3A3;        // 沙丘色
+$oasis-green:   #4A9B8E;        // 绿洲绿色
+$oasis-blue:    #6BB6B0;         // 绿洲蓝绿色
+$palm-green:    #2D5A27;         // 棕榈绿
 $sunset-orange: #D4A574;      // 日落橙
-$clear-white: #FEFEFE;        // 清爽白
-$shadow-brown: #8B7355;       // 阴影棕
+$clear-white:   #FEFEFE;        // 清爽白
+$shadow-brown:  #8B7355;       // 阴影棕
 
 // 圆角系统
 $radius-large: 24px;          // 主卡片圆角

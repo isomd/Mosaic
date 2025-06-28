@@ -50,7 +50,7 @@ onMounted(() => {
     language: props.language,
     theme: props.theme,
     automaticLayout: true,  // 自适应容器大小
-    minimap: {enabled: false},
+    minimap: {enabled: true},
     ...props.options,
   })
   editor.onDidChangeModelContent(() => {
@@ -60,10 +60,10 @@ onMounted(() => {
   })
   editor.onDidScrollChange((val)=>{
     scrollTop.value = val.scrollTop
-    console.log(JSON.stringify(val))
   })
   lineCount.value = editor.getModel().getLineCount()
   emit('editor-mounted', editor)
+  console.log(editor)
 })
 onUnmounted(() => {
   if (editor) {

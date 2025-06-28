@@ -18,12 +18,6 @@ const dialog = computed({
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleString()
 }
-const formatConfigValue = (value) => {
-  if (value === null) return 'null'
-  if (Array.isArray(value)) return value.join(', ') || '空数组'
-  if (typeof value === 'object') return JSON.stringify(value)
-  return value.toString()
-}
 
 // 添加到 script 部分
 const getStatusText = (status: string) => {
@@ -56,9 +50,10 @@ const getStatusClass = (status: string) => {
 const isDark = ref(true)
 </script>
 <template>
-  <v-dialog v-model="dialog" max-width="1200">
-    <v-card>
 
+  <v-dialog v-model="dialog" max-width="1200">
+
+    <v-card>
       <v-toolbar
           class="plugin-header-toolbar"
           height="90"
@@ -143,8 +138,6 @@ const isDark = ref(true)
             class="mt-4"
         />
 
-        <ConfigDisplay :config="pluginData.config" />
-
         <PluginStatisticsChart
             :statistics="pluginData.statistics"
             :theme="isDark ? 'dark' : 'light'"
@@ -155,6 +148,7 @@ const isDark = ref(true)
       </v-card-text>
 
     </v-card>
+
   </v-dialog>
 </template>
 <style scoped lang="scss">
