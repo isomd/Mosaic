@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="localDialog" max-width="1400" persistent class="config-dialog">
+  <v-dialog v-model="localDialog" max-width="1600" persistent class="config-dialog">
     <v-card class="config-dialog-card">
       <!-- 对话框标题栏 -->
       <v-card-title class="config-dialog-header">
@@ -8,10 +8,9 @@
             <v-icon size="32" color="white">mdi-cog</v-icon>
           </div>
           <div class="header-text-section">
-            <h2 class="dialog-title">配置信息</h2>
+            <h2 class="dialog-title">配置管理</h2>
+            <p class="dialog-subtitle">{{ pluginData?.name || '插件配置详情' }}</p>
           </div>
-
-          <p class="dialog-subtitle">{{ pluginData?.name || '插件配置详情' }}</p>
 
           <v-chip
               small
@@ -22,132 +21,298 @@
             {{ structuredConfigItems.length }} 项配置
           </v-chip>
 
-          <v-btn
-              icon
-              @click="closeDialog"
-              class="close-button"
-              color="white"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+          <v-spacer></v-spacer>
+
+          <!-- 操作按钮组 -->
+          <div class="header-actions">
+            <v-btn
+                color="success"
+                :loading="saving"
+                :disabled="!hasChanges || !isFormValid"
+                @click="saveConfiguration"
+                class="save-btn"
+            >
+              <v-icon class="mr-2">mdi-content-save</v-icon>
+              保存配置
+            </v-btn>
+
+            <v-btn
+                color="warning"
+                :disabled="!hasChanges"
+                @click="resetConfiguration"
+                class="reset-btn"
+            >
+              <v-icon class="mr-2">mdi-refresh</v-icon>
+              重置
+            </v-btn>
+
+            <v-btn
+                icon
+                @click="closeDialog"
+                class="close-button"
+                color="white"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </div>
         </div>
-
-        <v-spacer></v-spacer>
-
       </v-card-title>
 
       <!-- 对话框内容区域 -->
       <v-card-text class="config-dialog-content">
-
-
-        <!-- 结构化配置信息卡片 -->
-        <v-card class="config-structured-card" elevation="2" v-if="hasStructuredConfig">
-
-          <v-card-title class="config-structured-header">
-            <div class="header-content">
-              <div class="icon-wrapper">
-                <v-icon size="24" color="white">mdi-cog</v-icon>
-              </div>
-              <span class="header-text">详细配置项</span>
-            </div>
-            <v-spacer></v-spacer>
-
-          </v-card-title>
-
-          <v-card-text class="structured-content">
-            <div class="structured-config-grid">
-              <v-card
-                  v-for="(item, index) in structuredConfigItems"
-                  :key="index"
-                  class="config-item-card"
-                  elevation="1"
-                  hover
-              >
-                <v-card-text class="config-item-content">
-                  <!-- 配置名称和类型 -->
-                  <div class="config-item-header">
-                    <div class="config-name-section">
-                      <h4 class="config-name">{{ item.name }}</h4>
-                      <v-chip
-                          x-small
-                          :color="getTypeColor(item.type)"
-                          dark
-                          class="type-chip"
-                      >
-                        {{ item.type }}
-                      </v-chip>
-                    </div>
-                    <v-icon
-                        :color="item.required ? '#4CAF50' : '#9E9E9E'"
-                        size="20"
-                        class="required-icon"
-                        :title="item.required ? '必填项' : '可选项'"
-                    >
-                      {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
-                    </v-icon>
+        <div v-if="hasStructuredConfig" class="config-main-layout">
+          <!-- 左侧：配置说明书 -->
+          <div class="config-documentation-panel">
+            <v-card class="documentation-card" elevation="2">
+              <v-card-title class="documentation-header">
+                <div class="header-content">
+                  <div class="icon-wrapper">
+                    <v-icon size="24" color="white">mdi-book-open-variant</v-icon>
                   </div>
+                  <span class="header-text">配置说明书</span>
+                </div>
+              </v-card-title>
 
-                  <!-- 描述 -->
-                  <p class="config-description">{{ item.desc || '暂无描述' }}</p>
-
-                  <!-- 默认值 -->
-                  <div class="config-value-section">
-                    <span class="value-label">默认值:</span>
-                    <v-tooltip location="right">
-                      <template v-slot:activator="{ props }">
-                        <code
-                            v-bind="props"
-                            class="config-value-display"
-                            :class="{ 'null-value': item.defaultValue === null }"
+              <v-card-text class="documentation-content">
+                <div class="documentation-grid">
+                  <v-card
+                      v-for="(item, index) in structuredConfigItems"
+                      :key="index"
+                      class="doc-item-card"
+                      :class="{ 'doc-item-active': selectedConfigIndex === index }"
+                      elevation="1"
+                      @click="selectConfigItem(index)"
+                  >
+                    <v-card-text class="doc-item-content">
+                      <!-- 配置名称和类型 -->
+                      <div class="doc-item-header">
+                        <div class="config-name-section">
+                          <h4 class="config-name">{{ item.name }}</h4>
+                          <v-chip
+                              x-small
+                              :color="getTypeColor(item.type)"
+                              dark
+                              class="type-chip"
+                          >
+                            {{ item.type }}
+                          </v-chip>
+                        </div>
+                        <v-icon
+                            :color="item.required ? '#4CAF50' : '#9E9E9E'"
+                            size="20"
+                            class="required-icon"
+                            :title="item.required ? '必填项' : '可选项'"
                         >
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </div>
+
+                      <!-- 描述 -->
+                      <p class="config-description">{{ item.desc || '暂无描述' }}</p>
+
+                      <!-- 默认值 -->
+                      <div class="config-value-section">
+                        <span class="value-label">默认值:</span>
+                        <code class="config-value-display">
                           {{ formatConfigValue(item.defaultValue) }}
                         </code>
-                      </template>
-                      <span>{{ getValueTooltip(item.defaultValue) }}</span>
-                    </v-tooltip>
-                  </div>
+                      </div>
 
-                  <!-- 验证规则 -->
-                  <div v-if="item.validation" class="validation-section">
-                    <v-chip
-                        v-if="item.validation.allowedValues"
-                        x-small
-                        color="orange"
-                        outlined
-                        @click="showValidationDialog(item)"
-                        class="validation-chip"
-                    >
-                      <v-icon x-small class="mr-1">mdi-format-list-bulleted</v-icon>
-                      查看枚举值
-                    </v-chip>
-                    <v-chip
-                        v-if="item.validation.pattern"
-                        x-small
-                        color="purple"
-                        outlined
-                        class="validation-chip"
-                        :title="item.validation.pattern"
-                    >
-                      <v-icon x-small class="mr-1">mdi-regex</v-icon>
-                      正则验证
-                    </v-chip>
-                    <v-chip
-                        v-if="item.validation.minValue !== undefined || item.validation.maxValue !== undefined"
-                        x-small
-                        color="blue"
-                        outlined
-                        class="validation-chip"
-                        :title="`范围: ${item.validation.minValue || '∞'} ~ ${item.validation.maxValue || '∞'}`"
-                    >
-                      <v-icon x-small class="mr-1">mdi-numeric</v-icon>
-                      数值范围
-                    </v-chip>
+                      <!-- 验证规则 -->
+                      <div v-if="item.validation" class="validation-section">
+                        <v-chip
+                            v-if="item.validation.allowedValues"
+                            x-small
+                            color="orange"
+                            outlined
+                            @click.stop="showValidationDialog(item)"
+                            class="validation-chip"
+                        >
+                          <v-icon x-small class="mr-1">mdi-format-list-bulleted</v-icon>
+                          查看枚举值
+                        </v-chip>
+                        <v-chip
+                            v-if="item.validation.pattern"
+                            x-small
+                            color="purple"
+                            outlined
+                            class="validation-chip"
+                            :title="item.validation.pattern"
+                        >
+                          <v-icon x-small class="mr-1">mdi-regex</v-icon>
+                          正则验证
+                        </v-chip>
+                        <v-chip
+                            v-if="item.validation.minValue !== undefined || item.validation.maxValue !== undefined"
+                            x-small
+                            color="blue"
+                            outlined
+                            class="validation-chip"
+                            :title="`范围: ${item.validation.minValue || '∞'} ~ ${item.validation.maxValue || '∞'}`"
+                        >
+                          <v-icon x-small class="mr-1">mdi-numeric</v-icon>
+                          数值范围
+                        </v-chip>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+
+          <!-- 右侧：配置编辑表单 -->
+          <div class="config-editor-panel">
+            <v-card class="editor-card" elevation="2">
+              <v-card-title class="editor-header">
+                <div class="header-content">
+                  <div class="icon-wrapper">
+                    <v-icon size="24" color="white">mdi-pencil-box</v-icon>
                   </div>
-                </v-card-text>
-              </v-card>
-            </div>
-          </v-card-text>
-        </v-card>
+                  <span class="header-text">配置编辑</span>
+                </div>
+                <v-spacer></v-spacer>
+                <v-chip
+                    small
+                    :color="isFormValid ? 'success' : 'error'"
+                    dark
+                    class="validation-status-chip"
+                >
+                  <v-icon small class="mr-1">
+                    {{ isFormValid ? 'mdi-check-circle' : 'mdi-alert-circle' }}
+                  </v-icon>
+                  {{ isFormValid ? '验证通过' : '验证失败' }}
+                </v-chip>
+              </v-card-title>
+
+              <v-card-text class="editor-content">
+                <v-form ref="configForm" v-model="isFormValid" class="config-form">
+                  <div
+                      v-for="(item, index) in structuredConfigItems"
+                      :key="index"
+                      class="config-form-item"
+                      :class="{ 'form-item-highlighted': selectedConfigIndex === index }"
+                  >
+                    <!-- 字符串类型 -->
+                    <v-text-field
+                        v-if="item.type === 'string'"
+                        v-model="configValues[item.name]"
+                        :label="item.name"
+                        :placeholder="formatConfigValue(item.defaultValue)"
+                        :required="item.required"
+                        :rules="getValidationRules(item)"
+                        :error-messages="getFieldErrors(item.name)"
+                        outlined
+                        dense
+                        class="config-input"
+                        @focus="selectConfigItem(index)"
+                        @input="onConfigChange"
+                    >
+                      <template v-slot:prepend-inner>
+                        <v-icon :color="item.required ? 'error' : 'grey'">
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-text-field>
+
+                    <!-- 数字类型 (integer/double) -->
+                    <v-text-field
+                        v-else-if="item.type === 'integer' || item.type === 'double'"
+                        v-model.number="configValues[item.name]"
+                        :label="item.name"
+                        :placeholder="String(item.defaultValue)"
+                        :required="item.required"
+                        :rules="getValidationRules(item)"
+                        :error-messages="getFieldErrors(item.name)"
+                        :type="item.type === 'integer' ? 'number' : 'number'"
+                        :step="item.type === 'double' ? '0.01' : '1'"
+                        outlined
+                        dense
+                        class="config-input"
+                        @focus="selectConfigItem(index)"
+                        @input="onConfigChange"
+                    >
+                      <template v-slot:prepend-inner>
+                        <v-icon :color="item.required ? 'error' : 'grey'">
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-text-field>
+
+                    <!-- 布尔类型 -->
+                    <v-switch
+                        v-else-if="item.type === 'boolean'"
+                        v-model="configValues[item.name]"
+                        :label="item.name"
+                        :required="item.required"
+                        :rules="getValidationRules(item)"
+                        class="config-switch"
+                        @focus="selectConfigItem(index)"
+                        @change="onConfigChange"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon :color="item.required ? 'error' : 'grey'" class="mr-2">
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-switch>
+
+                    <!-- 枚举选择 -->
+                    <v-select
+                        v-else-if="item.validation && item.validation.allowedValues"
+                        v-model="configValues[item.name]"
+                        :label="item.name"
+                        :items="item.validation.allowedValues"
+                        :placeholder="formatConfigValue(item.defaultValue)"
+                        :required="item.required"
+                        :rules="getValidationRules(item)"
+                        :error-messages="getFieldErrors(item.name)"
+                        outlined
+                        dense
+                        class="config-select"
+                        @focus="selectConfigItem(index)"
+                        @change="onConfigChange"
+                    >
+                      <template v-slot:prepend-inner>
+                        <v-icon :color="item.required ? 'error' : 'grey'">
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-select>
+
+                    <!-- 对象/数组类型 -->
+                    <v-textarea
+                        v-else-if="item.type === 'object' || item.type === 'array'"
+                        v-model="configValues[item.name]"
+                        :label="item.name"
+                        :placeholder="formatConfigValue(item.defaultValue)"
+                        :required="item.required"
+                        :rules="getValidationRules(item)"
+                        :error-messages="getFieldErrors(item.name)"
+                        outlined
+                        rows="3"
+                        class="config-textarea"
+                        @focus="selectConfigItem(index)"
+                        @input="onConfigChange"
+                    >
+                      <template v-slot:prepend-inner>
+                        <v-icon :color="item.required ? 'error' : 'grey'">
+                          {{ item.required ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                      </template>
+                    </v-textarea>
+
+                    <!-- 配置项描述 -->
+                    <div class="config-item-description">
+                      <v-icon small color="grey" class="mr-1">mdi-information-outline</v-icon>
+                      <span class="description-text">{{ item.desc || '暂无描述' }}</span>
+                    </div>
+                  </div>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
 
         <!-- 无配置信息状态 -->
         <div v-if="!hasAnyConfig" class="empty-state">
@@ -157,7 +322,6 @@
           <h3 class="empty-title">暂无配置信息</h3>
           <p class="empty-text">该插件可能使用默认配置或运行时动态配置</p>
         </div>
-
       </v-card-text>
     </v-card>
 
@@ -227,30 +391,69 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 保存确认对话框 -->
+    <v-dialog v-model="saveConfirmDialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">
+          <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
+          确认保存配置
+        </v-card-title>
+        <v-card-text>
+          <p>您即将保存以下配置更改：</p>
+          <ul class="change-list">
+            <li v-for="(change, key) in configChanges" :key="key" class="change-item">
+              <strong>{{ key }}:</strong>
+              <span class="old-value">{{ formatConfigValue(change.oldValue) }}</span>
+              <v-icon small class="mx-2">mdi-arrow-right</v-icon>
+              <span class="new-value">{{ formatConfigValue(change.newValue) }}</span>
+            </li>
+          </ul>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="saveConfirmDialog = false">
+            取消
+          </v-btn>
+          <v-btn color="primary" @click="confirmSave" :loading="saving">
+            确认保存
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+// import { getCubeConfiguration, updateCubeConfiguration } from '@/api/plugin/pluginApi.js'
 
-// Props定义 - 严格按照TypeScript接口
+// Props定义
 const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
   },
   pluginData: {
-    type: Object, // 对应 Cube 接口
+    type: Object,
     default: () => ({})
   }
 })
 
 // Emits定义
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'configUpdated'])
 
 // 响应式数据
 const validationDialog = ref(false)
+const saveConfirmDialog = ref(false)
 const selectedConfig = ref(null)
+const selectedConfigIndex = ref(-1)
+const configValues = ref({})
+const originalConfigValues = ref({})
+const fieldErrors = ref({})
+const isFormValid = ref(true)
+const saving = ref(false)
+const loading = ref(false)
 
 // 双向绑定处理
 const localDialog = computed({
@@ -258,12 +461,11 @@ const localDialog = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-// 计算属性 - 严格按照Config接口结构
+// 计算属性
 const configData = computed(() => {
   return props.pluginData?.config || {}
 })
 
-// 结构化配置检查 - 基于ConfigInfo接口
 const hasStructuredConfig = computed(() => {
   const configInfo = configData.value?.configInfo
   return configInfo &&
@@ -275,17 +477,251 @@ const structuredConfigItems = computed(() => {
   return configData.value?.configInfo?.config || []
 })
 
-// 总体配置检查
 const hasAnyConfig = computed(() => {
   return hasStructuredConfig.value
 })
 
+const hasChanges = computed(() => {
+  return Object.keys(configChanges.value).length > 0
+})
+
+const configChanges = computed(() => {
+  const changes = {}
+  for (const key in configValues.value) {
+    if (configValues.value[key] !== originalConfigValues.value[key]) {
+      changes[key] = {
+        oldValue: originalConfigValues.value[key],
+        newValue: configValues.value[key]
+      }
+    }
+  }
+  return changes
+})
+
+// 监听对话框打开状态
+watch(localDialog, (newVal) => {
+  if (newVal && props.pluginData?.id) {
+    loadCurrentConfiguration()
+  }
+})
+
+// 生命周期
+onMounted(() => {
+  if (localDialog.value && props.pluginData?.id) {
+    loadCurrentConfiguration()
+  }
+})
+
 // 方法定义
-const closeDialog = () => {
-  localDialog.value = false
+const loadCurrentConfiguration = async () => {
+  if (!props.pluginData?.id) return
+
+  loading.value = true
+  try {
+    const response = await getCubeConfiguration(props.pluginData.id)
+    if (response.code === 200) {
+      const currentConfig = response.data || {}
+
+      // 初始化配置值
+      const initialValues = {}
+      structuredConfigItems.value.forEach(item => {
+        initialValues[item.name] = currentConfig[item.name] !== undefined
+            ? currentConfig[item.name]
+            : item.defaultValue
+      })
+
+      configValues.value = { ...initialValues }
+      originalConfigValues.value = { ...initialValues }
+    }
+  } catch (error) {
+    console.error('加载配置失败:', error)
+    // 使用默认值
+    const defaultValues = {}
+    structuredConfigItems.value.forEach(item => {
+      defaultValues[item.name] = item.defaultValue
+    })
+    configValues.value = { ...defaultValues }
+    originalConfigValues.value = { ...defaultValues }
+  } finally {
+    loading.value = false
+  }
 }
 
-// 类型颜色映射 - 基于ConfigItem的type字段
+const saveConfiguration = () => {
+  if (!isFormValid.value || !hasChanges.value) return
+  saveConfirmDialog.value = true
+}
+
+const confirmSave = async () => {
+  saving.value = true
+  saveConfirmDialog.value = false
+
+  try {
+    const updateRequest = {
+      cubeId: props.pluginData.id,
+      configurations: { ...configValues.value }
+    }
+
+    const response = await updateCubeConfiguration(updateRequest)
+
+    if (response.code === 200) {
+      originalConfigValues.value = { ...configValues.value }
+      emit('configUpdated', response.data)
+
+      // 显示成功消息
+      showSuccessMessage('配置保存成功')
+    } else {
+      throw new Error(response.message || '保存失败')
+    }
+  } catch (error) {
+    console.error('保存配置失败:', error)
+    showErrorMessage('保存配置失败: ' + error.message)
+  } finally {
+    saving.value = false
+  }
+}
+
+const resetConfiguration = () => {
+  configValues.value = { ...originalConfigValues.value }
+  fieldErrors.value = {}
+}
+
+const closeDialog = () => {
+  if (hasChanges.value) {
+    if (confirm('有未保存的更改，确定要关闭吗？')) {
+      resetConfiguration()
+      localDialog.value = false
+    }
+  } else {
+    localDialog.value = false
+  }
+}
+
+const selectConfigItem = (index) => {
+  selectedConfigIndex.value = index
+}
+
+const onConfigChange = () => {
+  // 清除字段错误
+  fieldErrors.value = {}
+
+  // 触发表单验证
+  setTimeout(() => {
+    if (this.$refs.configForm) {
+      this.$refs.configForm.validate()
+    }
+  }, 100)
+}
+
+const getValidationRules = (item) => {
+  const rules = []
+
+  // 必填验证
+  if (item.required) {
+    rules.push(v => {
+      if (v === null || v === undefined || v === '') {
+        return `${item.name} 为必填项`
+      }
+      return true
+    })
+  }
+
+  // 类型验证
+  if (item.type === 'integer') {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        const num = Number(v)
+        if (!Number.isInteger(num)) {
+          return `${item.name} 必须为整数`
+        }
+      }
+      return true
+    })
+  }
+
+  if (item.type === 'double') {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        const num = Number(v)
+        if (isNaN(num)) {
+          return `${item.name} 必须为数字`
+        }
+      }
+      return true
+    })
+  }
+
+  // 枚举值验证
+  if (item.validation?.allowedValues) {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        if (!item.validation.allowedValues.includes(v)) {
+          return `${item.name} 必须为: ${item.validation.allowedValues.join(', ')}`
+        }
+      }
+      return true
+    })
+  }
+
+  // 数值范围验证
+  if (item.validation?.minValue !== undefined) {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        const num = Number(v)
+        if (num < item.validation.minValue) {
+          return `${item.name} 不能小于 ${item.validation.minValue}`
+        }
+      }
+      return true
+    })
+  }
+
+  if (item.validation?.maxValue !== undefined) {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        const num = Number(v)
+        if (num > item.validation.maxValue) {
+          return `${item.name} 不能大于 ${item.validation.maxValue}`
+        }
+      }
+      return true
+    })
+  }
+
+  // 正则验证
+  if (item.validation?.pattern) {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        const regex = new RegExp(item.validation.pattern)
+        if (!regex.test(v)) {
+          return `${item.name} 格式不正确`
+        }
+      }
+      return true
+    })
+  }
+
+  // JSON格式验证（对象/数组类型）
+  if (item.type === 'object' || item.type === 'array') {
+    rules.push(v => {
+      if (v !== null && v !== undefined && v !== '') {
+        try {
+          JSON.parse(v)
+        } catch (e) {
+          return `${item.name} 必须为有效的JSON格式`
+        }
+      }
+      return true
+    })
+  }
+
+  return rules
+}
+
+const getFieldErrors = (fieldName) => {
+  return fieldErrors.value[fieldName] || []
+}
+
 const getTypeColor = (type) => {
   const colorMap = {
     'string': '#4CAF50',
@@ -298,14 +734,6 @@ const getTypeColor = (type) => {
   return colorMap[type] || '#607D8B'
 }
 
-// 获取值类型
-const getValueType = (value) => {
-  if (value === null) return 'null'
-  if (Array.isArray(value)) return 'array'
-  return typeof value
-}
-
-// 格式化配置值
 const formatConfigValue = (value) => {
   if (value === null) return 'null'
   if (value === undefined) return 'undefined'
@@ -320,23 +748,24 @@ const formatConfigValue = (value) => {
   return String(value)
 }
 
-// 获取值提示信息
-const getValueTooltip = (value) => {
-  if (value === null) return '空值'
-  if (value === undefined) return '未定义'
-  if (typeof value === 'object') return '对象类型，点击查看详情'
-  return `类型: ${typeof value}, 值: ${value}`
-}
-
-// 显示验证规则对话框
 const showValidationDialog = (config) => {
   selectedConfig.value = config
   validationDialog.value = true
 }
+
+const showSuccessMessage = (message) => {
+  // 这里可以集成您的消息提示组件
+  console.log('Success:', message)
+}
+
+const showErrorMessage = (message) => {
+  // 这里可以集成您的消息提示组件
+  console.error('Error:', message)
+}
 </script>
 
 <style scoped lang="scss">
-/* 对话框基础样式 - 采用暖黄色调主题 */
+/* 基础对话框样式保持不变 */
 .config-dialog :deep(.v-overlay__content) {
   margin: 24px;
 }
@@ -349,7 +778,6 @@ const showValidationDialog = (config) => {
   border: 2px solid #E6D3A3 !important;
 }
 
-/* 对话框标题栏 - 暖黄渐变主题 */
 .config-dialog-header {
   border-radius: 16px 16px 0 0 !important;
   background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 50%, #D4A574 100%);
@@ -359,26 +787,227 @@ const showValidationDialog = (config) => {
   overflow: hidden;
 }
 
-.config-dialog-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4A574' fill-opacity='0.1'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v20h40V20H20z'/%3E%3C/g%3E%3C/svg%3E") repeat;
-  pointer-events: none;
-}
-
 .dialog-header-content {
   display: flex;
   align-items: center;
   gap: 20px;
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
-.header-icon-wrapper {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.save-btn, .reset-btn {
+  min-width: 120px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #4CAF50, #45A049) !important;
+  color: white !important;
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #FF9800, #F57C00) !important;
+  color: white !important;
+}
+
+/* 主布局样式 */
+.config-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  min-height: 70vh;
+}
+
+.config-documentation-panel,
+.config-editor-panel {
+  height: 100%;
+}
+
+.documentation-card,
+.editor-card {
+  height: 100%;
+  border-radius: 12px !important;
+  border: 1px solid #E6D3A3;
+  overflow: hidden;
+}
+
+.documentation-header,
+.editor-header {
+  background: linear-gradient(135deg, #E6D3A3 0%, #F4E4BC 100%);
+  color: #2D5A27;
+  padding: 16px 20px;
+}
+
+.validation-status-chip {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* 文档面板样式 */
+.documentation-content {
+  padding: 20px;
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
+  height: calc(100% - 80px);
+  overflow-y: auto;
+}
+
+.documentation-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.doc-item-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 2px solid #E6D3A3;
+  cursor: pointer;
+}
+
+.doc-item-card:hover,
+.doc-item-active {
+  border-color: #D4A574;
+  background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 100%) !important;
+  transform: translateX(4px);
+}
+
+.doc-item-content {
+  padding: 16px;
+}
+
+/* 编辑器面板样式 */
+.editor-content {
+  padding: 20px;
+  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
+  height: calc(100% - 80px);
+  overflow-y: auto;
+}
+
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.config-form-item {
+  padding: 16px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.form-item-highlighted {
+  border-color: #D4A574;
+  background: rgba(244, 228, 188, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+}
+
+.config-input,
+.config-select,
+.config-textarea,
+.config-switch {
+  margin-bottom: 8px;
+}
+
+.config-item-description {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(230, 211, 163, 0.2);
+  border-radius: 6px;
+  border-left: 4px solid #E6D3A3;
+}
+
+.description-text {
+  font-size: 0.9rem;
+  color: #8B7355;
+  font-style: italic;
+}
+
+/* 保存确认对话框样式 */
+.change-list {
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.change-item {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.old-value {
+  color: #F44336;
+  text-decoration: line-through;
+}
+
+.new-value {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .config-main-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .config-documentation-panel {
+    order: 2;
+  }
+
+  .config-editor-panel {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .config-dialog-content {
+    padding: 16px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .save-btn, .reset-btn {
+    min-width: 100px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 滚动条样式 */
+.documentation-content::-webkit-scrollbar,
+.editor-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.documentation-content::-webkit-scrollbar-track,
+.editor-content::-webkit-scrollbar-track {
+  background: #F4E4BC;
+  border-radius: 4px;
+}
+
+.documentation-content::-webkit-scrollbar-thumb,
+.editor-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #D4A574, #8B7355);
+  border-radius: 4px;
+}
+
+/* 其他样式保持原有设计 */
+.header-icon-wrapper,
+.icon-wrapper {
   background: linear-gradient(135deg, #4A9B8E, #6BB6B0);
   border-radius: 25%;
   padding: 12px;
@@ -407,6 +1036,14 @@ const showValidationDialog = (config) => {
   font-weight: 500;
 }
 
+.config-count-chip {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: inherit !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
 .close-button {
   background: rgba(45, 90, 39, 0.1);
   border: 2px solid rgba(45, 90, 39, 0.2);
@@ -419,116 +1056,16 @@ const showValidationDialog = (config) => {
   transform: scale(1.05);
 }
 
-.config-dialog-content {
-  padding: 28px;
-  max-height: 70vh;
-  overflow-y: auto;
-  background: linear-gradient(180deg, #FEFEFE 0%, #F4E4BC 100%);
-}
-
-/* 配置卡片通用样式 - 暖色调主题 */
-.config-structured-card {
-  margin-bottom: 24px;
-  border-radius: 12px !important;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(139, 115, 85, 0.12);
-  border: 1px solid #E6D3A3;
-  transition: all 0.3s ease;
-}
-
-.config-structured-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(139, 115, 85, 0.18);
-}
-
-/* 结构化配置卡片头部 */
-.config-structured-header {
-  border-radius: 16px 16px 0 0 !important;
-  background: linear-gradient(135deg, #E6D3A3 0%, #F4E4BC 100%);
-  color: #2D5A27;
-  padding: 16px 20px;
-  position: relative;
-}
-
-.config-structured-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #8B7355, #E6D3A3, #8B7355);
-}
-
 .header-content {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.icon-wrapper {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 .header-text {
   font-size: 1.2rem;
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.config-count-chip {
-  background: rgba(255, 255, 255, 0.3) !important;
-  color: inherit !important;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-/* 结构化配置样式 */
-.structured-content {
-  padding: 20px;
-  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%);
-}
-
-.structured-config-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 20px;
-}
-
-.config-item-card {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  border: 2px solid #E6D3A3  !important;
-  background: linear-gradient(135deg, #FEFEFE 0%, #F4E4BC 100%) !important;
-  position: relative;
-  overflow: hidden;
-}
-
-//.config-item-card::before {
-//  content: '';
-//  position: absolute;
-//  top: 0;
-//  left: 0;
-//  right: 0;
-//  height: 4px;
-//  background: linear-gradient(90deg, #E6D3A3, #D4A574, #E6D3A3);
-//}
-
-.config-item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(139, 115, 85, 0.2);
-  background: linear-gradient(135deg, #F4E4BC 0%, #E6D3A3 100%) !important;
-}
-
-.config-item-content {
-  padding: 20px;
 }
 
 .config-item-header {
@@ -591,23 +1128,11 @@ const showValidationDialog = (config) => {
   font-size: 0.85rem;
   color: #2D5A27;
   border: 2px solid #E6D3A3;
-  cursor: help;
   max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.config-value-display:hover {
-  background: linear-gradient(135deg, #F4E4BC, #E6D3A3);
-  transform: scale(1.02);
-}
-
-.config-value-display.null-value {
-  color: #8B7355;
-  font-style: italic;
 }
 
 .validation-section {
@@ -654,7 +1179,7 @@ const showValidationDialog = (config) => {
   font-weight: 500;
 }
 
-/* 验证对话框样式 */
+/* 验证对话框样式保持原有设计 */
 .validation-dialog :deep(.v-overlay__content) {
   margin: 24px;
 }
@@ -753,80 +1278,5 @@ const showValidationDialog = (config) => {
   min-width: 100px;
   font-weight: 600;
   border: none !important;
-}
-
-/* 响应式设计优化 */
-@media (max-width: 768px) {
-  .structured-config-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .config-dialog-content {
-    padding: 20px;
-    max-height: 65vh;
-  }
-
-  .dialog-header-content {
-    gap: 16px;
-  }
-
-  .dialog-title {
-    font-size: 1.4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .config-item-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .config-name-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .property-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .range-display {
-    flex-direction: column;
-  }
-
-  .allowed-values-grid {
-    flex-direction: column;
-  }
-
-  .allowed-value-chip {
-    align-self: flex-start;
-  }
-
-  .config-dialog-content {
-    padding: 16px;
-  }
-}
-
-/* 滚动条样式优化 */
-.config-dialog-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.config-dialog-content::-webkit-scrollbar-track {
-  background: #F4E4BC;
-  border-radius: 4px;
-}
-
-.config-dialog-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #D4A574, #8B7355);
-  border-radius: 4px;
-}
-
-.config-dialog-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #8B7355, #D4A574);
 }
 </style>
