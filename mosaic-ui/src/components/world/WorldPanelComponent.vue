@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import {useStatusStore} from "@/store/useStatusStore";
-
+import {useWorldStore} from "@/store/data/useWorldStore";
 import {type World,type CreateWorldForm} from "@/api/world/worldType";
+import {getWorldList,createWorld,getCurrentWorld} from "@/api/world/worldApi";
+const worldStore = useWorldStore()
 const statusStore = useStatusStore()
 const display = computed(()=>{
   return statusStore.showWorldPanel
@@ -9,44 +11,33 @@ const display = computed(()=>{
 const createWorldForm = ref<CreateWorldForm>({
 
 })
-const worldList = ref<World[]>([
-  {
-    id:0,
-    worldName:'world0'
-  },
-  {
-    id:1,
-    worldName:'world1'
-  },
-  {
-    id:2,
-    worldName:'world2'
-  },
-  {
-    id:3,
-    worldName:'world3'
-  },
-  {
-    id:4,
-    worldName:'world4'
-  },
-  {
-    id:5,
-    worldName:'world5'
-  },
-  {
-    id:6,
-    worldName:'world6'
-  },
-])
+const worldList = ref<World[]>([])
 onMounted(()=>{
-  statusStore.setCurrentWorld(worldList.value[0])
+  getCurrentWorld().then((res:any)=>{
+    if(res.code == 200){
+      statusStore.setCurrentWorld(res.data)
+    }
+  })
+  worldStore.getWorlds().then((res:any)=>{
+    worldList.value = res
+
+  })
 })
 const handleCreateWorld = ()=>{
-  createWorldForm.value.id = worldList.length
-  worldList.value.push(createWorldForm.value)
-  createWorldForm.value.worldName = ''
+  createWorld(createWorldForm.value).then((res:any)=>{
+    if(res.code == 200) {
+      worldStore.getWorlds().then((res:any)=>{
+        worldList.value = res
+
+      })
+    } else {
+      //
+    }
+  })
+  createWorldForm.value.name = ''
 }
+
+
 </script>
 <template>
   <transition name="slide-up">
@@ -55,11 +46,11 @@ const handleCreateWorld = ()=>{
 
       </div>
       <div class="world-list">
-        <WorldListItemComponent v-for="world in worldList" :key="world.id" :world="world"></WorldListItemComponent>
+        <WorldListItemComponent v-for="world in worldList" :key="world.id.uuid" :world="world"></WorldListItemComponent>
       </div>
       <div class="actions">
-        <MinecraftInputComponent v-model="createWorldForm.worldName" style="flex: 8" :placeholder="$t('world.worldName')"></MinecraftInputComponent>
-        <MinecraftButtonComponent :disabled="createWorldForm.worldName === ''"  style="flex: 1" @click="handleCreateWorld">{{$t("world.createWorld")}}</MinecraftButtonComponent>
+        <MinecraftInputComponent v-model="createWorldForm.name" style="flex: 8" :placeholder="$t('world.worldName')"></MinecraftInputComponent>
+        <MinecraftButtonComponent :disabled="createWorldForm.name === ''"  style="flex: 1" @click="handleCreateWorld">{{$t("world.createWorld")}}</MinecraftButtonComponent>
       </div>
     </div>
   </transition>
