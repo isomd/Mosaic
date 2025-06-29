@@ -1,15 +1,38 @@
 <script lang="ts" setup>
 import {defineProps} from "vue";
 import {useStatusStore} from "@/store/useStatusStore";
-import {type World} from "@/api/world/worldType";
+import {useWorldStore} from "@/store/data/useWorldStore";
+
+import type{ World,TraverseWorldForm,DeleteWorldForm} from "@/api/world/worldType";
+import {traverseWorld,removeWorld} from "@/api/world/worldApi";
+import router from "@/router";
 const statusStore = useStatusStore()
 const props = defineProps({
   world: {} as World
 })
-const running = ref(false)
+const worldStore = useWorldStore()
 const dialog = ref(false)
-const handleConfirm = ()=>{
-
+const traverseWorldForm = ref<TraverseWorldForm>({})
+const deleteWorldForm = ref<DeleteWorldForm>({})
+onMounted(()=>{
+  traverseWorldForm.value.uuid = props.world.id.uuid
+  deleteWorldForm.value.uuid = props.world.id.uuid
+})
+const handleTraverse = ()=>{
+  traverseWorld(traverseWorldForm.value).then((res:any)=>{
+    if(res.code == 200){
+      statusStore.setCurrentWorld(props.world)
+      worldStore.getWorlds()
+    }
+  })
+}
+const handleDelete = ()=>{
+  removeWorld(deleteWorldForm.value).then((res:any)=>{
+    if(res.code == 200){
+      worldStore.getWorlds()
+      router.go(0)
+    }
+  })
 }
 </script>
 <template>
@@ -20,26 +43,25 @@ const handleConfirm = ()=>{
           🔨
         </div>
         <div class="world-name">
-          {{world.worldName}}
+          {{world.name}}
         </div>
         <div class="actions">
-          <div class="action-item" v-if="statusStore.currentWorld.id!==world.id">
-            <MinecraftButtonComponent @click="statusStore.setCurrentWorld(world)"><v-icon size="32">mdi-earth-arrow-left</v-icon></MinecraftButtonComponent>
+          <div class="action-item" v-if="world&&statusStore.currentWorld.id.uuid!==world.id.uuid">
+            <MinecraftButtonComponent @click="handleTraverse"><v-icon size="32">mdi-earth-arrow-left</v-icon></MinecraftButtonComponent>
           </div>
-          <div class="action-item" v-else>
-            <MinecraftButtonComponent >
-              <v-icon size="32" v-if="running">mdi-play</v-icon>
-              <v-icon size="32" v-else>mdi-pause</v-icon>
-            </MinecraftButtonComponent>
-          </div>
+<!--          <div class="action-item" v-else>-->
+<!--            <MinecraftButtonComponent >-->
+<!--              <v-icon size="32" v-if="running">mdi-play</v-icon>-->
+<!--              <v-icon size="32" v-else>mdi-pause</v-icon>-->
+<!--            </MinecraftButtonComponent>-->
+<!--          </div>-->
           <div class="action-item">
-            <MinecraftButtonComponent @click="dialog = true"><v-icon size="32">mdi-delete</v-icon></MinecraftButtonComponent>
+            <MinecraftButtonComponent @click="handleDelete"><v-icon size="32">mdi-delete</v-icon></MinecraftButtonComponent>
           </div>
         </div>
       </div>
     </MinecraftButtonComponent>
   </div>
-<!--  <ConfirmComponent v-model="dialog" :title="'Delete World?'" @confirm="handleConfirm"></ConfirmComponent>-->
 </template>
 <style scoped lang="scss">
 .world-list-item{
