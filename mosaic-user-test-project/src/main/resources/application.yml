@@ -12,6 +12,8 @@ mosaic:
   chunk:
     bind:
       port: 8848
+  persistence:
+    type: json
 
   plugin:
     # 推荐的配置方式

@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author welsir
@@ -159,5 +159,12 @@ public class HotSwapDomain {
             return rollBack;
         }
         throw new HotSwapException("无法找到该热更新点历史记录");
+    }
+
+    public List<HotSwapPoint> getAllHotSwapPoints() {
+        return context.getHotSwapPointRecord().values().stream()
+                .flatMap(innerMap -> innerMap.values().stream())
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }

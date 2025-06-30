@@ -5,6 +5,7 @@ import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author welsir
@@ -26,6 +27,19 @@ public class HotSwapPoint {
         this.className = className;
         this.changeType = changeType;
         this.changeRecord = changeRecord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HotSwapPoint that = (HotSwapPoint) o;
+        return Objects.equals(createdAt, that.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdAt);
     }
 
 }
