@@ -37,4 +37,8 @@ public class WorldContainerManager {
     public List<WorldContainer> getAllWorldContainer() {
         return new ArrayList<>(this.worldContainerMap.values());
     }
+
+    public Boolean contains(GUID guid){
+        return this.worldContainerMap.containsKey(guid);
+    }
 }

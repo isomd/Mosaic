@@ -5,3 +5,12 @@ export function list2Map<T> (list:T[],idName:string){
     }
     return map
 }
+
+export function deepCopy(data:any){
+    try{
+        return JSON.parse(JSON.stringify(data))
+    } catch (e){
+        console.error(e)
+        return null
+    }
+}

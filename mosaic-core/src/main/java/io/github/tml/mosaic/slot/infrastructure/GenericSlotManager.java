@@ -1,23 +1,26 @@
 package io.github.tml.mosaic.slot.infrastructure;
 
+import io.github.tml.mosaic.core.tools.copy.DeepCopyUtil;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.slot.Slot;
+import io.github.tml.mosaic.world.container.MosaicWorldContainer;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class GenericSlotManager implements SlotManager {
 
     private Map<GUID, Slot> slotMap = new HashMap<>();
 
-    private final static GenericSlotManager MANAGER  = new GenericSlotManager();
+//    private final static GenericSlotManager MANAGER  = new GenericSlotManager();
 
     public GenericSlotManager(){
     }
 
     public static GenericSlotManager manager(){
-        return MANAGER;
+        return new GenericSlotManager();
     }
 
     @Override
