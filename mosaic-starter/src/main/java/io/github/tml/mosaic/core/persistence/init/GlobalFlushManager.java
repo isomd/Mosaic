@@ -31,9 +31,11 @@ public class GlobalFlushManager {
     HotSwapRepository hotSwapRepository;
     @Resource
     HotSwapDomain hotSwapDomain;
+    @Resource
+    ApplicationContext applicationContext;
 
     @PostConstruct
-    public void init(ApplicationContext applicationContext) {
+    public void init() {
         //获取热更新点存储文件并赋值到内存对象
         List<HotSwapPoint> hotSwapPoints = hotSwapRepository.getHotSwapPoints();
         hotSwapPoints.forEach(hotSwapDomain::setHotSwapPoint);

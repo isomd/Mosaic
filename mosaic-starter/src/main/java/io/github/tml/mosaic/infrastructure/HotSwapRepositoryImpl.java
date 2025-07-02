@@ -36,8 +36,8 @@ public class HotSwapRepositoryImpl implements HotSwapRepository {
                 saveRedisFile(allHotSwapPoints);
             }else if(persistenceManager.getMysqlAdapter()!=null){
                 saveMysqlFile(allHotSwapPoints);
-            }
-            throw new RuntimeException("无法识别序列化方式，请确认依赖是否引入");
+            }else
+                throw new RuntimeException("无法识别序列化方式，请确认依赖是否引入");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -75,34 +75,21 @@ public class HotSwapRepositoryImpl implements HotSwapRepository {
             }
             return JSON.parseArray(content.toString(), HotSwapPoint.class);
         }catch (Exception e) {
-            throw new RuntimeException("获取 HotSwapPoint 数据失败: " + getPath(), e);
-
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
     private void saveLocalFile(List<HotSwapPoint> hotSwapPoint) throws IOException {
-        String filePath = getPath();
-        List<HotSwapPoint> existingList = getHotSwapPoints();
 
-        Set<HotSwapPoint> uniqueSet = new HashSet<>(existingList);
-        uniqueSet.addAll(hotSwapPoint);
-        log.info("保存的热更新点:{}",uniqueSet.toArray());
-        persistenceManager.getLocalFileAdapter().save(filePath, uniqueSet.toArray(new HotSwapPoint[0]));
+        String filePath = getPath();
+
+        persistenceManager.getLocalFileAdapter().save(filePath, hotSwapPoint);
     }
 
     private void saveRedisFile(List<HotSwapPoint> hotSwapPoint) {
         String hotSwapPointKey = getPath();
-        Object o = persistenceManager.getRedisAdapter().get(hotSwapPointKey);
-        List<HotSwapPoint> hotSwapPointList = new ArrayList<>();
-        if (o != null) {
-            String jsonArray = o.toString();
-            if (!jsonArray.trim().isEmpty()) {
-                hotSwapPointList = JSON.parseArray(jsonArray, HotSwapPoint.class);
-            }
-        }
-        Set<HotSwapPoint> uniqueSet = new HashSet<>(hotSwapPointList);
-        uniqueSet.addAll(hotSwapPoint);
-        String json = JSON.toJSONString(uniqueSet.toArray(new HotSwapPoint[0]));
+        String json = JSON.toJSONString(hotSwapPoint);
         persistenceManager.getRedisAdapter().set(hotSwapPointKey, json);
     }
 
@@ -112,6 +99,6 @@ public class HotSwapRepositoryImpl implements HotSwapRepository {
 
     @Override
     public String getPath() {
-        return "/hotswap/";
+        return "/hotswap/hotswapPoint.json";
     }
 }

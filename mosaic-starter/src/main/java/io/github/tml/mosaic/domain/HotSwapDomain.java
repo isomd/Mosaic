@@ -9,6 +9,7 @@ import io.github.tml.mosaic.entity.dto.HotSwapPointDTO;
 import io.github.tml.mosaic.entity.req.AgentServerReq;
 import io.github.tml.mosaic.entity.resp.AgentServerResp;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
+import io.github.tml.mosaic.hotSwap.init.MosaicAgentSocketClient;
 import io.github.tml.mosaic.hotSwap.model.ChangeMethodRecord;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import io.github.tml.mosaic.util.HotSwapUtil;
@@ -57,7 +58,14 @@ public class HotSwapDomain implements ComponentReplace {
                     dto::getProxyCode,
                     Set.of(CodeTemplateUtil.getCubeImportPath()));
             //2.热部署注入
-            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
+//            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
+            MosaicAgentSocketClient client = MosaicAgentSocketClient.INSTANCE;
+            if(client == null){
+                throw new HotSwapException("MosaicAgentSocketClient 未初始化!");
+            }
+
+            AgentServerResp resp = client.pushMessage(proxy, dto.getClassName());
+
             //3.更新本地内存
             if(resp.getIsSuccess()){
                 context.putClassProxyCode(dto.getClassName(), proxy);
@@ -116,6 +124,7 @@ public class HotSwapDomain implements ComponentReplace {
         req.setClassCode(proxyCode);
 
         String json = JSON.toJSONString(req);
+
         try {
             Socket socket = new Socket("localhost", hotSwapConfig.getPort());
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -126,9 +135,9 @@ public class HotSwapDomain implements ComponentReplace {
             writer.flush();
 
             String response = reader.readLine();
+            reader.close();
+            writer.close();
             return JSON.parseObject(response, AgentServerResp.class);
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

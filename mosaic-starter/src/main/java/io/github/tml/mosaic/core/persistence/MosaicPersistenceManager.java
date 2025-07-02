@@ -28,7 +28,7 @@ public class MosaicPersistenceManager {
 
 
     public RedisAdapter getRedisAdapter() {
-        if (redisAdapter.isEmpty()) {
+        if (redisAdapter == null || redisAdapter.isEmpty()) {
             return null;
         }
         return redisAdapter.get(0);
@@ -36,7 +36,7 @@ public class MosaicPersistenceManager {
 
 
     public MysqlAdapter getMysqlAdapter() {
-        if (mysqlAdapter.isEmpty()) {
+        if (mysqlAdapter ==null || mysqlAdapter.isEmpty()) {
             return null;
         }
         return mysqlAdapter.get(0);
@@ -44,7 +44,7 @@ public class MosaicPersistenceManager {
 
 
     public LocalFileAdapter getLocalFileAdapter() {
-        if (localFileAdapter.isEmpty()) {
+        if (localFileAdapter == null ||localFileAdapter.isEmpty()) {
             return null;
         }
         return localFileAdapter.get(0);

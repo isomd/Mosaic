@@ -1,8 +1,10 @@
-package io.github.tml.mosaic.core.chunk;
+package io.github.tml.mosaic.core.hotswap;
 
 import io.github.tml.mosaic.config.MosaicHotSwapConfig;
+import io.github.tml.mosaic.hotSwap.init.MosaicAgentSocketClient;
 import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -20,12 +22,13 @@ import java.lang.management.ManagementFactory;
  */
 @Component
 @Slf4j
-public class ChunkLoaderInstaller implements ApplicationListener<ApplicationReadyEvent> {
+public class MosaicHotSwapLoaderInstaller implements ApplicationListener<ApplicationReadyEvent> {
 
     @Resource
     MosaicHotSwapConfig mosaicHotSwapConfig;
 
     private Process agentProcess;
+
 
     private String getCurrentPid() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -37,7 +40,7 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
         String pid = getCurrentPid();
 
         try {
-            Class<?> currentClass = Class.forName(ChunkLoaderInstaller.class.getName());
+            Class<?> currentClass = Class.forName(MosaicHotSwapLoaderInstaller.class.getName());
             Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicAgent");
             String currentPath = EnvironmentPathFindUtil.getJarPath(currentClass);
 
@@ -57,8 +60,12 @@ public class ChunkLoaderInstaller implements ApplicationListener<ApplicationRead
             log.info("attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
             pb.inheritIO();
             agentProcess = pb.start();
+            int exitCode = agentProcess.waitFor();
+            MosaicAgentSocketClient.getInstance(mosaicHotSwapConfig.getPort());
         } catch (IOException | ClassNotFoundException e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

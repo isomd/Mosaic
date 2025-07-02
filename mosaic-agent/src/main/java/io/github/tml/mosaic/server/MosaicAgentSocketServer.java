@@ -15,13 +15,19 @@ import java.net.Socket;
 import java.util.Map;
 
 public class MosaicAgentSocketServer {
+    private Socket socket;
+    private BufferedReader reader;
+    private BufferedWriter writer;
 
-    public void start(Socket socket) {
+    public MosaicAgentSocketServer(Socket socket) throws IOException {
+        this.socket = socket;
+        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    }
+
+    public void start() {
         String responseJson = "";
-        try (
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-        ) {
+        try {
             // 读取请求
             String json = reader.readLine();
 
@@ -42,17 +48,12 @@ public class MosaicAgentSocketServer {
 
             DeployContextHolder.set(Map.of("code", classCode));
 
-//            String classPath = AgentUtil.generateClassPathByEnvironment(targetClassLoader);
-//
-//            byte[] bytes = AgentUtil.compile(className, DeployContextHolder.get().get("code"), classPath);
-
             // 热替换逻辑
-//            AgentUtil.instrumentation.redefineClasses(new ClassDefinition(aClass,bytes));
             AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
 
-            if("true".equals(DeployContextHolder.get().get("flag"))){
+            if ("true".equals(DeployContextHolder.get().get("flag"))) {
                 responseJson = "{\"isSuccess\":true,\"message\":\"Class :" + className + " 更新成功\"}";
-            }else{
+            } else {
                 responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + DeployContextHolder.get().get("errorMsg") + "\"}";
             }
             DeployContextHolder.clear();
@@ -64,6 +65,16 @@ public class MosaicAgentSocketServer {
                  IllegalAccessException | IOException e) {
             responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage() + "\"}";
             throw new RuntimeException(responseJson);
+        }
+    }
+
+    public void close() {
+        try {
+            if (reader != null) reader.close();
+            if (writer != null) writer.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
