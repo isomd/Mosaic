@@ -66,6 +66,10 @@ public class WorldDomain {
     }
 
     public WorldContainerVO removeWorld(GUID guid){
+        if (mosaicWorld.isRunningWorld(guid)){
+            WorldContainer worldContainer = mosaicWorld.getOriginalWorldContainer();
+            mosaicWorld.traverse(worldContainer);
+        }
         return WorldContainerConvert.convert2VO(mosaicWorld.getWorldContainerManager().removeWorldContainer(guid));
     }
 
