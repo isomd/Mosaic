@@ -13,7 +13,6 @@ import io.github.tml.mosaic.hotSwap.model.ChangeMethodRecord;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import io.github.tml.mosaic.util.HotSwapUtil;
 import io.github.tml.mosaic.util.CodeTemplateUtil;
-import io.github.tml.mosaic.world.replace.ComponentReplace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ import java.util.Set;
  */
 @Service
 @Slf4j
-public class HotSwapDomain implements ComponentReplace {
+public class HotSwapDomain {
 
     @Autowired
     MosaicHotSwapConfig hotSwapConfig;

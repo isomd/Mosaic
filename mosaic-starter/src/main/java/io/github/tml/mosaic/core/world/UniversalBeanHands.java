@@ -42,21 +42,6 @@ public class UniversalBeanHands {
         }
     }
 
-    public void replaceWorldComponentPrimary(WorldContainer oldContainer, WorldContainer newContainer){
-        ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext)applicationContext).getBeanFactory();
-        List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
-        for (Class<?> clazz : componentClasses){
-            String oldBeanName = oldContainer.getComponentName(clazz);
-            String newBeanName = newContainer.getComponentName(clazz);
-            if(beanFactory.containsBean(oldBeanName) && beanFactory.containsBean(newBeanName)) {
-                BeanDefinition oldBeanDefinition = beanFactory.getBeanDefinition(oldBeanName);
-                BeanDefinition newBeanDefinition = beanFactory.getBeanDefinition(newBeanName);
-                oldBeanDefinition.setPrimary(false);
-                newBeanDefinition.setPrimary(true);
-            }
-        }
-    }
-
     public void registerBean(String beanName, Class<?> beanClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) context.getBeanFactory();
         if (!registry.containsBeanDefinition(beanName)) {
