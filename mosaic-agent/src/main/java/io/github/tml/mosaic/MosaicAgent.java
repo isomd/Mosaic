@@ -24,13 +24,18 @@ public class MosaicAgent {
         AgentUtil.instrumentation = inst;
         AgentUtil.instrumentation.addTransformer(new MosaicAgentWatcher(), true);
         int port = Integer.parseInt(args.trim());
-        try(ServerSocket serverSocket = new ServerSocket(port)) {
-            while (true) {
-                Socket socket = serverSocket.accept();
-                new Thread(() -> new MosaicAgentSocketServer().start(socket)).start();
-            } // 支持并发多个请求
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            Socket socket = serverSocket.accept();
+            MosaicAgentSocketServer server = new MosaicAgentSocketServer(socket);
+            new Thread(() -> {
+                try {
+                    server.start();
+                } finally {
+                    server.close();
+                }
+            }).start();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
