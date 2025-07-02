@@ -1,30 +1,32 @@
 <script lang="ts" setup>
 
-const selectedLanguage = ref('java')
-const editorOptions = ref({
-  fontSize: 14,
-  lineNumbers: 'on',
-  roundedSelection: false,
-  scrollBeyondLastLine: false,
-  find: {
-    addExtraSpaceOnTop: false
-  }
+
+const config = ref({
+  "test":{
+    "test1":true,
+    "test2":"haha"
+  },
+  "apiEndpoint": "https://api.siliconflow.cn/v1/chat/completions",
+  "apiKey": "sk-qdahitijgevlgckknvypdmyvpveyhbrjqyylmhfkvuedmfsf",
+  "model": "deepseek-ai/DeepSeek-R1",
+  "maxTokens": 4096,
+  "temperature": 0.7,
+
 })
-const code = ref<String>('package io.github.tml.controller;\n\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.RequestMapping;\nimport org.springframework.web.bind.annotation.RestController;\n\n@RestController\n@RequestMapping(\"/welsir\")\npublic class WelsirTestController {\n\n    @GetMapping(\"/v1\")\n    public String welsir() {\n\n        String params = \"\";\n        System.out.println(params);\n        return \"welsir\";\n    }\n\n}')
+const val = ref({})
 
-
+onMounted(()=>{
+  val.value = config
+})
 </script>
 <template>
   <div class="minecraft-header minecraft-glow">
     <h1>{{$t('menu.settings')}}</h1>
   </div>
-  <div class="editor-container">
-    <MonacoEditor
-        v-model="code"
-        :language="selectedLanguage"
-        :options="editorOptions"
-    />
+  <div style="white-space: break-spaces">
+    {{val.value}}
   </div>
+  <ConfigFormComponent :configNode="config" v-model="val"></ConfigFormComponent>
 </template>
 <style scoped lang="scss">
 .editor-container {
