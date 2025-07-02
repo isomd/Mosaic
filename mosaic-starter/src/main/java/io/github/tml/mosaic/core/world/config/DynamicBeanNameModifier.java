@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -25,19 +26,23 @@ public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProces
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
         for (Class<?> clazz : componentClasses){
-            BeanDefinition beanDefinition = registry.getBeanDefinition(StringUtil.getFirstLowerCase(clazz.getSimpleName()));
+            String oldBeanName = StringUtil.getFirstLowerCase(clazz.getSimpleName());
+            BeanDefinition beanDefinition = registry.getBeanDefinition(oldBeanName);
+            BeanDefinition beanDefinitionCopy = new GenericBeanDefinition(beanDefinition);
 
             String newBeanName = MosaicComponentConfig.getBeanName(clazz);
 
             log.info("Modifying bean name from [{}] to [{}]", clazz.getName(), newBeanName);
 
-            registry.removeBeanDefinition(StringUtil.getFirstLowerCase(clazz.getSimpleName()));
+            registry.removeBeanDefinition(oldBeanName);
 
             beanDefinition.setPrimary(true);
 
-            registry.registerBeanDefinition(newBeanName, beanDefinition);
+            registry.registerBeanDefinition(clazz.getSimpleName(), beanDefinition);
+
+            registry.registerBeanDefinition(newBeanName, beanDefinitionCopy);
             // 保存现有的BeanDefinition，以便后续创建新的Bean实例
-            map.put(clazz, beanDefinition);
+            map.put(clazz, beanDefinitionCopy);
         }
     }
 
@@ -48,9 +53,7 @@ public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProces
 
     public BeanDefinition getBeanDefinition(Class<?> clazz) {
         if(map.containsKey(clazz)){
-            BeanDefinition beanDefinition = map.get(clazz);
-            beanDefinition.setPrimary(false);
-            return beanDefinition;
+            return map.get(clazz);
         }
         throw new RuntimeException("beanDefinition not found");
     }
