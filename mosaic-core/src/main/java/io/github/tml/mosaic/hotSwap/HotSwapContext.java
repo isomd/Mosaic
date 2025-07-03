@@ -71,6 +71,8 @@ public class HotSwapContext {
                 .computeIfAbsent(hotSwapPoint.getClassName(), k -> new HashMap<>())
                 .computeIfAbsent(hotSwapPoint.getChangeRecord().getMethodName(), k -> new ArrayList<>())
                 .add(hotSwapPoint);
+
+        System.out.println("---: " + getHotSwapPointRecord().toString());
     }
 
     public Boolean existsHotSwapPoint(String className,String methodName) {

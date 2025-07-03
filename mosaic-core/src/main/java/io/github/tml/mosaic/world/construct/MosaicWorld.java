@@ -1,11 +1,9 @@
 package io.github.tml.mosaic.world.construct;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;
-import io.github.tml.mosaic.world.replace.ComponentReplace;
 import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +47,6 @@ public class MosaicWorld {
         }
         this.runningWorldContainer = worldContainer;
         init();
-        replaceBeanContext.replaceBean(this.runningWorldContainer.getWorldComponentManager());
     }
 
     public Boolean isRunningWorld(GUID guid){
@@ -62,6 +59,8 @@ public class MosaicWorld {
             this.originalWorldContainer = this.runningWorldContainer;
         }
         this.worldContainerManager.addWorldContainer(this.runningWorldContainer);
+
+        replaceBeanContext.replaceBean(this.runningWorldContainer.getWorldComponentManager());
 
         this.hotReplace();
     }

@@ -9,23 +9,23 @@ import io.github.tml.mosaic.entity.dto.HotSwapPointDTO;
 import io.github.tml.mosaic.entity.req.AgentServerReq;
 import io.github.tml.mosaic.entity.resp.AgentServerResp;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
+import io.github.tml.mosaic.hotSwap.init.MosaicAgentSocketClient;
 import io.github.tml.mosaic.hotSwap.model.ChangeMethodRecord;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import io.github.tml.mosaic.util.HotSwapUtil;
 import io.github.tml.mosaic.util.CodeTemplateUtil;
-import io.github.tml.mosaic.world.replace.ComponentReplace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author welsir
@@ -34,7 +34,7 @@ import java.util.Set;
  */
 @Service
 @Slf4j
-public class HotSwapDomain implements ComponentReplace {
+public class HotSwapDomain {
 
     @Autowired
     MosaicHotSwapConfig hotSwapConfig;
@@ -57,7 +57,14 @@ public class HotSwapDomain implements ComponentReplace {
                     dto::getProxyCode,
                     Set.of(CodeTemplateUtil.getCubeImportPath()));
             //2.热部署注入
-            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
+//            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
+            MosaicAgentSocketClient client = MosaicAgentSocketClient.INSTANCE;
+            if(client == null){
+                throw new HotSwapException("MosaicAgentSocketClient 未初始化!");
+            }
+
+            AgentServerResp resp = client.pushMessage(proxy, dto.getClassName());
+
             //3.更新本地内存
             if(resp.getIsSuccess()){
                 context.putClassProxyCode(dto.getClassName(), proxy);
@@ -116,6 +123,7 @@ public class HotSwapDomain implements ComponentReplace {
         req.setClassCode(proxyCode);
 
         String json = JSON.toJSONString(req);
+
         try {
             Socket socket = new Socket("localhost", hotSwapConfig.getPort());
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -126,11 +134,9 @@ public class HotSwapDomain implements ComponentReplace {
             writer.flush();
 
             String response = reader.readLine();
+            reader.close();
+            writer.close();
             return JSON.parseObject(response, AgentServerResp.class);
-
-
-        }catch (UnknownHostException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -155,10 +161,19 @@ public class HotSwapDomain implements ComponentReplace {
             AgentServerResp resp = NotifyAgentBySocket(rollBack, className);
             if(resp.getIsSuccess()){
                 //5.删除当前最后一个热更新点
-                context.removeLastHotSwapPoint(className,methodName);
+                if(isExistHotSwapPoint(className,methodName)){
+                    context.removeLastHotSwapPoint(className,methodName);
+                }
             }
             return rollBack;
         }
-        throw new HotSwapException("无法找到热更新点历史记录");
+        throw new HotSwapException("无法找到该热更新点历史记录");
+    }
+
+    public List<HotSwapPoint> getAllHotSwapPoints() {
+        return context.getHotSwapPointRecord().values().stream()
+                .flatMap(innerMap -> innerMap.values().stream())
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }

@@ -30,6 +30,11 @@ public class WorldContainerManager {
         return this.worldContainerMap.get(id);
     }
 
+    public WorldContainer getWorldContainer(GUID id, Integer version) {
+
+        return this.worldContainerMap.get(id);
+    }
+
     public WorldContainer removeWorldContainer(GUID id) {
         return this.worldContainerMap.remove(id);
     }

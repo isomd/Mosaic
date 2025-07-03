@@ -7,11 +7,10 @@ import io.github.tml.mosaic.util.R;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/world")
+@RequestMapping("/mosaic/world")
 public class WorldController {
     @Resource
     private WorldService worldService;

@@ -26,6 +26,10 @@ public abstract class WorldContainer extends UniqueEntity {
 
     protected WorldComponentManager worldComponentManager;
 
+    protected WorldContainer next;
+
+    protected WorldContainer pre;
+
     protected Boolean initialized = false;
 
     public WorldContainer(Integer version, String name, List<WorldComponent> components) {
@@ -34,6 +38,8 @@ public abstract class WorldContainer extends UniqueEntity {
         this.name = name;
         this.components = components;
         this.worldComponentManager = new WorldComponentManager(components, this.getId());
+        this.next = null;
+        this.pre = null;
     }
 
     public WorldContainer(GUID guid, Integer version, String name, List<WorldComponent> components) {
@@ -42,6 +48,8 @@ public abstract class WorldContainer extends UniqueEntity {
         this.name = name;
         this.components = components;
         this.worldComponentManager = new WorldComponentManager(components, this.getId());
+        this.next = null;
+        this.pre = null;
     }
 
     public void increaseVersion() {
