@@ -9,7 +9,6 @@ import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
 import io.github.tml.mosaic.slot.Slot;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import io.github.tml.mosaic.slot.support.SlotBuilder;
-import io.github.tml.mosaic.world.replace.ComponentReplace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
  */
 @Service
 @Slf4j
-public class SlotDomain implements ComponentReplace {
+public class SlotDomain {
 
     @Resource
     private SlotManager slotManager;
