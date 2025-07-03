@@ -58,10 +58,7 @@ public class HotSwapDomain {
                     Set.of(CodeTemplateUtil.getCubeImportPath()));
             //2.热部署注入
 //            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
-            MosaicAgentSocketClient client = MosaicAgentSocketClient.INSTANCE;
-            if(client == null){
-                throw new HotSwapException("MosaicAgentSocketClient 未初始化!");
-            }
+            MosaicAgentSocketClient client = MosaicAgentSocketClient.getInstance();
 
             AgentServerResp resp = client.pushMessage(proxy, dto.getClassName());
 

@@ -21,20 +21,25 @@ public class MosaicAgent {
 
     public static void agentmain(String args, Instrumentation inst) {
 
+        int port = Integer.parseInt(args.trim());
+
+
         AgentUtil.instrumentation = inst;
         AgentUtil.instrumentation.addTransformer(new MosaicAgentWatcher(), true);
-        int port = Integer.parseInt(args.trim());
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            Socket socket = serverSocket.accept();
-            MosaicAgentSocketServer server = new MosaicAgentSocketServer(socket);
-            new Thread(() -> {
-                try {
-                    server.start();
-                } finally {
-                    server.close();
-                }
-            }).start();
+            while (true) {
+                Socket socket = serverSocket.accept();
+                MosaicAgentSocketServer server = new MosaicAgentSocketServer(socket);
+                new Thread(() -> {
+                    try {
+                        server.start();
+                    } finally {
+                        server.close();
+                    }
+                }).start();
+            }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
