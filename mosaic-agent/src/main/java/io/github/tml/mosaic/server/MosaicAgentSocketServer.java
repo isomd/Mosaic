@@ -28,43 +28,64 @@ public class MosaicAgentSocketServer {
     public void start() {
         String responseJson = "";
         try {
-            // 读取请求
-            String json = reader.readLine();
+           while (true) {
+               // 读取请求
+               String json = reader.readLine();
 
-            // 加载请求类 & 反序列化
-            Class<?> req = AgentUtil.getClassByInst("io.github.tml.mosaic.entity.req.AgentServerRequestDTO");
-            ClassLoader targetClassLoader = req.getClassLoader();
-            Thread.currentThread().setContextClassLoader(targetClassLoader);
+               if (json == null || (!json.trim().startsWith("{") && !json.trim().startsWith("["))) {
+                   break;
+               }
+               try {
+                   // 加载请求类 & 反序列化
+                   Class<?> req = AgentUtil.getClassByInst("io.github.tml.mosaic.entity.req.AgentServerRequestDTO");
+                   ClassLoader targetClassLoader = req.getClassLoader();
+                   Thread.currentThread().setContextClassLoader(targetClassLoader);
 
-            ParserConfig parserConfig = new ParserConfig();
-            parserConfig.setDefaultClassLoader(targetClassLoader);
-            Object reqObj = JSON.parseObject(json, req, parserConfig, Feature.SupportAutoType);
+                   ParserConfig parserConfig = new ParserConfig();
+                   parserConfig.setDefaultClassLoader(targetClassLoader);
+                   Object reqObj = JSON.parseObject(json, req, parserConfig, Feature.SupportAutoType);
 
-            // 获取参数
-            Method getClassNameMethod = req.getMethod("getClassName");
-            String className = (String) getClassNameMethod.invoke(reqObj);
-            Method getClassCodeMethod = req.getMethod("getClassCode");
-            String classCode = (String) getClassCodeMethod.invoke(reqObj);
+                   // 获取参数
+                   Method getClassNameMethod = req.getMethod("getClassName");
+                   String className = (String) getClassNameMethod.invoke(reqObj);
+                   Method getClassCodeMethod = req.getMethod("getClassCode");
+                   String classCode = (String) getClassCodeMethod.invoke(reqObj);
 
-            DeployContextHolder.set(Map.of("code", classCode));
+                   DeployContextHolder.set(Map.of("code", classCode));
 
-            // 热替换逻辑
-            AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
+                   // 热替换逻辑
+                   AgentUtil.instrumentation.retransformClasses(AgentUtil.getClassByInst(className));
 
-            if ("true".equals(DeployContextHolder.get().get("flag"))) {
-                responseJson = "{\"isSuccess\":true,\"message\":\"Class :" + className + " 更新成功\"}";
-            } else {
-                responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + DeployContextHolder.get().get("errorMsg") + "\"}";
-            }
-            DeployContextHolder.clear();
-            writer.write(responseJson);
-            writer.newLine();
-            writer.flush();
+                   if ("true".equals(DeployContextHolder.get().get("flag"))) {
+                       responseJson = "{\"isSuccess\":true,\"message\":\"Class :" + className + " 更新成功\"}";
+                   } else {
+                       responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + DeployContextHolder.get().get("errorMsg") + "\"}";
+                   }
+                   DeployContextHolder.clear();
+                   writer.write(responseJson);
+                   writer.newLine();
+                   writer.flush();
+               } catch (IOException e) {
+                   System.out.println("业务处理异常: " + e.getMessage());
+                   throw new RuntimeException(e);
+               } catch (InvocationTargetException e) {
+                   System.out.println("业务处理异常: " + e.getMessage());
+                   throw new RuntimeException(e);
+               } catch (UnmodifiableClassException e) {
+                   System.out.println("业务处理异常: " + e.getMessage());
+                   throw new RuntimeException(e);
+               } catch (NoSuchMethodException e) {
+                   System.out.println("业务处理异常: " + e.getMessage());
+                   throw new RuntimeException(e);
+               } catch (IllegalAccessException e) {
+                   System.out.println("业务处理异常: " + e.getMessage());
+                   throw new RuntimeException(e);
+               }
+           }
 
-        } catch (InvocationTargetException | UnmodifiableClassException | NoSuchMethodException |
-                 IllegalAccessException | IOException e) {
-            responseJson = "{\"isSuccess\":false,\"message\":\"更新失败：" + e.getClass().getSimpleName() + " - " + e.getMessage() + "\"}";
-            throw new RuntimeException(responseJson);
+        } catch (IOException e) {
+            System.out.println("业务处理异常: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
