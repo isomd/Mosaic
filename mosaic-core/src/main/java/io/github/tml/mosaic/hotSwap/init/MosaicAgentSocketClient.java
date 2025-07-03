@@ -17,23 +17,29 @@ public class MosaicAgentSocketClient {
 
     private final String HOST = "localhost";
 
-    public static MosaicAgentSocketClient INSTANCE;
+    private static MosaicAgentSocketClient INSTANCE;
 
-    BufferedReader reader;
-    BufferedWriter writer;
-    Socket socket;
+    private int port;
 
-    public static MosaicAgentSocketClient getInstance(int port) throws IOException {
+    private static BufferedReader reader;
+    private static BufferedWriter writer;
+    private static Socket socket;
+
+    public static void register(int port) throws IOException {
+        INSTANCE = new MosaicAgentSocketClient(port);
+    }
+
+    public static MosaicAgentSocketClient getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new MosaicAgentSocketClient(port);
+            throw new IllegalStateException("MosaicAgentSocketClient 未初始化");
         }
         return INSTANCE;
     }
 
-    public MosaicAgentSocketClient(int port) throws IOException {
+    private MosaicAgentSocketClient(int port) throws IOException {
         socket = new Socket(HOST, port);
-        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
     public AgentServerResp pushMessage(String proxyCode,String className) {
@@ -49,12 +55,20 @@ public class MosaicAgentSocketClient {
             writer.flush();
 
             String response = reader.readLine();
-            reader.close();
-            writer.close();
+
             return JSON.parseObject(response, AgentServerResp.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static void close() {
+        try {
+            if (reader != null) reader.close();
+            if (writer != null) writer.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
