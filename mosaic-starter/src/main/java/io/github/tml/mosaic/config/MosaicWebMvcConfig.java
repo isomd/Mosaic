@@ -10,9 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MosaicWebMvcConfig implements WebMvcConfigurer {
 
+    public static final String MOSAIC_FRONT_PATH = "/mosaic/view/";
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/mosaic/**")
+        registry.addResourceHandler(MOSAIC_FRONT_PATH+"**")
                 .addResourceLocations("classpath:/view/");
 
     }
