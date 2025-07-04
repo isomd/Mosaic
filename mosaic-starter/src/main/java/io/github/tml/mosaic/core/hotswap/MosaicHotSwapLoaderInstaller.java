@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.Socket;
 
 /**
  * @author welsir
@@ -37,9 +38,11 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+
         String pid = getCurrentPid();
 
         try {
+
             Class<?> currentClass = Class.forName(MosaicHotSwapLoaderInstaller.class.getName());
             Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicAgent");
             String currentPath = EnvironmentPathFindUtil.getJarPath(currentClass);
@@ -60,8 +63,8 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
             log.info("attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
             pb.inheritIO();
             agentProcess = pb.start();
-            int exitCode = agentProcess.waitFor();
-            MosaicAgentSocketClient.getInstance(mosaicHotSwapConfig.getPort());
+            waitForAgentPort("localhost",mosaicHotSwapConfig.getPort(),10000);
+            MosaicAgentSocketClient.register(mosaicHotSwapConfig.getPort());
         } catch (IOException | ClassNotFoundException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -76,5 +79,19 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
             log.info("Shutting down agent process...");
             agentProcess.destroy(); // 停止 agent 进程
         }
+        MosaicAgentSocketClient.close();
+    }
+
+    public static void waitForAgentPort(String host, int port, int timeoutMillis) throws InterruptedException {
+        int waitTime = 0;
+        while (waitTime < timeoutMillis) {
+            try (Socket socket = new Socket(host, port)) {
+                return;
+            } catch (Exception e) {
+                Thread.sleep(200); // 每200ms重试一次
+                waitTime += 200;
+            }
+        }
+        throw new RuntimeException("Agent端口在 " + timeoutMillis + "ms 内未启动成功");
     }
 }
