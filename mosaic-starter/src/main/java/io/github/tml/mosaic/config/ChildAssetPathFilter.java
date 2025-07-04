@@ -42,8 +42,8 @@ public class ChildAssetPathFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = req.getRequestURI();
 
-        // 是白名单的path直接放行
-        if(whitePathList.contains(requestURI)){
+        // 是请求或者是白名单的path直接放行
+        if(whitePathList.contains(requestURI)||isApiRequest(req)){
             filterChain.doFilter(req, resp);
             return;
 
@@ -92,5 +92,10 @@ public class ChildAssetPathFilter extends OncePerRequestFilter {
             }
         }
         return Optional.empty();
+    }
+
+    private Boolean isApiRequest(HttpServletRequest request){
+        String SecFetchDest = request.getHeader("Sec-Fetch-Dest");
+        return "empty".equals(SecFetchDest);
     }
 }
