@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
 @Getter
-public abstract class WorldContainer extends UniqueEntity {
+public class WorldContainer extends UniqueEntity {
     protected AtomicInteger version;
 
     protected String name;

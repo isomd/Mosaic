@@ -26,12 +26,4 @@ public class MosaicWorldContainer extends WorldContainer implements Serializable
     }
 
     // TODO: 深拷贝uuid问题
-    @Override
-    public WorldContainer clone() {
-        MosaicWorldContainer clone = DeepCopyUtil.deepCopy(this);
-        if(clone != null && clone != this){
-            return clone;
-        }
-        throw new RuntimeException("clone failed");
-    }
 }

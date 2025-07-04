@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.service.impl;
 
+import io.github.tml.mosaic.controller.WorldController;
 import io.github.tml.mosaic.convert.WorldContainerConvert;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.domain.WorldDomain;
@@ -40,5 +41,12 @@ public class WorldServiceImpl implements WorldService {
     @Override
     public WorldContainerVO getNowWorld() {
         return worldDomain.getNowWorld();
+    }
+
+    @Override
+    public WorldContainerVO createArchive(String uuid) {
+        WorldContainerVO worldController = worldDomain.createQuickCopyWorld(new GUUID(uuid));
+
+        return worldController;
     }
 }

@@ -23,7 +23,18 @@ public class WorldContainerManager {
     }
 
     public void addWorldContainer(WorldContainer worldContainer) {
-        this.worldContainerMap.put(worldContainer.getId(), worldContainer);
+        if(this.worldContainerMap.contains(worldContainer.getId())){
+            // 加入节点链
+            WorldContainer node = this.worldContainerMap.get(worldContainer.getId());
+            while(node.getNext() != null){
+                node = node.getNext();
+            }
+            node.setNext(worldContainer);
+            worldContainer.setPre(node);
+        } else {
+            // 加入节点中
+            this.worldContainerMap.put(worldContainer.getId(), worldContainer);
+        }
     }
 
     public WorldContainer getWorldContainer(GUID id) {

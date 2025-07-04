@@ -41,4 +41,9 @@ public class WorldController {
     public R<?> getNowWorld(){
         return R.success(worldService.getNowWorld());
     }
+    // 创建快照
+    @GetMapping("/createArchive")
+    public R<?> createArchive(@RequestParam String uuid){
+        return R.success(worldService.createArchive(uuid));
+    }
 }

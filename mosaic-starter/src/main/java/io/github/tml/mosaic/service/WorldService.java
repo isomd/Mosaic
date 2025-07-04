@@ -15,4 +15,6 @@ public interface WorldService {
     WorldContainerVO removeWorld(String uuid);
 
     WorldContainerVO getNowWorld();
+
+    WorldContainerVO createArchive(String uuid);
 }
