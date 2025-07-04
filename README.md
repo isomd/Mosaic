@@ -1,5 +1,5 @@
 # Mosaic 📟
-
+<a id="section1"></a>
 <div align="center">
 
 <img src="https://github.com/user-attachments/assets/b425421b-d3dd-4b6c-b1a7-a944ff63c3e9" alt="Mosaic Logo" width="150" />
@@ -75,7 +75,7 @@
 - **开发热重载**: 开发期间实时预览效果
 
 ### 🔄 强大的插件管理
-- **多源加载**: 支持JAR/网络流多种加载方式
+- **多源加载**: 支持多种多样的加载方式
 - **版本控制**: 完整的插件版本管理体系
 - **依赖解析**: 智能处理插件间依赖关系
 - **冲突检测**: 自动检测并解决插件冲突
@@ -193,6 +193,6 @@
 
 **如果觉得 Mosaic 对你有帮助，请给我们一个 ⭐ Star！**
 
-[⬆ 回到顶部](#-mosaic-plugin-framework)
+[⬆ 回到顶部](#section1)
 
 </div>
