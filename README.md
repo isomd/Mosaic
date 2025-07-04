@@ -66,7 +66,7 @@
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="55%" valign="top">
 
 ### 🚀 极简开发体验
 - **一行代码启动**: Maven依赖即插即用
@@ -81,7 +81,7 @@
 - **冲突检测**: 自动检测并解决插件冲突
 
 </td>
-<td width="50%" valign="top">
+<td width="55%" valign="top">
 
 ### 🔌 真正的热插拔
 - **零停机部署**: 无需重启应用即可更新插件
