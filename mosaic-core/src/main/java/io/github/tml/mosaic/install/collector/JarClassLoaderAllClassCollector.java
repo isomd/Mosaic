@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -91,6 +93,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
      */
     private JarPluginClassLoader createJarClassLoader(String jarPath) throws CubeException {
         try {
+            jarPath = decodeFilePath(jarPath);
             File jarFile = new File(jarPath);
             if (!jarFile.exists() || !jarFile.isFile()) {
                 throw new InfoCollectException("JAR file not exist or invalid: " + jarPath);
@@ -114,5 +117,13 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
 
     private String extractClassName(String entryName) {
         return entryName.replace('/', '.').substring(0, entryName.length() - 6);
+    }
+
+    private String decodeFilePath(String encodedPath) {
+        try {
+            return URLDecoder.decode(encodedPath, StandardCharsets.UTF_8.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decode file path", e);
+        }
     }
 }

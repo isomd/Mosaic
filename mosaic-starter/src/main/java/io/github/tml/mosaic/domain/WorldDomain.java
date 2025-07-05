@@ -27,9 +27,9 @@ public class WorldDomain {
 
     public WorldContainerVO createWorld(WorldContainerDTO worldDTO){
         // 创建新世界容器
-        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(worldDTO.getName(), MosaicComponentConfig.getComponentClasses(), false);
+        WorldContainer worldContainer = mosaicWorld.createWorldContainer(worldDTO.getName());
 
-        mosaicWorld.getWorldContainerManager().addWorldContainer(worldContainer);
+        mosaicWorld.registryWorldContainer(worldContainer);
         // 创建新世界的组件并注册
         universalBeanHands.createBeans(worldContainer);
 
@@ -38,9 +38,9 @@ public class WorldDomain {
 
     public WorldContainerVO traverseWorld(GUID guid){
         // 当前切换的世界是否存在
-        if(mosaicWorld.getWorldContainerManager().contains(guid)){
+        if(mosaicWorld.contains(guid)){
             if(!mosaicWorld.isRunningWorld(guid)){
-                WorldContainer worldContainer = mosaicWorld.getWorldContainerManager().getWorldContainer(guid);
+                WorldContainer worldContainer = mosaicWorld.getWorldContainer(guid);
 
                 mosaicWorld.traverse(worldContainer);
 
@@ -52,25 +52,33 @@ public class WorldDomain {
     }
 
     public WorldContainerVO createQuickCopyWorld(GUID guid){
-        WorldContainer worldContainer = mosaicWorld.getWorldContainerManager().getWorldContainer(guid);
+        WorldContainer worldContainer = mosaicWorld.getWorldContainer(guid);
 
         WorldContainer newWorldContainer = WorldContainerFactory.createWorldContainer(worldContainer);
 
-        mosaicWorld.getWorldContainerManager().addWorldContainer(newWorldContainer);
+        mosaicWorld.registryWorldContainer(newWorldContainer);
+
+        // 创建快照世界的组件并注册
+        universalBeanHands.createBeans(worldContainer, newWorldContainer);
 
         return WorldContainerConvert.convert2VO(newWorldContainer);
     }
 
     public List<WorldContainerVO> getAllWorlds(){
-        return mosaicWorld.getWorldContainerManager().getAllWorldContainer().stream().map(WorldContainerConvert::convert2VO).collect(Collectors.toList());
+        return mosaicWorld.getAllWorldContainer().stream().map(WorldContainerConvert::convert2VO).collect(Collectors.toList());
     }
 
     public WorldContainerVO removeWorld(GUID guid){
-        if (mosaicWorld.isRunningWorld(guid)){
-            WorldContainer worldContainer = mosaicWorld.getOriginalWorldContainer();
-            mosaicWorld.traverse(worldContainer);
+        WorldContainer worldContainer = mosaicWorld.getWorldContainer(guid);
+        if(mosaicWorld.getOriginalWorldContainer().equals(worldContainer) || mosaicWorld.worldSize() <= 1){
+            return null;
         }
-        return WorldContainerConvert.convert2VO(mosaicWorld.getWorldContainerManager().removeWorldContainer(guid));
+        if (mosaicWorld.isRunningWorld(guid)){
+            WorldContainer originalWorld = mosaicWorld.getOriginalWorldContainer();
+
+            mosaicWorld.traverse(originalWorld);
+        }
+        return WorldContainerConvert.convert2VO(mosaicWorld.removeWorldContainer(guid));
     }
 
     public WorldContainerVO getNowWorld(){

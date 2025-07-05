@@ -31,19 +31,39 @@ public class UniversalBeanHands {
         List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
         for (Class<?> clazz : componentClasses){
             registerBean(newContainer.getComponentName(clazz), clazz);
+            log.info("世界组件{}注册：{}", clazz.getName(), newContainer.getComponentName(clazz));
+        }
+
+    }
+
+    public void createBeans(WorldContainer oldContainer, WorldContainer newContainer) {
+        List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
+        for (Class<?> clazz : componentClasses){
+            registerBean(newContainer.getComponentName(clazz), oldContainer.getName(), clazz);
         }
     }
 
-    public void registerBean(String beanName, Class<?> beanClass) {
+    protected void registerBean(String beanName, Class<?> beanClass) {
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) context.getBeanFactory();
         if (!registry.containsBeanDefinition(beanName)) {
             BeanDefinition beanDefinition = dynamicBeanNameModifier.getBeanDefinition(beanClass);
             beanDefinition.setPrimary(false);
             registry.registerBeanDefinition(beanName, beanDefinition);
         }
-
         Object o = applicationContext.getBean(beanName, beanClass);
+        log.info("registerBean: {} : {}", beanName, o);
+    }
 
-        log.info("Bean {} {} has been registered.", beanName, o);
+    protected void registerBean(String newBeanName, String oldBeanName, Class<?> beanClass) {
+        Object oldBean = applicationContext.getBean(oldBeanName, beanClass);
+        Object newBean = DeepCopyUtil.deepCopy(oldBean);
+        if(newBean == null){
+            log.error("组件快照创建失败");
+            return;
+        }
+        // 注册进容器
+        ((ConfigurableApplicationContext) applicationContext)
+                .getBeanFactory()
+                .registerSingleton(newBeanName, newBean);
     }
 }

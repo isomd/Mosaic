@@ -2,63 +2,45 @@ package io.github.tml.mosaic.world.container;
 
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.guid.UniqueEntity;
-import io.github.tml.mosaic.cube.factory.context.CubeContext;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.world.component.WorldComponent;
-import io.github.tml.mosaic.world.component.WorldComponentManager;
+import io.github.tml.mosaic.util.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 @Setter
 @Getter
-public abstract class WorldContainer extends UniqueEntity {
-    protected AtomicInteger version;
-
+public class WorldContainer extends UniqueEntity {
     protected String name;
 
-    protected List<WorldComponent> components;
+    protected List<Class<?>> componentClasses;
 
-    protected WorldComponentManager worldComponentManager;
+    private Map<Class<?>, String> worldComponentNames;
 
-    protected WorldContainer next;
-
-    protected WorldContainer pre;
-
-    protected Boolean initialized = false;
-
-    public WorldContainer(Integer version, String name, List<WorldComponent> components) {
+    public WorldContainer(String name, List<Class<?>> componentClasses) {
         super(CommonComponent.GuidAllocator().nextGUID());
-        this.version = new AtomicInteger(version);
         this.name = name;
-        this.components = components;
-        this.worldComponentManager = new WorldComponentManager(components, this.getId());
-        this.next = null;
-        this.pre = null;
+        this.componentClasses = componentClasses;
+        this.worldComponentNames = componentClasses.stream()
+                .collect(HashMap::new, (map, clazz) -> map.put(clazz, StringUtil.getFirstLowerCase(clazz.getSimpleName()) + this.getId().toString()), HashMap::putAll);
     }
 
-    public WorldContainer(GUID guid, Integer version, String name, List<WorldComponent> components) {
+    public WorldContainer(GUID guid, String name, List<Class<?>> componentClasses) {
         super(guid);
-        this.version = new AtomicInteger(version);
         this.name = name;
-        this.components = components;
-        this.worldComponentManager = new WorldComponentManager(components, this.getId());
-        this.next = null;
-        this.pre = null;
+        this.componentClasses = componentClasses;
+        this.worldComponentNames = componentClasses.stream()
+                .collect(HashMap::new, (map, clazz) -> map.put(clazz, StringUtil.getFirstLowerCase(clazz.getSimpleName()) + this.getId().toString()), HashMap::putAll);
     }
-
-    public void increaseVersion() {
-        version.incrementAndGet();
-    }
-
-    public abstract WorldContainer clone();
 
     public String getComponentName(Class<?> clazz) {
-        return worldComponentManager.getComponentName(clazz);
+        return worldComponentNames.get(clazz);
+    }
+
+    public WorldContainer clone(){
+        return new WorldContainer(this.getName() + "的副本", this.componentClasses);
     }
 }

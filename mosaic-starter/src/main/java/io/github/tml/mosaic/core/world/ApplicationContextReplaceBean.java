@@ -2,13 +2,14 @@ package io.github.tml.mosaic.core.world;
 
 import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
 import io.github.tml.mosaic.util.BeanUtils;
-import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ApplicationContextReplaceBean implements ReplaceBeanContext {
@@ -20,16 +21,16 @@ public class ApplicationContextReplaceBean implements ReplaceBeanContext {
 
     @Override
     // 属性替换
-    public void replaceBean(WorldComponentManager worldComponentManager) {
+    public void replaceBean(Map<Class<?>, String> componentNames) {
         for (Class<?> clazz : componentClasses){
             Object oldBean = applicationContext.getBean(clazz);
-            Object newBean = getNewComponent(clazz, worldComponentManager);
+            Object newBean = getNewComponent(clazz, componentNames);
             BeanUtils.copyProperties(newBean, oldBean);
         }
     }
 
-    protected <T> T getNewComponent(Class<T> clazz, WorldComponentManager worldComponentManager){
-        String beanName = worldComponentManager.getComponentName(clazz);
+    protected <T> T getNewComponent(Class<T> clazz, Map<Class<?>, String> componentNames){
+        String beanName = componentNames.get(clazz);
         return applicationContext.getBean(beanName, clazz);
     }
 }

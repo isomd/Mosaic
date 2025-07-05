@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.controller;
 
+import io.github.tml.mosaic.convert.WorldContainerConvert;
 import io.github.tml.mosaic.entity.dto.WorldContainerDTO;
 import io.github.tml.mosaic.entity.vo.world.WorldContainerVO;
 import io.github.tml.mosaic.service.WorldService;
@@ -34,11 +35,16 @@ public class WorldController {
     @GetMapping("/remove")
     public R<?> removeWorld(@RequestParam String uuid){
         WorldContainerVO worldContainerVO = worldService.removeWorld(uuid);
-        return Objects.isNull(worldContainerVO) ? R.error("未找到世界") : R.success(worldContainerVO);
+        return Objects.isNull(worldContainerVO) ? R.error("原始世界不能删除") : R.success(worldContainerVO);
     }
 
     @GetMapping("/getNowWorld")
     public R<?> getNowWorld(){
         return R.success(worldService.getNowWorld());
+    }
+    // 创建快照
+    @GetMapping("/createArchive")
+    public R<?> createArchive(@RequestParam String uuid){
+        return R.success(worldService.createArchive(uuid));
     }
 }

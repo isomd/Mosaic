@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.world.replace;
 
-import io.github.tml.mosaic.world.component.WorldComponentManager;
+import java.util.Map;
 
 public interface ReplaceBeanContext {
-    void replaceBean(WorldComponentManager worldComponentManager);
+    void replaceBean(Map<Class<?>, String> componentNames);
 }
