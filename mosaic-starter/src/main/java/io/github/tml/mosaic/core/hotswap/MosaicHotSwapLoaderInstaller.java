@@ -1,10 +1,9 @@
 package io.github.tml.mosaic.core.hotswap;
 
-import io.github.tml.mosaic.config.MosaicHotSwapConfig;
+import io.github.tml.mosaic.config.mosaic.MosaicHotSwapConfig;
 import io.github.tml.mosaic.hotSwap.init.MosaicAgentSocketClient;
 import io.github.tml.mosaic.util.EnvironmentPathFindUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

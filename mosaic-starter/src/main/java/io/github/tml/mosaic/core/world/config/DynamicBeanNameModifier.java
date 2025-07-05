@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.world.config;
 
-import io.github.tml.mosaic.config.MosaicComponentConfig;
+import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
 import io.github.tml.mosaic.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

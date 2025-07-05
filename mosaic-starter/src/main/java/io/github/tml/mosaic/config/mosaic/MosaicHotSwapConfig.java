@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.config;
+package io.github.tml.mosaic.config.mosaic;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.domain;
 
-import io.github.tml.mosaic.config.MosaicComponentConfig;
+import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
 import io.github.tml.mosaic.convert.WorldContainerConvert;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.world.UniversalBeanHands;

@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.world;
 
-import io.github.tml.mosaic.config.MosaicComponentConfig;
+import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
 import io.github.tml.mosaic.util.BeanUtils;
 import io.github.tml.mosaic.world.component.WorldComponentManager;
 import io.github.tml.mosaic.world.replace.ReplaceBeanContext;

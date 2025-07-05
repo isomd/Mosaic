@@ -1,9 +1,7 @@
-package io.github.tml.mosaic.config;
+package io.github.tml.mosaic.config.view;
 
-import io.github.tml.mosaic.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import static io.github.tml.mosaic.config.MosaicWebMvcConfig.MOSAIC_FRONT_PATH;
+import static io.github.tml.mosaic.config.view.MosaicWebMvcConfig.MOSAIC_FRONT_PATH;
 
 /**
  * 子插件页面重定向过滤器

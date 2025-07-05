@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.config;
+package io.github.tml.mosaic.config.mosaic;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
