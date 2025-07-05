@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.config;
+package io.github.tml.mosaic.config.mosaic;
 
 import io.github.tml.mosaic.core.persistence.adapter.file.JSONFileAdapter;
 import io.github.tml.mosaic.core.persistence.adapter.file.LocalFileAdapter;

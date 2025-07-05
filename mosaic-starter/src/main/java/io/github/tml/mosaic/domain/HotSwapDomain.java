@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.domain;
 
 import com.alibaba.fastjson.JSON;
-import io.github.tml.mosaic.config.MosaicHotSwapConfig;
+import io.github.tml.mosaic.config.mosaic.MosaicHotSwapConfig;
 import io.github.tml.mosaic.core.execption.HotSwapException;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.entity.dto.HotSwapDTO;
