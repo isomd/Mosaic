@@ -45,8 +45,6 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public WorldContainerVO createArchive(String uuid) {
-        WorldContainerVO worldController = worldDomain.createQuickCopyWorld(new GUUID(uuid));
-
-        return worldController;
+        return worldDomain.createQuickCopyWorld(new GUUID(uuid));
     }
 }
