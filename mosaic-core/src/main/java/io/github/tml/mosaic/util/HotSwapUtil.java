@@ -217,11 +217,11 @@ public class HotSwapUtil {
 
     /**
      * 源码增强方法入口
-     * @param sourceCode
-     * @param targetLine
-     * @param operation
-     * @param codeSupplier
-     * @param importsToAdd
+     * @param sourceCode 源代码（字符串）
+     * @param targetLine 目标行号
+     * @param operation  操作类型
+     * @param codeSupplier 代码段
+     * @param importsToAdd 要添加的import集合
      * @return
      */
     public static String modify(
