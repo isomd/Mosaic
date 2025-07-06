@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.world;
 
 import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
+import io.github.tml.mosaic.core.tools.copy.DeepCopyUtil;
 import io.github.tml.mosaic.core.world.config.DynamicBeanNameModifier;
 import io.github.tml.mosaic.world.container.WorldContainer;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,8 @@ public class UniversalBeanHands {
 
     protected void registerBean(String newBeanName, String oldBeanName, Class<?> beanClass) {
         Object oldBean = applicationContext.getBean(oldBeanName, beanClass);
-        Object newBean = DeepCopyUtil.deepCopy(oldBean);
+//        Object newBean = DeepCopyUtil.deepCopy(oldBean);
+        Object newBean = null;
         if(newBean == null){
             log.error("组件快照创建失败");
             return;

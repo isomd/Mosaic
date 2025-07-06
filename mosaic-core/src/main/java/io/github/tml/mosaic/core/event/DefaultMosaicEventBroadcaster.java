@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.event;
 
 import io.github.tml.mosaic.core.event.event.MosaicEvent;
+import io.github.tml.mosaic.core.event.listener.MosaicCommonListenerEventListener;
 import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import lombok.extern.slf4j.Slf4j;
 
@@ -157,16 +158,26 @@ public class DefaultMosaicEventBroadcaster implements MosaicEventBroadcaster {
     private List<MosaicEventListener<?>> getListenersForEvent(Class<? extends MosaicEvent> eventType) {
         List<MosaicEventListener<?>> result = new ArrayList<>();
 
-        // 获取精确匹配的监听器
+        // 1. 获取精确匹配的监听器
         List<MosaicEventListener<?>> exactMatches = listenerRegistry.get(eventType);
         if (exactMatches != null) {
             result.addAll(exactMatches);
         }
 
-        // 获取父类型的监听器（支持事件继承）
+        // 2. 获取父类型的监听器（支持事件继承）
         for (Map.Entry<Class<? extends MosaicEvent>, List<MosaicEventListener<?>>> entry : listenerRegistry.entrySet()) {
             if (entry.getKey().isAssignableFrom(eventType) && !entry.getKey().equals(eventType)) {
                 result.addAll(entry.getValue());
+            }
+        }
+
+        // 3. 【新增】强制添加所有MosaicCommonListenerEventListener
+        List<MosaicEventListener<?>> commonListeners = listenerRegistry.get(MosaicEvent.class);
+        if (commonListeners != null) {
+            for (MosaicEventListener<?> listener : commonListeners) {
+                if (listener instanceof MosaicCommonListenerEventListener && !result.contains(listener)) {
+                    result.add(listener);
+                }
             }
         }
 
