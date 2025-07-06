@@ -146,7 +146,7 @@ public class HotSwapDomain {
     public String rollBackHotSwapPoint(String className,String methodName) {
 
         //1.拿到当前类对应的源码字符串
-        String currentCode = context.getProxyCode(className);
+        String currentCode = this.getProxyCodeByClassFullName(className);
 
         //2.找到前一个版本的热更新点
         List<HotSwapPoint> hotSwapPointList = context.getHotSwapPointsByMethodName(className, methodName);
@@ -160,6 +160,8 @@ public class HotSwapDomain {
                 //5.删除当前最后一个热更新点
                 if(isExistHotSwapPoint(className,methodName)){
                     context.removeLastHotSwapPoint(className,methodName);
+                    //6.更新内存中的源码字符串
+                    context.putClassProxyCode(className, rollBack);
                 }
             }
             return rollBack;
