@@ -17,21 +17,21 @@ public abstract class AbstractAutowireInitCubeFactory extends AbstractAutowireCo
     @Override
     protected Cube executeInitializationPhase(Cube cube, CubeDefinition cubeDefinition, Object[] args) throws CubeException {
         try {
-            log.debug("Initialization phase started | CubeId: {}", cube.getCubeId());
+            log.debug("[Cube][CubeFactory] Initialization phase started | CubeId: {}", cube.getCubeId());
 
             // Pre-initialization hook
             preInitialization(cube, cubeDefinition, args);
 
             // Main initialization logic
             if (cube.init()) {
-                log.info("✓ Cube initialized successfully | CubeId: {}, CubeName: {}", cube.getCubeId(), cube.getMetaData().getName());
+                log.info("[Cube][CubeFactory] ✓ Cube initialized successfully | CubeId: {}, CubeName: {}", cube.getCubeId(), cube.getMetaData().getName());
 
                 // Post-initialization hook
                 postInitialization(cube, cubeDefinition, args);
                 return cube;
             } else {
                 String errorMsg = String.format("Cube initialization returned false | CubeId: %s", cube.getCubeId());
-                log.error("✗ {}", errorMsg);
+                log.error("[Cube][CubeFactory] ✗ {}", errorMsg);
                 throw new CubeException(errorMsg);
             }
 

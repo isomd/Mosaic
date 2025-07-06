@@ -25,7 +25,7 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
 
     /** Constructor: initializes Cube factory */
     public AbstractRefreshableCubeContext() {
-        log.info("AbstractRefreshableCubeContext initialized with factory: {}", cubeFactory.getClass().getSimpleName());
+        log.info("[Cube][CubeContext] cubeContext initialized with cubeFactory: {}", cubeFactory.getClass().getSimpleName());
     }
 
     /**
@@ -35,27 +35,26 @@ public abstract class AbstractRefreshableCubeContext extends AbstractCubeContext
      */
     @Override
     public void refresh() throws CubeException {
-        log.info("Starting context refresh...");
+        log.info("[Cube][CubeContext] Starting cubeContext refresh...");
 
         try {
             // 1. Get CubeFactory
             ListableCubeFactory cubeFactory = getBeanFactory();
-            log.debug("CubeFactory retrieved: {}", cubeFactory.getClass().getSimpleName());
 
             // 2. Refresh configuration resources
             refreshConfigurationResources();
-            log.info("Configuration resources refreshed.");
+            log.info("[Cube][CubeContext] cube Configuration resources has refreshed.");
 
             // 3. Pre-instantiate singleton beans
             preInstantiateSingletons();
-            log.info("Singleton beans pre-instantiated.");
+            log.info("[Cube][CubeContext] Singleton cubeBeans pre-instantiated.");
 
         } catch (Exception e) {
-            log.error("Context refresh failed.", e);
+            log.error("[Cube][CubeContext] cubeContext refresh failed.", e);
             throw new CubeException("Context refresh failed: " + e.getMessage(), e);
         }
 
-        log.info("Context refresh complete.");
+        log.info("[Cube][CubeContext] cubeContext refresh complete.");
     }
 
     /**

@@ -51,10 +51,10 @@ public abstract class AbstractResourceFileAdapter implements ResourceFileAdapter
                         long start = System.currentTimeMillis();
                         collector.collect(infoContext);
                         long timeSpent = System.currentTimeMillis() - start;
-                        log.info("Collecting info with [{}] took {} ms", collector.getClass().getSimpleName(), timeSpent);
+                        log.info("[Cube] [{}] collecting info took {} ms", collector.getClass().getSimpleName(), timeSpent);
                     });
         } catch (Exception e) {
-            log.error("Error during info collection: {}", e.getMessage(), e);
+            log.error("[Cube] Error during info collection: {}", e.getMessage(), e);
         }
     }
 }

@@ -48,8 +48,7 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
 
             String agentPath = EnvironmentPathFindUtil.getJarPath(agentClass);
 
-            log.info("install path: {}", currentPath);
-            log.info("agent path: {}", agentPath);
+            log.info("[Hotswap] agent path: {}", agentPath);
 
             String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             ProcessBuilder pb = new ProcessBuilder(
@@ -59,7 +58,7 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
                     agentPath,
                     String.valueOf(mosaicHotSwapConfig.getPort())
             );
-            log.info("attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
+            log.info("[Hotswap] attach agent to target project, listen port is : {}", mosaicHotSwapConfig.getPort());
             pb.inheritIO();
             agentProcess = pb.start();
             waitForAgentPort("localhost",mosaicHotSwapConfig.getPort(),10000);
@@ -91,6 +90,6 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
                 waitTime += 200;
             }
         }
-        throw new RuntimeException("Agent端口在 " + timeoutMillis + "ms 内未启动成功");
+        throw new RuntimeException("Agent port start fail in " + timeoutMillis + "ms");
     }
 }

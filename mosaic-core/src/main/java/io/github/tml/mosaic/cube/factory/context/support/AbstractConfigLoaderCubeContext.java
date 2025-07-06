@@ -75,20 +75,20 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
     public AbstractConfigLoaderCubeContext() {
         super();
         this.configReader = createDefaultConfigReader();
-        log.info("AbstractConfigLoaderCubeContext initialized with default config reader");
+        log.info("[Cube][CubeContext] cubeContext load god cube configuration by configReader: {}", configReader.getClass().getSimpleName());
     }
 
     /** Refresh and reload all configuration resources from files */
     @Override
     protected void refreshConfigurationResources() throws CubeException {
-        log.info("Refreshing configuration resources...");
+        log.info("[Cube][CubeContext] Refreshing cube configuration resources...");
 
         try {
             clearConfigurations();
             String[] configLocations = getConfigLocations();
 
             if (configLocations == null || configLocations.length == 0) {
-                log.warn("No configuration locations specified, loading default configuration.");
+                log.warn("[Cube][CubeContext] No configuration locations specified, loading default configuration.");
                 loadDefaultConfiguration();
                 return;
             }
@@ -96,14 +96,14 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
             log.info("Loading configuration from {} locations: {}", configLocations.length, Arrays.toString(configLocations));
             for (String configLocation : configLocations) {
                 if (configLocation == null || configLocation.trim().isEmpty()) {
-                    log.warn("Skipping empty configuration location.");
+                    log.warn("[Cube][CubeContext] Skipping empty configuration location.");
                     continue;
                 }
                 loadConfigurationFromLocation(configLocation.trim());
             }
 
         } catch (Exception e) {
-            log.error("Failed to refresh configuration resources", e);
+            log.error("[Cube][CubeContext] Failed to refresh cube configuration resources", e);
             throw new CubeException("Configuration refresh failed: " + e.getMessage(), e);
         }
     }
@@ -111,7 +111,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
     /** Remove all stored configuration data */
     protected void clearConfigurations() {
         configurationMap.clear();
-        log.info("All configurations cleared.");
+        log.info("[Cube][CubeContext] All cube configurations has cleared.");
     }
 
     /** Load and parse configuration from a given file location */
@@ -165,14 +165,13 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
 
     /** Load default configuration if no location is provided */
     private void loadDefaultConfiguration() {
-        log.info("Loading default configuration...");
+        log.info("[Cube][CubeContext] Loading default cube configuration...");
         try {
             JSONObject defaultConfig = configReader.readConfig();
             if (defaultConfig != null && !defaultConfig.isEmpty()) {
                 parseAndStoreConfiguration(defaultConfig, "default");
-                log.info("Default configuration loaded.");
             } else {
-                log.warn("No default configuration found.");
+                log.warn("[Cube][CubeContext] No default cube configuration found.");
             }
         } catch (Exception e) {
             log.error("Failed to load default configuration", e);
