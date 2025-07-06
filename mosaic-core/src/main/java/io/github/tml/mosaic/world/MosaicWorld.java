@@ -1,14 +1,15 @@
-package io.github.tml.mosaic.world.construct;
+package io.github.tml.mosaic.world;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.world.container.WorldContainer;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;
 import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public class MosaicWorld {
     @Getter
     protected WorldContainer runningWorldContainer;
@@ -57,6 +58,7 @@ public class MosaicWorld {
         }
         this.runningWorldContainer = worldContainer;
         this.reload();
+        log.info("世界切换：{}-{}", worldContainer.getName(), worldContainer.getId().toString());
     }
 
     public Boolean isRunningWorld(GUID guid){

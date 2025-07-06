@@ -1,9 +1,8 @@
 package io.github.tml.mosaic.core.world;
 
 import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
-import io.github.tml.mosaic.core.tools.copy.DeepCopyUtil;
 import io.github.tml.mosaic.core.world.config.DynamicBeanNameModifier;
-import io.github.tml.mosaic.world.container.WorldContainer;
+import io.github.tml.mosaic.world.WorldContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,7 +31,7 @@ public class UniversalBeanHands {
         List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
         for (Class<?> clazz : componentClasses){
             registerBean(newContainer.getComponentName(clazz), clazz);
-            log.info("世界组件{}注册：{}", clazz.getName(), newContainer.getComponentName(clazz));
+            log.info("World Component {} registry: {}", clazz.getName(), newContainer.getComponentName(clazz));
         }
 
     }
@@ -51,8 +50,6 @@ public class UniversalBeanHands {
             beanDefinition.setPrimary(false);
             registry.registerBeanDefinition(beanName, beanDefinition);
         }
-        Object o = applicationContext.getBean(beanName, beanClass);
-        log.info("registerBean: {} : {}", beanName, o);
     }
 
     protected void registerBean(String newBeanName, String oldBeanName, Class<?> beanClass) {
@@ -60,7 +57,7 @@ public class UniversalBeanHands {
 //        Object newBean = DeepCopyUtil.deepCopy(oldBean);
         Object newBean = null;
         if(newBean == null){
-            log.error("组件快照创建失败");
+            log.error("Component create failed {}", beanClass.getName());
             return;
         }
         // 注册进容器

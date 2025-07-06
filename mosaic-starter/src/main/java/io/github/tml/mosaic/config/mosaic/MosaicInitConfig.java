@@ -11,7 +11,7 @@ import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.world.construct.MosaicWorld;
+import io.github.tml.mosaic.world.MosaicWorld;
 import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +26,9 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class MosaicInitConfig {
+
+    private volatile Boolean isFirstInit = true;
+
     /*
     * 当前世界
     * */
@@ -42,14 +45,18 @@ public class MosaicInitConfig {
     public CubeContext cubeContext(InfoContextInstaller infoContextInstaller) {
         ClassPathCubeContext context = new ClassPathCubeContext();
 
-        // 初始化安装项Context 收集 -> List<CubeInfo>
-        List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(infoContextInstaller.installCubeInfoContext());
+        if (this.isFirstInit){
+            // 初始化安装项Context 收集 -> List<CubeInfo>
+            List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(infoContextInstaller.installCubeInfoContext());
 
-        // List<CubeInfo> -> List<CubeDefinition>
-        List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
+            // List<CubeInfo> -> List<CubeDefinition>
+            List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
 
-        // 注册进context容器
-        context.registerAllCubeDefinition(cubeDefinitions);
+            // 注册进context容器
+            context.registerAllCubeDefinition(cubeDefinitions);
+
+            this.isFirstInit = false;
+        }
 
         // 刷新容器
         context.refresh();
