@@ -25,8 +25,6 @@ public class LocalProjectClassCollector implements InfoCollector {
     private String basePackage;
     private String basePackagePath;
 
-    private volatile String mainClassPackage;
-
     @Override
     public void collect(InfoContext infoContext) {
         long startTime = System.currentTimeMillis();
@@ -49,14 +47,12 @@ public class LocalProjectClassCollector implements InfoCollector {
      * 通过堆栈信息获取主类所在的包
      */
     private String getMainClassPackage() throws CubeException {
-        if (this.mainClassPackage != null) return this.mainClassPackage;
         for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
             if ("main".equals(element.getMethodName())) {
                 try {
                     Class<?> mainClass = Class.forName(element.getClassName());
                     Package pkg = mainClass.getPackage();
                     if (pkg != null) {
-                        this.mainClassPackage = pkg.getName();
                         return pkg.getName();
                     }
                 } catch (ClassNotFoundException ignored) {

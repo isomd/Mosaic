@@ -2,7 +2,7 @@ package io.github.tml.mosaic.world.factory;
 
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.world.container.WorldContainer;
+import io.github.tml.mosaic.world.WorldContainer;
 
 import java.util.List;
 

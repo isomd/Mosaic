@@ -121,7 +121,7 @@ public class JarClassLoaderAllClassCollector implements InfoCollector {
 
     private String decodeFilePath(String encodedPath) {
         try {
-            return URLDecoder.decode(encodedPath, StandardCharsets.UTF_8.toString());
+            return URLDecoder.decode(encodedPath, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException("Failed to decode file path", e);
         }

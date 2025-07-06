@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.world.manager;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.world.container.WorldContainer;
+import io.github.tml.mosaic.world.WorldContainer;
 
 import java.util.ArrayList;
 import java.util.List;

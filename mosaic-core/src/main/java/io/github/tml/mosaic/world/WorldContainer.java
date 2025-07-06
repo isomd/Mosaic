@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.world.container;
+package io.github.tml.mosaic.world;
 
 import io.github.tml.mosaic.core.infrastructure.CommonComponent;
 import io.github.tml.mosaic.core.tools.guid.GUID;
