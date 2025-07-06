@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.core.world;
 
 import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
+import io.github.tml.mosaic.core.tools.copy.DeepCopyUtil;
 import io.github.tml.mosaic.core.world.config.DynamicBeanNameModifier;
 import io.github.tml.mosaic.world.WorldContainer;
 import lombok.extern.slf4j.Slf4j;

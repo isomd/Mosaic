@@ -82,7 +82,7 @@ public class EnvironmentPathFindUtil {
      */
     public static String getJarPath(Class<?> anchorClass) {
         EnvironmentType env = detectEnvironment(anchorClass);
-        log.info("检测到的部署环境："+env);
+        log.info("[Hotswap] current project running env：{}, analysis this env path", env);
         switch (env) {
             case DEVELOPMENT:
                 return resolveDevJarPath(anchorClass);
@@ -91,7 +91,7 @@ public class EnvironmentPathFindUtil {
             case PRODUCTION:
                 return resolveProductionJarPath(anchorClass);
             default:
-                throw new IllegalStateException("未知环境类型");
+                throw new IllegalStateException("unknown running project env");
         }
     }
 

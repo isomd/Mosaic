@@ -82,7 +82,7 @@ public class ValidatorRegistry {
         registerValidator(new NotNullValidator());
         
         initialized = true;
-        log.info("Initialized {} default validators", allValidators.size());
+        log.info("[Cube] has benn initialized {} default cube config validators", allValidators.size());
     }
     
     /**

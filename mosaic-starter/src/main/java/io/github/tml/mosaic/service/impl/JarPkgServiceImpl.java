@@ -330,9 +330,9 @@ public class JarPkgServiceImpl implements JarPkgService {
                     .filter(path -> path.toString().toLowerCase().endsWith(JAR_EXTENSION))
                     .forEach(this::loadExistingJarPackage);
 
-            log.info("加载已存在的JAR包完成，共{}个", jarPackageMap.size());
+            log.info("load exist jar package :{}", jarPackageMap.size());
         } catch (Exception e) {
-            log.error("加载已存在的JAR包失败", e);
+            log.error("load exist jar package fail", e);
         }
     }
 

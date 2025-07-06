@@ -73,9 +73,9 @@ public abstract class AbstractAutowirePropertyCubeFactory extends AbstractAutowi
                     // 注册扩展点到扩展包
                     extensionPackage.addExtensionPoint(extensionPoint);
                 }
-                log.info("extPackage init success | Cube: {} | extPackage: {} | extPointNum: {}", cube.getCubeId(), pkgDef.getName(), extensionPackage.getExtensionPoints().size());
+                log.debug("[Cube][CubeFactory] extPackage init success | Cube: {} | extPackage: {} | extPointNum: {}", cube.getCubeId(), pkgDef.getName(), extensionPackage.getExtensionPoints().size());
             } catch (Exception e) {
-                log.error("extPackage init fail | Cube: {} | extPackage: {} | error: {}", cube.getCubeId(), pkgDef.getName(), e.getMessage());
+                log.error("[Cube][CubeFactory] extPackage init fail | Cube: {} | extPackage: {} | error: {}", cube.getCubeId(), pkgDef.getName(), e.getMessage());
             }
         }
     }
