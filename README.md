@@ -62,6 +62,22 @@
 
 ---
 
+# 🎥 让我们开一局？
+## 控制台
+![screenshot-17517748496291](https://github.com/user-attachments/assets/3e50b2c6-7f0d-4728-9778-f14fffaff8a8)
+## 创建世界
+![屏幕截图_6-7-2025_12519_localhost1](https://github.com/user-attachments/assets/b4fecd68-38f3-4ca4-aa6b-2b3b5a38968b)
+## 热更新
+![QQ20250706-125422](https://github.com/user-attachments/assets/84e62a81-96fd-4e90-9d47-58598dfb6b9a)
+## 插件管理
+![QQ20250706-144833](https://github.com/user-attachments/assets/8399d97a-bc8c-49ec-acf1-c8057989333f)
+## 扩展包管理
+![QQ20250706-145035](https://github.com/user-attachments/assets/4e1dcee2-93e8-4f56-ad30-814436cca5ef)
+## 配置管理
+![QQ20250706-144921](https://github.com/user-attachments/assets/2348ffeb-85a2-4625-a696-c6e31c5195f6)
+
+---
+
 ## 🔱 核心特性
 
 <table>
@@ -98,22 +114,6 @@
 </td>
 </tr>
 </table>
-
----
-
-# 🎥 Preview
-## 控制台
-![screenshot-17517748496291](https://github.com/user-attachments/assets/3e50b2c6-7f0d-4728-9778-f14fffaff8a8)
-## 创建世界
-![屏幕截图_6-7-2025_12519_localhost1](https://github.com/user-attachments/assets/b4fecd68-38f3-4ca4-aa6b-2b3b5a38968b)
-## 热更新
-![QQ20250706-125422](https://github.com/user-attachments/assets/84e62a81-96fd-4e90-9d47-58598dfb6b9a)
-## 插件管理
-![QQ20250706-144833](https://github.com/user-attachments/assets/8399d97a-bc8c-49ec-acf1-c8057989333f)
-## 扩展包管理
-![QQ20250706-145035](https://github.com/user-attachments/assets/4e1dcee2-93e8-4f56-ad30-814436cca5ef)
-## 配置管理
-![QQ20250706-144921](https://github.com/user-attachments/assets/2348ffeb-85a2-4625-a696-c6e31c5195f6)
 
 ---
 
