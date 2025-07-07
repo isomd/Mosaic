@@ -62,7 +62,7 @@ const getSlotListFunction = () => {
       .add-slot-text{
         text-align: center;
         display: block;
-        font-size: 14px;
+        font-size: 1em;
       }
     }
     &:hover{

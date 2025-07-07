@@ -5,9 +5,6 @@
 </template>
 <script lang="ts" setup>
 import router from "@/router";
-onMounted(()=>{
-  router.push('/dashboard')
-})
 </script>
 <style scoped lang="scss">
 .default-app{

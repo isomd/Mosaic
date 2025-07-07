@@ -33,5 +33,5 @@ export const useSlotStore = defineStore('slot', () => {
         return slotMap.value.get(id)
     }
 
-    return { getSlots,getSlotById }
+    return { getSlots,getSlotById,slotMap }
 })
