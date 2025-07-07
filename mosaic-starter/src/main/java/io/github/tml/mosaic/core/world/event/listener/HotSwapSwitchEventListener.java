@@ -64,6 +64,7 @@ public class HotSwapSwitchEventListener extends WorldEventListener<AfterWorldTra
         return AfterWorldTransitionEvent.class;
     }
 
+
     private void updateClassByClassName(String className,HotSwapContext context){
         Map<String, String> map = context.getClassMethodLatestHotSwapPoint(className);
 
