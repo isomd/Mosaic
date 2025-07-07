@@ -41,11 +41,12 @@ public class WorldDomain {
         // 当前切换的世界是否存在
         if(mosaicWorld.contains(guid)){
             if(!mosaicWorld.isRunningWorld(guid)){
+                AfterWorldTransitionEvent event = new AfterWorldTransitionEvent(null);
+                event.setOldWorldId(mosaicWorld.getRunningWorldContainer().getId());
+                event.setNewWorldId(guid);
                 WorldContainer worldContainer = mosaicWorld.getWorldContainer(guid);
 
                 mosaicWorld.traverse(worldContainer);
-
-                AfterWorldTransitionEvent event = new AfterWorldTransitionEvent(worldContainer);
 
                 broadcaster.broadcastEvent(event);
 
