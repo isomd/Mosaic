@@ -8,6 +8,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.File;
@@ -22,7 +23,7 @@ import java.net.Socket;
  */
 @Component
 @Slf4j
-public class MosaicHotSwapLoaderInstaller implements ApplicationListener<ApplicationReadyEvent> {
+public class MosaicHotSwapLoaderInstaller {
 
     @Resource
     MosaicHotSwapConfig mosaicHotSwapConfig;
@@ -35,16 +36,13 @@ public class MosaicHotSwapLoaderInstaller implements ApplicationListener<Applica
         return name.split("@")[0];
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
 
+    @PostConstruct
+    public void init() {
         String pid = getCurrentPid();
 
         try {
-
-            Class<?> currentClass = Class.forName(MosaicHotSwapLoaderInstaller.class.getName());
             Class<?> agentClass = Class.forName("io.github.tml.mosaic.MosaicAgent");
-            String currentPath = EnvironmentPathFindUtil.getJarPath(currentClass);
 
             String agentPath = EnvironmentPathFindUtil.getJarPath(agentClass);
 

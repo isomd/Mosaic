@@ -2,6 +2,7 @@ package io.github.tml.mosaic.hotSwap;
 
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import lombok.Getter;
+import org.modelmapper.internal.util.Maps;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +47,12 @@ public class HotSwapContext {
         hotSwapPoints.remove(hotSwapPoints.size()-1);
     }
 
+    public HotSwapPoint getLastHotSwapPoint(String className, String methodName) {
+        int last = hotSwapPointRecord.get(className).get(methodName).size()-1;
+        if(last == -1) return null;
+        return hotSwapPointRecord.get(className).get(methodName).get(last);
+    }
+
     public void putClassProxyCode(String className, String proxyCode) {
         classProxyCode.put(className, proxyCode);
     }
@@ -86,5 +93,15 @@ public class HotSwapContext {
                 .orElse(Collections.emptyList());
     }
 
-
+    public Map<String,String> getClassMethodLatestHotSwapPoint(String className) {
+        Map<String, List<HotSwapPoint>> methodHotswapMap = hotSwapPointRecord.get(className);
+        Map<String,String> methodLatestHotSwapPoint = new HashMap<>();
+        methodHotswapMap.keySet().forEach(key -> {
+            HotSwapPoint point = this.getLastHotSwapPoint(className,key);
+            if(point != null) {
+                methodLatestHotSwapPoint.put(key, point.getChangeRecord().getNewSourceCode());
+            }
+        });
+        return methodLatestHotSwapPoint;
+    }
 }
