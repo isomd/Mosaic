@@ -1,7 +1,5 @@
 package io.github.tml.mosaic.core.persistence.init;
 
-import io.github.tml.mosaic.core.persistence.MosaicPersistenceManager;
-import io.github.tml.mosaic.core.persistence.adapter.file.LocalFileAdapter;
 import io.github.tml.mosaic.domain.HotSwapDomain;
 import io.github.tml.mosaic.hotSwap.HotSwapRepository;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
@@ -11,14 +9,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author welsir
