@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -174,5 +171,30 @@ public class HotSwapDomain {
                 .flatMap(innerMap -> innerMap.values().stream())
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    public void recoverHotSwapPoint(List<HotSwapPoint> hotSwapPoints) {
+
+        Set<String> uniqueClassNames = hotSwapPoints.stream()
+                .map(HotSwapPoint::getClassName)
+                .collect(Collectors.toSet());
+
+        uniqueClassNames.forEach(className -> {
+            //1.当前类的所有最新热更新点
+            Map<String, String> map = context.getClassMethodLatestHotSwapPoint(className);
+            //2.获取当前类的源码字符串
+            String sourceCode = this.getProxyCodeByClassFullName(className);
+            String proxy = HotSwapUtil.enhanceSourceCode(sourceCode, map);
+            MosaicAgentSocketClient client = MosaicAgentSocketClient.getInstance();
+
+            AgentServerResp resp = client.pushMessage(proxy, className);
+
+            //3.更新本地内存
+            if(resp.getIsSuccess()){
+                context.putClassProxyCode(className, proxy);
+            }else{
+                throw new HotSwapException(resp.getMessage());
+            }
+        });
     }
 }
