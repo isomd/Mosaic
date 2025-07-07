@@ -12,7 +12,8 @@ import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
 import io.github.tml.mosaic.slot.infrastructure.SlotManager;
 import io.github.tml.mosaic.world.MosaicWorld;
-import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
+import io.github.tml.mosaic.world.component.ComponentCreator;
+import io.github.tml.mosaic.world.component.ComponentReplacer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +34,8 @@ public class MosaicInitConfig {
     * 当前世界
     * */
     @Bean
-    public MosaicWorld mosaicWorld(ReplaceBeanContext replaceBeanContext){
-        return new MosaicWorld(MosaicComponentConfig.getComponentClasses(), replaceBeanContext);
+    public MosaicWorld mosaicWorld(ComponentReplacer componentReplacer, ComponentCreator componentCreator){
+        return new MosaicWorld(MosaicComponentConfig.getComponentClasses(), componentReplacer, componentCreator);
     }
 
     /**

@@ -3,7 +3,8 @@ package io.github.tml.mosaic.world;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import io.github.tml.mosaic.world.manager.WorldContainerManager;
-import io.github.tml.mosaic.world.replace.ReplaceBeanContext;
+import io.github.tml.mosaic.world.component.ComponentCreator;
+import io.github.tml.mosaic.world.component.ComponentReplacer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,26 +19,32 @@ public class MosaicWorld {
 
     protected WorldContainerManager worldContainerManager;
 
-    private final ReplaceBeanContext replaceBeanContext;
+    private final ComponentReplacer componentReplacer;
+
+    private final ComponentCreator componentCreator;
 
     protected List<Class<?>> componentsClasses;
 
     private final String ORIGINAL_WORLD_NAME = "original";
 
-    public MosaicWorld(List<Class<?>> classes, ReplaceBeanContext replaceBeanContext) {
-        this.replaceBeanContext = replaceBeanContext;
+    public MosaicWorld(List<Class<?>> classes, ComponentReplacer componentReplacer, ComponentCreator componentCreator) {
         this.componentsClasses = classes;
-        this.originalWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, classes, true);
+        this.componentReplacer = componentReplacer;
+        this.componentCreator = componentCreator;
+
+        this.originalWorldContainer = createOriginalWorldContainer();
         this.runningWorldContainer = this.originalWorldContainer;
         this.worldContainerManager = new WorldContainerManager();
         this.worldContainerManager.put(this.originalWorldContainer);
         this.reload();
     }
 
-    public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes, ReplaceBeanContext replaceBeanContext) {
-        this.replaceBeanContext = replaceBeanContext;
+    public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes, ComponentReplacer componentReplacer, ComponentCreator componentCreator) {
         this.componentsClasses = classes;
-        this.originalWorldContainer = WorldContainerFactory.createWorldContainer(ORIGINAL_WORLD_NAME, classes, true);
+        this.componentReplacer = componentReplacer;
+        this.componentCreator = componentCreator;
+
+        this.originalWorldContainer = createOriginalWorldContainer();
         this.runningWorldContainer = runningWorldContainer;
         this.worldContainerManager = new WorldContainerManager();
         this.worldContainerManager.put(this.originalWorldContainer);
@@ -47,9 +54,7 @@ public class MosaicWorld {
 
     // 重新加载世界的组件
     protected void reload(){
-        replaceBeanContext.replaceBean(this.runningWorldContainer.getWorldComponentNames());
-
-        this.hotReplace();
+        componentReplacer.replaceComponent(this.runningWorldContainer.getWorldComponentNames());
     }
     // 切换世界
     public void traverse(WorldContainer worldContainer){
@@ -66,7 +71,19 @@ public class MosaicWorld {
     }
 
     public WorldContainer createWorldContainer(String name){
-        return WorldContainerFactory.createWorldContainer(name, componentsClasses, false);
+        return createWorldContainer(name, false);
+    }
+
+    private WorldContainer createOriginalWorldContainer(){
+        return createWorldContainer(ORIGINAL_WORLD_NAME, true);
+    }
+
+    private WorldContainer createWorldContainer(String name, Boolean isOriginal){
+        WorldContainer worldContainer = WorldContainerFactory.createWorldContainer(name, this.componentsClasses, isOriginal);
+
+        componentCreator.createComponents(worldContainer);
+
+        return worldContainer;
     }
 
     public void registryWorldContainer(WorldContainer worldContainer){
@@ -91,10 +108,5 @@ public class MosaicWorld {
 
     public Integer worldSize(){
         return worldContainerManager.worldSize();
-    }
-
-    // 做批量热更新
-    protected void hotReplace(){
-
     }
 }

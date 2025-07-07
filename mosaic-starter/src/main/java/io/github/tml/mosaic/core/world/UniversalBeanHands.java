@@ -1,9 +1,9 @@
 package io.github.tml.mosaic.core.world;
 
 import io.github.tml.mosaic.config.mosaic.MosaicComponentConfig;
-import io.github.tml.mosaic.core.tools.copy.DeepCopyUtil;
 import io.github.tml.mosaic.core.world.config.DynamicBeanNameModifier;
 import io.github.tml.mosaic.world.WorldContainer;
+import io.github.tml.mosaic.world.component.ComponentCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class UniversalBeanHands {
+public class UniversalBeanHands implements ComponentCreator {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -28,19 +28,20 @@ public class UniversalBeanHands {
     @Resource
     private ConfigurableApplicationContext context;
 
-    public void createBeans(WorldContainer newContainer) {
-        List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
-        for (Class<?> clazz : componentClasses){
-            registerBean(newContainer.getComponentName(clazz), clazz);
-            log.info("World Component {} registry: {}", clazz.getName(), newContainer.getComponentName(clazz));
-        }
+    private final List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
 
+    @Override
+    public void createComponents(WorldContainer worldContainer) {
+        for (Class<?> clazz : componentClasses){
+            registerBean(worldContainer.getComponentName(clazz), clazz);
+            log.info("World Component {} registry: {}", clazz.getName(), worldContainer.getComponentName(clazz));
+        }
     }
 
-    public void createBeans(WorldContainer oldContainer, WorldContainer newContainer) {
-        List<Class<?>> componentClasses = MosaicComponentConfig.getComponentClasses();
+    @Override
+    public void createComponents(WorldContainer oldWorldContainer, WorldContainer newWorldContainer) {
         for (Class<?> clazz : componentClasses){
-            registerBean(newContainer.getComponentName(clazz), oldContainer.getName(), clazz);
+            registerBean(newWorldContainer.getComponentName(clazz), oldWorldContainer.getName(), clazz);
         }
     }
 
@@ -54,16 +55,6 @@ public class UniversalBeanHands {
     }
 
     protected void registerBean(String newBeanName, String oldBeanName, Class<?> beanClass) {
-        Object oldBean = applicationContext.getBean(oldBeanName, beanClass);
-//        Object newBean = DeepCopyUtil.deepCopy(oldBean);
-        Object newBean = null;
-        if(newBean == null){
-            log.error("Component create failed {}", beanClass.getName());
-            return;
-        }
-        // 注册进容器
-        ((ConfigurableApplicationContext) applicationContext)
-                .getBeanFactory()
-                .registerSingleton(newBeanName, newBean);
+        // 创建快照bean
     }
 }
