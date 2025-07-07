@@ -17,3 +17,16 @@ export function uploadPluginJar(file:File){
         timeout: 100000
     })
 }
+export function getCubeConfiguration(form:string){
+    return request({
+        url: `/cube/${form}/getConfiguration`,
+        method: 'get',
+    })
+}
+export function updateCubeConfiguration(form){
+    return request({
+        url: '/cube/updateConfiguration',
+        method: 'post',
+        data:form
+    })
+}

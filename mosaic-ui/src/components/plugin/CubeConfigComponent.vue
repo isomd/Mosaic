@@ -424,9 +424,9 @@
   </v-dialog>
 </template>
 
-<script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-// import { getCubeConfiguration, updateCubeConfiguration } from '@/api/plugin/pluginApi.js'
+<script setup lang="ts">
+import { ref, computed, watch, onMounted,defineProps,defineEmits } from 'vue'
+import { getCubeConfiguration, updateCubeConfiguration } from '@/api/plugin/pluginApi.js'
 
 // Props定义
 const props = defineProps({
@@ -600,15 +600,15 @@ const closeDialog = () => {
 const selectConfigItem = (index) => {
   selectedConfigIndex.value = index
 }
-
+const configForm = ref()
 const onConfigChange = () => {
   // 清除字段错误
   fieldErrors.value = {}
 
   // 触发表单验证
   setTimeout(() => {
-    if (this.$refs.configForm) {
-      this.$refs.configForm.validate()
+    if (configForm.value) {
+      configForm.value.validate()
     }
   }, 100)
 }

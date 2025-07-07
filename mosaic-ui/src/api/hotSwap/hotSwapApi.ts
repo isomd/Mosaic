@@ -1,5 +1,6 @@
 import request from "@/utils/request";
-import {type CreatePointForm} from "@/api/hotSwap/hotSwapType";
+import type{ CreatePointForm,GetHotSwapPointsForm} from "@/api/hotSwap/hotSwapType";
+import type{RollBackHotSwapPointForm} from "@/api/hotSwap/hotSwapType";
 
 export function getClassStr(form:String){
     return request({
@@ -19,3 +20,17 @@ export function createPoint(form:CreatePointForm){
     })
 }
 
+export function getHotSwapPoints(form:GetHotSwapPointsForm){
+    return request({
+        url: '/hotSwap/getHotSwapPoints',
+        method: 'get',
+        params: form
+    })
+}
+export function rollBackHotSwapPoint(form:RollBackHotSwapPointForm){
+    return request({
+        url: '/hotSwap/rollBackHotSwapPoint',
+        method: 'post',
+        params: form
+    })
+}

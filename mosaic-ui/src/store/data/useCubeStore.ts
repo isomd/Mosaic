@@ -48,5 +48,5 @@ export const useCubeStore = defineStore('cube', () => {
         let exPoint:ExtensionPoint = exPackage.extensionPoints.find(exPoint=>exPoint.id==exPointId)
         return exPoint
     }
-    return { getCubes,getExPointBySlotId,getCubeById,getExPoint }
+    return { getCubes,getExPointBySlotId,getCubeById,getExPoint,cubeMap }
 })

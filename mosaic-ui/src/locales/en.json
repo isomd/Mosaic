@@ -65,6 +65,7 @@
   "hotSwap": {
     "lineNumber": "Line Number",
     "slot": "Slot",
+    "emptySot": "Empty Slot",
     "className": "ClassName",
     "args": "args",
     "plugin": "Plugin ID",
@@ -76,7 +77,10 @@
     "changeTypes": {
       "REPLACE_ASSIGN_RIGHT": "REPLACE_ASSIGN_RIGHT",
       "INSERT_AFTER": "INSERT_AFTER"
-    }
+    },
+    "rollback": "Rollback",
+    "current": "Current",
+    "afterApplying": "After Applying"
   },
   "world": {
     "worldName": "World Name",
