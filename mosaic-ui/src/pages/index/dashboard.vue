@@ -36,10 +36,10 @@ const worldInfo = ref({
   size: '2.3 GB'
 })
 const slotNums = computed(()=>{
-  return slotStore.slotMap.size
+  return slotStore.slotList.length
 })
 const cubeNums = computed(()=>{
-  return cubeStore.cubeMap.size
+  return cubeStore.cubeList.length
 })
 const worldNums = computed(()=>{
   return worldStore.worldList.length

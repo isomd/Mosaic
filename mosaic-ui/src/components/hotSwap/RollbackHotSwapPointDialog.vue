@@ -42,6 +42,8 @@ import {defineEmits, defineProps} from "vue";
 import type {MethodInfo,RollBackHotSwapPointForm} from "@/api/hotSwap/hotSwapType";
 import {rollBackHotSwapPoint} from '@/api/hotSwap/hotSwapApi'
 import router from "@/router";
+import {useStatusStore} from "@/store/useStatusStore";
+const statusStore = useStatusStore()
 const props = defineProps({
   value: Boolean,
   methodInfo: {
@@ -70,11 +72,13 @@ const dialog = computed({
 })
 const rollBackHotSwapPointForm = ref<RollBackHotSwapPointForm>({})
 const handleConfirmRollback = () =>{
+  statusStore.setLoading(true)
   rollBackHotSwapPointForm.value.className = props.methodInfo.className
   rollBackHotSwapPointForm.value.method = props.methodInfo.methodName
 
   rollBackHotSwapPoint(rollBackHotSwapPointForm.value).then((res:any)=>{
     if(res.code == 200) {
+      statusStore.setLoading(false)
       emit('confirm')
       dialog.value = false
     }

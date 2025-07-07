@@ -1,19 +1,17 @@
 <script lang="ts" setup>
 import {getSlotList} from "@/api/slot/slotApi";
 import {type Slot} from '@/api/slot/slotType'
+import { useSlotStore} from "@/store/data/useSlotStore";
+const slotStore = useSlotStore()
 const dialog = ref(false)
-let slotList = ref<Slot[]>([])
+let slotList = computed(()=>{
+  return slotStore.slotList
+})
 onMounted(()=>{
   getSlotListFunction()
 })
 const getSlotListFunction = () => {
-  getSlotList().then((res:any)=>{
-    if(res.code == 200){
-      slotList.value = res.data.slotList
-    } else {
-      //
-    }
-  })
+  slotStore.getSlots()
 }
 </script>
 <template>
