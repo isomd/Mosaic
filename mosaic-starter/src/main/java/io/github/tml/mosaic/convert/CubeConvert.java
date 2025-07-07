@@ -28,6 +28,7 @@ public class CubeConvert {
                 definition.getVersion(),
                 definition.getDescription(),
                 definition.getModel(),
+                definition.getScope(),
                 definition.getClassName(),
                 definition.getClassLoader()
         );
@@ -55,6 +56,7 @@ public class CubeConvert {
                 .version(cubeDTO.getVersion())
                 .description(cubeDTO.getDescription())
                 .model(cubeDTO.getModel())
+                .scope(cubeDTO.getScope())
                 .className(cubeDTO.getClassName())
                 .status(convertStatus(cubeDTO.getStatus()))
                 .extensionPackages(cubeDTO.getExtensionPackages().stream()

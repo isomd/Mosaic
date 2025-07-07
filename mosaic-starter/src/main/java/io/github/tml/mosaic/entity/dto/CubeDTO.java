@@ -19,9 +19,9 @@ public class CubeDTO extends CubeDefinition {
     private LocalDateTime lastUpdatedTime;
 
     public CubeDTO(String id, String name, String version, 
-                   String description, String model, 
+                   String description, String model, String scope,
                    String className, ClassLoader classLoader) {
-        super(id, name, version, description, model, className, classLoader);
+        super(id, name, version, description, model, scope, className, classLoader);
         this.status = determineStatus();
         this.registeredTime = LocalDateTime.now();
         this.lastUpdatedTime = LocalDateTime.now();

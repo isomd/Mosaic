@@ -9,8 +9,7 @@ import static io.github.tml.plugin.systemLog.config.Constant.PLUGIN_ID;
 @MCube(
         name="系统日志",
         description = "用于输出系统日志的插件",
-        version = "1.0.1",
-        model = "property"
+        version = "1.0.1"
 )
 public class SystemLogCube extends MosaicCube {
 

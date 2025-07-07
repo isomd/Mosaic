@@ -21,6 +21,7 @@ public class CubeInfoVO {
     private String version;
     private String description;
     private String model;
+    private String scope;
     private String className;
     private CubeStatus status;
     private List<ExtensionPackageVO> extensionPackages;

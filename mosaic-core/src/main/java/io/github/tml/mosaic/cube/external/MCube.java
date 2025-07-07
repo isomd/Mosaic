@@ -28,7 +28,12 @@ public @interface MCube {
     String description() default "";
     
     /**
-     * 方块的模式: 单例、多例
+     * 方块的范围: 单例、多例
      */
-    String model() default "singleton";
+    String scope() default "singleton";
+
+    /**
+     * 方块的模式: 功能型方块
+     */
+    String model() default "default";
 }

@@ -20,6 +20,7 @@ public class CubeInfo {
     private String version;
     private String description;
     private String model;
+    private String scope;
     private String className;
     private Class<?> clazz;
     private List<ExtensionPackageInfo> extensionPackages = new ArrayList<>();
@@ -36,5 +37,6 @@ public class CubeInfo {
         this.setVersion(mCube.version());
         this.setDescription(mCube.description());
         this.setModel(mCube.model());
+        this.setScope(mCube.scope());
     }
 }

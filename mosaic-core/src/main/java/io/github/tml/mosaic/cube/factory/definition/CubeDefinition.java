@@ -18,6 +18,7 @@ public class CubeDefinition {
     private String version;
     private String description;
     private String model;
+    private String scope;
     private String className;
     private transient ClassLoader classLoader;
     private final List<ExtensionPackageDefinition> extensionPackages = new ArrayList<>();
@@ -27,14 +28,13 @@ public class CubeDefinition {
      */
     private ConfigInfo configInfo;
 
-    public CubeDefinition(String id, String name, String version,
-                          String description, String model,
-                          String className, ClassLoader classLoader) {
+    public CubeDefinition(String id, String name, String version, String description, String model, String scope, String className, ClassLoader classLoader) {
         this.id = id;
         this.name = name;
         this.version = version;
         this.description = description;
         this.model = model;
+        this.scope = scope;
         this.className = className;
         this.classLoader = classLoader;
     }

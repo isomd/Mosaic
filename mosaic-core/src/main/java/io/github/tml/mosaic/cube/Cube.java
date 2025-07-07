@@ -44,9 +44,9 @@ public class Cube extends ConfigurableEntity implements CubeApi {
             return createAndInitInstance();
         }
 
-        // 存在则检查model模式
-        String model = metaData.getModel();
-        if ("property".equals(model)) {
+        // 存在则检查范围
+        String scope = metaData.getScope();
+        if ("property".equals(scope)) {
             // property模式：销毁现有实例，重新创建
             mosaicCube.destroy();
             mosaicCube = null;
@@ -104,6 +104,7 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         private String version;
         private String description;
         private String model;
+        private String scope;
         private Class<?> clazz;
 
         // 扩展包元数据

@@ -25,6 +25,7 @@ public class CubeDefinitionConverter {
                 cubeInfo.getVersion(),
                 cubeInfo.getDescription(),
                 cubeInfo.getModel(),
+                cubeInfo.getScope(),
                 cubeInfo.getClassName(),
                 cubeInfo.getClassLoader()
         );
