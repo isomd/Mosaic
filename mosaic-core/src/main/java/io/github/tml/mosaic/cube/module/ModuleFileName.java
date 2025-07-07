@@ -5,7 +5,8 @@ public enum ModuleFileName {
     CUBE("cube"),
     API("api"),
     CONFIG("config"),
-    VIEW("view");
+    VIEW("view"),
+    LISTENER("listener");
 
     private String packageName;
 

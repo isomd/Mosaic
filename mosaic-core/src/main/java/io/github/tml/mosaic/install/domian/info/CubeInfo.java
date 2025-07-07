@@ -26,6 +26,8 @@ public class CubeInfo {
     private List<ExtensionPackageInfo> extensionPackages = new ArrayList<>();
     private transient ClassLoader classLoader;
 
+    private List<CubeListenerInfo> cubeListeners = new ArrayList<>();
+
     /**
      * Cube配置信息
      */
