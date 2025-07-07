@@ -25,6 +25,7 @@ declare module 'vue' {
     MinecraftInputComponent: typeof import('./components/common/MinecraftInputComponent.vue')['default']
     MonacoEditor: typeof import('./components/code/MonacoEditor.vue')['default']
     PluginStatisticsChart: typeof import('./components/plugin/PluginStatisticsChart.vue')['default']
+    RollbackHotSwapPointDialog: typeof import('./components/hotSwap/RollbackHotSwapPointDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SidebarComponent: typeof import('./components/layout/SidebarComponent.vue')['default']
