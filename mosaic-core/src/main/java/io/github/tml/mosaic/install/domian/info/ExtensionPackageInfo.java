@@ -21,14 +21,6 @@ public class ExtensionPackageInfo {
     private String cubeId;
     private List<ExtensionPointInfo> extensionPoints = new ArrayList<>();
 
-    public ExtensionPackageInfo(String cubeId, List<ExtensionPointInfo> extensionPoints, String description, String name, String id) {
-        this.cubeId = cubeId;
-        this.extensionPoints = extensionPoints;
-        this.description = description;
-        this.name = name;
-        this.id = id;
-    }
-
     public void addExtensionPoint(ExtensionPointInfo extensionPointInfo) {
         extensionPoints.add(extensionPointInfo);
     }
