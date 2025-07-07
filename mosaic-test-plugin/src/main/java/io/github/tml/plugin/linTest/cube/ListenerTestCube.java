@@ -12,7 +12,7 @@ import static io.github.tml.plugin.linTest.config.Constant.PLUGIN_ID;
         version = "1.0.0",
         model = "function"
 )
-public class listenerTestCube extends MosaicCube {
+public class ListenerTestCube extends MosaicCube {
 
     @Override
     public boolean init() {
@@ -26,6 +26,10 @@ public class listenerTestCube extends MosaicCube {
             System.err.println("[功能型方块] 初始化失败: " + e.getMessage());
             return false;
         }
+    }
+
+    public void test() {
+        System.out.println("test一手");
     }
 
     @Override

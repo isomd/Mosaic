@@ -1,8 +1,11 @@
 package io.github.tml.mosaic.core.event.event;
 
 import io.github.tml.mosaic.core.tools.param.ConfigInfo;
+import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * 描述: CubeConfig更新事件
@@ -12,13 +15,13 @@ import lombok.Data;
 @Data
 public class CubeConfigUpdateEvent extends MosaicEvent {
 
-    private final CubeDefinition cubeDefinition;
-    private final ConfigInfo before;
-    private final ConfigInfo after;
+    private final MosaicCube mosaicCube;
+    private final Map<String, Object> before;
+    private final Map<String, Object> after;
 
-    public CubeConfigUpdateEvent(CubeDefinition cubeDefinition, ConfigInfo before, ConfigInfo after) {
+    public CubeConfigUpdateEvent(MosaicCube mosaicCube, Map<String, Object> before, Map<String, Object> after) {
         super(null);
-        this.cubeDefinition = cubeDefinition;
+        this.mosaicCube = mosaicCube;
         this.before = before;
         this.after = after;
     }
