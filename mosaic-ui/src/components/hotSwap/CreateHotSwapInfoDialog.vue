@@ -5,6 +5,9 @@ import {createPoint} from "@/api/hotSwap/hotSwapApi";
 import {type CreatePointForm} from "@/api/hotSwap/hotSwapType";
 import {useCubeStore} from "@/store/data/useCubeStore";
 import {useSlotStore} from "@/store/data/useSlotStore";
+import {useStatusStore} from "@/store/useStatusStore";
+const statusStore = useStatusStore()
+
 const cubeStore = useCubeStore()
 const slotStore = useSlotStore()
 const emit = defineEmits(['update:modelValue', 'updateCode'])
@@ -59,9 +62,11 @@ const getSlotListFunction = () => {
 }
 
 const handelSave = () => {
+  statusStore.setLoading(true)
   createPoint(createPointForm.value).then((res: any) => {
     if (res.code == 200) {
       emit('updateCode', res.data.code)
+      statusStore.setLoading(false)
       dialog.value = false
     } else {
       //

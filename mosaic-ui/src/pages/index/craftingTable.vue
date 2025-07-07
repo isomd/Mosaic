@@ -150,7 +150,7 @@ const handleConfirmRollback = ()=>{
 <template>
   <div class="input-container">
     <MinecraftInputComponent v-model="searchInput" :placeholder="'io.github.tml.controller.UserController'" style="flex: 9" @keydown.enter="handleSearch"></MinecraftInputComponent>
-    <MinecraftButtonComponent style="flex: 1" @click="handleSearch"><span class="mx-auto">{{$t('common.search')}}</span></MinecraftButtonComponent>
+    <MinecraftButtonComponent :disabled="searchInput===''" style="flex: 1" @click="handleSearch"><span class="mx-auto" >{{$t('common.search')}}</span></MinecraftButtonComponent>
   </div>
   <div class="editor-container" v-if="code!==''">
     <MonacoEditor
@@ -176,6 +176,7 @@ const handleConfirmRollback = ()=>{
 .editor-container {
   position: relative;
   padding: 20px;
+  height: 70%;
 }
 
 </style>
