@@ -314,6 +314,12 @@ public class HotSwapUtil {
     }
 
 
+    /**
+     * 根据sourceCode和methodMap构建增强源码字符串
+     * @param sourceCode 当前类源码字符串
+     * @param methodsToReplace 修改的方法源码字符串
+     * @return
+     */
     public static String enhanceSourceCode(String sourceCode, Map<String, String> methodsToReplace) {
         CompilationUnit compilationUnit = parseSourceCode(sourceCode);
 
