@@ -25,9 +25,9 @@ public class ComponentBeanReplacer implements ComponentReplacer {
     public void replaceComponent(Map<Class<?>, String> componentNames) {
         for (Class<?> clazz : componentClasses){
             String componentName = componentNames.get(clazz);
-            Object oldBean = applicationContext.getBean(clazz);
-            Object newBean = getNewComponent(clazz, componentName);
-            BeanUtils.copyProperties(newBean, oldBean);
+            Object mainComponent = applicationContext.getBean(clazz);
+            Object newComponent = getNewComponent(clazz, componentName);
+            BeanUtils.copyProperties(newComponent, mainComponent);
             log.info("Component {} replace success", componentName);
         }
     }

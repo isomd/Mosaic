@@ -3,9 +3,9 @@ package io.github.tml.mosaic.core.world.event.event;
 import lombok.Data;
 
 @Data
-public class WorldTransitionEvent extends WorldEvent {
+public class AfterWorldTransitionEvent extends WorldEvent {
 
-    protected WorldTransitionEvent(Object source) {
+    public AfterWorldTransitionEvent(Object source) {
         super(source);
     }
 

@@ -1,14 +1,16 @@
 package io.github.tml.mosaic.domain;
 
 import io.github.tml.mosaic.convert.WorldContainerConvert;
+import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.core.world.UniversalBeanHands;
+import io.github.tml.mosaic.core.world.event.event.AfterWorldTransitionEvent;
 import io.github.tml.mosaic.entity.dto.WorldContainerDTO;
 import io.github.tml.mosaic.entity.vo.world.WorldContainerVO;
 import io.github.tml.mosaic.world.MosaicWorld;
 import io.github.tml.mosaic.world.WorldContainer;
 import io.github.tml.mosaic.world.factory.WorldContainerFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,6 +22,11 @@ import java.util.stream.Collectors;
 public class WorldDomain {
     @Resource
     private MosaicWorld mosaicWorld;
+
+    @Resource
+    private ApplicationContext applicationContext;
+
+    private final DefaultMosaicEventBroadcaster broadcaster = DefaultMosaicEventBroadcaster.broadcaster();
 
     public WorldContainerVO createWorld(WorldContainerDTO worldDTO){
         // 创建新世界容器
@@ -37,6 +44,10 @@ public class WorldDomain {
                 WorldContainer worldContainer = mosaicWorld.getWorldContainer(guid);
 
                 mosaicWorld.traverse(worldContainer);
+
+                AfterWorldTransitionEvent event = new AfterWorldTransitionEvent(worldContainer);
+
+                broadcaster.broadcastEvent(event);
 
                 return WorldContainerConvert.convert2VO(worldContainer);
             }
@@ -74,5 +85,10 @@ public class WorldDomain {
 
     public WorldContainerVO getNowWorld(){
         return WorldContainerConvert.convert2VO(mosaicWorld.getRunningWorldContainer());
+    }
+
+    public <E> E getWorldComponent(GUID guid, Class<E> clazz){
+        String componentName = mosaicWorld.getWorldContainer(guid).getComponentName(clazz);
+        return applicationContext.getBean(componentName, clazz);
     }
 }
