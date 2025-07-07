@@ -21,16 +21,11 @@ public class WorldDomain {
     @Resource
     private MosaicWorld mosaicWorld;
 
-    @Resource
-    private UniversalBeanHands universalBeanHands;
-
     public WorldContainerVO createWorld(WorldContainerDTO worldDTO){
         // 创建新世界容器
         WorldContainer worldContainer = mosaicWorld.createWorldContainer(worldDTO.getName());
 
         mosaicWorld.registryWorldContainer(worldContainer);
-        // 创建新世界的组件并注册
-        universalBeanHands.createBeans(worldContainer);
 
         return WorldContainerConvert.convert2VO(worldContainer);
     }
@@ -56,9 +51,6 @@ public class WorldDomain {
         WorldContainer newWorldContainer = WorldContainerFactory.createWorldContainer(worldContainer);
 
         mosaicWorld.registryWorldContainer(newWorldContainer);
-
-        // 创建快照世界的组件并注册
-        universalBeanHands.createBeans(worldContainer, newWorldContainer);
 
         return WorldContainerConvert.convert2VO(newWorldContainer);
     }

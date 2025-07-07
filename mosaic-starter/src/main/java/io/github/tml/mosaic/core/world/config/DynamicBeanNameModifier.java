@@ -19,7 +19,7 @@ import java.util.Map;
 @Component
 public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProcessor {
 
-    public Map<Class<?>, BeanDefinition> map = new HashMap<>();
+    public Map<Class<?>, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
     // 初始改名
     @Override
@@ -30,19 +30,10 @@ public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProces
             BeanDefinition beanDefinition = registry.getBeanDefinition(oldBeanName);
             BeanDefinition beanDefinitionCopy = new GenericBeanDefinition(beanDefinition);
 
-            String newBeanName = MosaicComponentConfig.getBeanName(clazz);
-
-            log.info("Modifying bean name from [{}] to [{}]", clazz.getName(), newBeanName);
-
-            registry.removeBeanDefinition(oldBeanName);
-
             beanDefinition.setPrimary(true);
 
-            registry.registerBeanDefinition(clazz.getSimpleName(), beanDefinition);
-
-            registry.registerBeanDefinition(newBeanName, beanDefinitionCopy);
             // 保存现有的BeanDefinition，以便后续创建新的Bean实例
-            map.put(clazz, beanDefinitionCopy);
+            beanDefinitionMap.put(clazz, beanDefinitionCopy);
         }
     }
 
@@ -52,8 +43,8 @@ public class DynamicBeanNameModifier implements BeanDefinitionRegistryPostProces
     }
 
     public BeanDefinition getBeanDefinition(Class<?> clazz) {
-        if(map.containsKey(clazz)){
-            return map.get(clazz);
+        if(beanDefinitionMap.containsKey(clazz)){
+            return beanDefinitionMap.get(clazz);
         }
         throw new RuntimeException("beanDefinition not found");
     }
