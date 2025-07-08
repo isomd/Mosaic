@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class MosaicWorld {
@@ -31,38 +33,45 @@ public class MosaicWorld {
         this.componentsClasses = classes;
         this.componentReplacer = componentReplacer;
         this.componentCreator = componentCreator;
-
-        this.originalWorldContainer = createOriginalWorldContainer();
-        this.runningWorldContainer = this.originalWorldContainer;
-        this.worldContainerManager = new WorldContainerManager();
-        this.worldContainerManager.put(this.originalWorldContainer);
-        this.reload();
+        init(null);
     }
 
     public MosaicWorld(WorldContainer runningWorldContainer, List<Class<?>> classes, ComponentReplacer componentReplacer, ComponentCreator componentCreator) {
         this.componentsClasses = classes;
         this.componentReplacer = componentReplacer;
         this.componentCreator = componentCreator;
-
-        this.originalWorldContainer = createOriginalWorldContainer();
-        this.runningWorldContainer = runningWorldContainer;
-        this.worldContainerManager = new WorldContainerManager();
-        this.worldContainerManager.put(this.originalWorldContainer);
-        this.worldContainerManager.put(this.runningWorldContainer);
-        this.reload();
+        init(runningWorldContainer);
     }
 
-    // 重新加载世界的组件
-    protected void reload(){
-        componentReplacer.replaceComponent(this.runningWorldContainer.getWorldComponentNames());
+    // 初始化
+    protected void init(WorldContainer worldContainer){
+        this.originalWorldContainer = createOriginalWorldContainer();
+        this.worldContainerManager = new WorldContainerManager();
+        this.worldContainerManager.put(this.originalWorldContainer);
+        if (!Objects.isNull(worldContainer)){
+            this.runningWorldContainer = worldContainer;
+            this.worldContainerManager.put(this.runningWorldContainer);
+        } else {
+            this.runningWorldContainer = this.originalWorldContainer;
+        }
+        componentTransition(null);
+    }
+
+    protected void componentTransition(Map<Class<?>, String> oldComponentNames){
+        if(Objects.isNull(oldComponentNames) || oldComponentNames.isEmpty()){
+            componentReplacer.replaceComponent(this.runningWorldContainer.getWorldComponentNames());
+        } else {
+            componentReplacer.replaceComponent(this.runningWorldContainer.getWorldComponentNames(), oldComponentNames);
+        }
     }
     // 切换世界
     public void traverse(WorldContainer worldContainer){
         if(this.runningWorldContainer.equals(worldContainer)){
             return;
         }
+        Map<Class<?>, String> componentNames = this.runningWorldContainer.getWorldComponentNames();
         this.runningWorldContainer = worldContainer;
-        this.reload();
+        this.componentTransition(componentNames);
         log.info("世界切换：{}-{}", worldContainer.getName(), worldContainer.getId().toString());
     }
 

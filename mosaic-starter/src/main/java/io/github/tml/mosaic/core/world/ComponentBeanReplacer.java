@@ -22,17 +22,35 @@ public class ComponentBeanReplacer implements ComponentReplacer {
 
     @Override
     // 属性替换
-    public void replaceComponent(Map<Class<?>, String> componentNames) {
+    public void replaceComponent(Map<Class<?>, String> newComponentNames, Map<Class<?>, String> oldComponentNames) {
         for (Class<?> clazz : componentClasses){
-            String componentName = componentNames.get(clazz);
-            Object mainComponent = applicationContext.getBean(clazz);
-            Object newComponent = getNewComponent(clazz, componentName);
+            String newComponentName = newComponentNames.get(clazz), oldComponentName = oldComponentNames.get(clazz);
+            Object mainComponent = getComponent(clazz);
+            Object oldComponent = getComponent(clazz, oldComponentName);
+            Object newComponent = getComponent(clazz, newComponentName);
+
+            BeanUtils.copyProperties(mainComponent, oldComponent);
             BeanUtils.copyProperties(newComponent, mainComponent);
-            log.info("Component {} replace success", componentName);
+            log.info("Component {} replace to {} success", clazz.getSimpleName(), newComponentName);
         }
     }
 
-    protected <T> T getNewComponent(Class<T> clazz, String componentName){
+    @Override
+    public void replaceComponent(Map<Class<?>, String> newComponentNames) {
+        for (Class<?> clazz : componentClasses){
+            String componentName = newComponentNames.get(clazz);
+            Object mainComponent = getComponent(clazz);
+            Object newComponent = getComponent(clazz, componentName);
+            BeanUtils.copyProperties(newComponent, mainComponent);
+            log.info("Component {} replace to {} success", clazz.getSimpleName(), componentName);
+        }
+    }
+
+    protected <T> T getComponent(Class<T> clazz, String componentName){
         return applicationContext.getBean(componentName, clazz);
+    }
+
+    protected <T> T getComponent(Class<T> clazz){
+        return applicationContext.getBean(clazz);
     }
 }
