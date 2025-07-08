@@ -14,8 +14,7 @@ import static io.github.tml.plugin.linTest.config.Constant.PLUGIN_ID;
 @MCube(
         name = "功能型方块",
         description = "测试功能型方块的监听器",
-        version = "1.0.0",
-        model = "function"
+        version = "1.0.0"
 )
 public class ListenerTestCube extends AngelCube {
 

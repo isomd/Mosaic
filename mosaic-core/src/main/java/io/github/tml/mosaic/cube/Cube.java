@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static io.github.tml.mosaic.cube.constant.CubeModelType.FUNCTION_TYPE;
+
 /**
  * 方块抽象基类 - 所有插件必须继承此类
  */
@@ -77,7 +79,7 @@ public class Cube extends ConfigurableEntity implements CubeApi {
                 }
 
                 // 判断，如果是功能型方块，需要将listener注册进广播器
-                if (this.getMetaData().model.equals("function")) {
+                if (this.getMetaData().model.equals(FUNCTION_TYPE)) {
                     DefaultMosaicEventBroadcaster broadcaster = DefaultMosaicEventBroadcaster.broadcaster();
                     for (MosaicEventListener<?> cubeListener : this.getMetaData().getCubeListeners()) {
                         broadcaster.registerListener(cubeListener);
