@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.domain;
+package io.github.tml.mosaic.domain.hotswap;
 
 import io.github.tml.mosaic.config.mosaic.MosaicHotSwapConfig;
 import io.github.tml.mosaic.core.execption.HotSwapException;

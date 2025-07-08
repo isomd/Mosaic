@@ -2,7 +2,7 @@ package io.github.tml.mosaic.core.world.event.listener;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.world.event.event.AfterWorldTransitionEvent;
-import io.github.tml.mosaic.domain.WorldDomain;
+import io.github.tml.mosaic.domain.world.WorldDomain;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import org.springframework.stereotype.Component;

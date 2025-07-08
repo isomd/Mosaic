@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.service.impl;
 
-import io.github.tml.mosaic.domain.HotSwapDomain;
+import io.github.tml.mosaic.domain.hotswap.HotSwapDomain;
 import io.github.tml.mosaic.entity.dto.HotSwapDTO;
 import io.github.tml.mosaic.entity.dto.HotSwapPointDTO;
 import io.github.tml.mosaic.entity.req.AppendSlotReq;
