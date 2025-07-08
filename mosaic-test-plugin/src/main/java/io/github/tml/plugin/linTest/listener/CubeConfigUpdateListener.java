@@ -40,7 +40,7 @@ public class CubeConfigUpdateListener extends SelectiveMosaicEventListener {
     private void handleConfigUpdate(CubeConfigUpdateEvent event) {
         MosaicCube mosaicCube = event.getMosaicCube();
         ListenerTestCube listenerTestCube = (ListenerTestCube) mosaicCube;
-        listenerTestCube.test();
+        listenerTestCube.changeFlag();
 
         log.info("Config updated - before: {}", event.getBefore().toString());
         log.info("Config updated - after: {}", event.getAfter().toString());
