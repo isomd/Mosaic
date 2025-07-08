@@ -21,8 +21,8 @@ const dialog = ref(false)
     <v-card>
       <v-card-title>{{props.title}}</v-card-title>
       <v-card-actions>
-        <v-btn @click="handleConfirm">{{$t('common.confirm')}}</v-btn>
         <v-btn @click="handleCancel">{{$t('common.cancel')}}</v-btn>
+        <v-btn @click="handleConfirm">{{$t('common.confirm')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

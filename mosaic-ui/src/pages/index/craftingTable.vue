@@ -78,7 +78,7 @@ const getHotSwapPointList = ()=>{
 const findRecentVersion = (methodName:string):ChangeRecord | null => {
   let pointArray = points.value.reverse()
   for(let i in pointArray){
-    if(pointArray[i].changeRecord.methodName === methodName){
+    if(pointArray[i].changeRecord.methodName === methodName&&pointArray[i].changeRecord.oldSourceCode!=pointArray[i].changeRecord.newSourceCode){
       return pointArray[i].changeRecord
     }
   }
@@ -109,7 +109,6 @@ const calcMethodPosition = (code:string,changeRecord:ChangeRecord)=> {
       return;
     }
     for (let i = 0; i < methodLength; i++) {
-
       if (codeLines[value + i] !== methodLines[i]) {
         return
       }

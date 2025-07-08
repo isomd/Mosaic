@@ -2,6 +2,7 @@
 import {defineProps} from "vue";
 import {type Slot} from '@/api/slot/slotType'
 import {useCubeStore} from "@/store/data/useCubeStore";
+import {useSlotStore} from "@/store/data/useSlotStore";
 import {ExtensionPoint} from "@/api/plugin/pluginType";
 import {deleteSlot,unSetup} from "@/api/slot/slotApi";
 import router from "@/router";
@@ -11,6 +12,7 @@ const dialog = ref(false)
 const deleteDialog = ref(false)
 const unSetupDialog = ref(false)
 const cubeStore = useCubeStore()
+const slotStore = useSlotStore()
 const exPoint = ref<ExtensionPoint>({
 
 })
@@ -25,8 +27,7 @@ onMounted(()=>{
 const handleDelete = () => {
   deleteSlot(props.slot.slotId).then((res:any)=>{
     if(res.code == 200) {
-      //TODO: message
-      router.go(0)
+      slotStore.getSlots()
     } else {
       //
     }
@@ -35,8 +36,7 @@ const handleDelete = () => {
 const handleUnSetup = () => {
   unSetup(props.slot.slotId).then((res:any)=>{
     if(res.code == 200) {
-      //TODO: message
-      router.go(0)
+      slotStore.getSlots()
     } else {
       //
     }
