@@ -9,7 +9,7 @@ const display = computed(()=>{
   return statusStore.showWorldPanel
 })
 const createWorldForm = ref<CreateWorldForm>({
-
+  name: ''
 })
 const worldList = ref<World[]>([])
 onMounted(()=>{

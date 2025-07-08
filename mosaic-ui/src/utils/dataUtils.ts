@@ -1,9 +1,14 @@
 export function list2Map<T> (list:T[],idName:string){
-    const map = new Map<string, T>();
-    for (let item of list) {
-        map.set(item[idName], item);
+    try{
+        const map = new Map<string, T>();
+        for (let item of list) {
+            map.set(item[idName], item);
+        }
+        return map
+    } catch (e){
+        console.error(e)
+        return new Map()
     }
-    return map
 }
 
 export function deepCopy(data:any){
