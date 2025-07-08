@@ -65,7 +65,8 @@
   "hotSwap": {
     "lineNumber": "Line Number",
     "slot": "Slot",
-    "emptySot": "Empty Slot",
+    "emptySlot": "Empty Slot",
+    "createSlot": "Create a slot",
     "className": "ClassName",
     "args": "args",
     "plugin": "Plugin ID",

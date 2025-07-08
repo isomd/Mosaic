@@ -55,7 +55,6 @@ const scrollY = computed(()=>{
   return `-${scrollTop.value}px`
 })
 onMounted(() => {
-  if (!container.value) return
   editor = monaco.editor.create(container.value, {
     value: props.modelValue,
     language: props.language,

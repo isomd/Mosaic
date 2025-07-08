@@ -65,7 +65,8 @@
   "hotSwap": {
     "lineNumber": "行号",
     "slot": "槽",
-    "emptySot": "空槽",
+    "emptySlot": "空槽",
+    "createSlot": "创建新槽",
     "className": "类名",
     "args": "参数",
     "plugin": "插件 ID",

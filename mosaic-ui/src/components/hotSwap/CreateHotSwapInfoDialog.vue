@@ -6,6 +6,7 @@ import {type CreatePointForm} from "@/api/hotSwap/hotSwapType";
 import {useCubeStore} from "@/store/data/useCubeStore";
 import {useSlotStore} from "@/store/data/useSlotStore";
 import {useStatusStore} from "@/store/useStatusStore";
+import CreateSlotFormComponent from "../slot/CreateSlotFormComponent.vue";
 const statusStore = useStatusStore()
 
 const cubeStore = useCubeStore()
@@ -16,7 +17,9 @@ const props = defineProps({
   targetLine: Number,
   className: String
 })
-const slotList = ref<Slot[]>([])
+const slotList = computed(()=>{
+  return slotStore.slotList
+})
 const dialog = computed({
   get() {
     return props.value
@@ -51,15 +54,10 @@ const argsSelection = computed(() => {
   return args
 })
 onMounted(() => {
-  getSlotListFunction()
   createPointForm.value.targetLine = props.targetLine
   createPointForm.value.className = props.className
 })
-const getSlotListFunction = () => {
-  slotStore.getSlots().then((slots: Slot[]) => {
-    slotList.value = slots
-  })
-}
+
 
 const handelSave = () => {
   statusStore.setLoading(true)
@@ -69,7 +67,7 @@ const handelSave = () => {
       statusStore.setLoading(false)
       dialog.value = false
     } else {
-      //
+      statusStore.setLoading(false)
     }
   })
 }
@@ -103,8 +101,24 @@ const isJavaIdentifierValid = (name: String) => {
 
   return !javaKeywords.has(name);
 }
-
+const createSlot = ref<boolean>(false)
 const handleSlotChange = (newSlot) => {
+  if(newSlot.slotId === 'yqdsmyszmdxz'){
+    createSlot.value = true
+    createPointForm.value = {
+      slotId: '',
+      cubeId: "",
+      exPackageId: "",
+      exPointId: "",
+      resName: "",
+      className: '',
+      targetLine: 0,
+      changeType: 'INSERT_AFTER',
+      args: []
+    }
+    return
+  }
+  createSlot.value = false
   createPointForm.value = {
     ...createPointForm.value,
     ...newSlot
@@ -112,6 +126,14 @@ const handleSlotChange = (newSlot) => {
 }
 
 const combobox = ref()
+const createSlotRef = ref()
+const handleSubmit = (form) => {
+  createPointForm.value = {
+    ...createPointForm.value,
+    ...form
+  }
+  handelSave()
+}
 
 </script>
 <template>
@@ -133,46 +155,50 @@ const combobox = ref()
           <v-list-item-subtitle>
             <v-select :items="slotList"
                       variant="outlined"
-                      :model-value="cubeStore.getExPointBySlotId(createPointForm.slotId)?.extensionName"
+                      :model-value="createPointForm.slotId"
                       @update:modelValue="handleSlotChange">
               <template v-slot:item="{props:itemProps,item,index}">
-                <v-list-item v-bind="itemProps" :title="''" :key="index">
+                <v-list-item v-bind="itemProps" :title="''" :key="item.id" v-if="item.raw.slotId === 'yqdsmyszmdxz'">
+                  <template #title>{{ $t('hotSwap.createSlot') }}</template>
+                </v-list-item>
+                <v-list-item v-bind="itemProps" :title="''" :key="index" v-else>
                   <template #title>{{ cubeStore.getExPointBySlotId(item.raw.slotId)?.extensionName||item.raw.slotId }}</template>
-                  <template #subtitle>{{ cubeStore.getExPointBySlotId(item.raw.slotId)?.description||$t('hotSwap.emptySot') }}</template>
+                  <template #subtitle>{{ cubeStore.getExPointBySlotId(item.raw.slotId)?.description||$t('hotSwap.emptySlot') }}</template>
                 </v-list-item>
               </template>
             </v-select>
           </v-list-item-subtitle>
-          <v-list-item v-if="createPointForm.slotId">
-            <v-list-item-title>
-              {{ $t('hotSwap.plugin') }}:
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ createPointForm.cubeId }}
-            </v-list-item-subtitle>
-            <v-list-item-title>
-              {{ $t('hotSwap.exPackage') }}:
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ createPointForm.exPackageId }}
-            </v-list-item-subtitle>
-            <v-list-item-title>
-              {{ $t('hotSwap.exPoint') }}:
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ createPointForm.exPointId }}
-            </v-list-item-subtitle>
-            <v-list-item-title>
-              {{ $t('hotSwap.parameterTypes') }}:
-            </v-list-item-title>
-            <v-list-item-action>
-              <v-chip-group>
-                <v-chip v-for="type in cubeStore.getExPointBySlotId(createPointForm.slotId)?.parameterTypes"><span
-                    style="color:#CC7731">{{ type }}</span></v-chip>
-              </v-chip-group>
-            </v-list-item-action>
-          </v-list-item>
+<!--          <v-list-item v-if="createPointForm.slotId">-->
+<!--            <v-list-item-title>-->
+<!--              {{ $t('hotSwap.plugin') }}:-->
+<!--            </v-list-item-title>-->
+<!--            <v-list-item-subtitle>-->
+<!--              {{ createPointForm.cubeId }}-->
+<!--            </v-list-item-subtitle>-->
+<!--            <v-list-item-title>-->
+<!--              {{ $t('hotSwap.exPackage') }}:-->
+<!--            </v-list-item-title>-->
+<!--            <v-list-item-subtitle>-->
+<!--              {{ createPointForm.exPackageId }}-->
+<!--            </v-list-item-subtitle>-->
+<!--            <v-list-item-title>-->
+<!--              {{ $t('hotSwap.exPoint') }}:-->
+<!--            </v-list-item-title>-->
+<!--            <v-list-item-subtitle>-->
+<!--              {{ createPointForm.exPointId }}-->
+<!--            </v-list-item-subtitle>-->
+<!--            <v-list-item-title>-->
+<!--              {{ $t('hotSwap.parameterTypes') }}:-->
+<!--            </v-list-item-title>-->
+<!--            <v-list-item-action>-->
+<!--              <v-chip-group>-->
+<!--                <v-chip v-for="type in cubeStore.getExPointBySlotId(createPointForm.slotId)?.parameterTypes"><span-->
+<!--                    style="color:#CC7731">{{ type }}</span></v-chip>-->
+<!--              </v-chip-group>-->
+<!--            </v-list-item-action>-->
+<!--          </v-list-item>-->
         </v-list-item>
+        <CreateSlotFormComponent @submitValue="handleSubmit" ref="createSlotRef" :key="createPointForm" :slot="createPointForm" :create="true"></CreateSlotFormComponent>
         <v-list-item>
           <v-list-item-title>
             {{ $t('hotSwap.args') }}
@@ -251,7 +277,7 @@ const combobox = ref()
         <v-btn @click="emit('update:modelValue', false)">
           关闭
         </v-btn>
-        <v-btn @click="handelSave">
+        <v-btn @click="createSlotRef.handleSubmit()">
           保存
         </v-btn>
       </v-card-actions>
