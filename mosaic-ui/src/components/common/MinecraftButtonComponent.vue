@@ -27,7 +27,6 @@ function handleClick() {
   height: auto;
   //min-width: 180px;
   //padding: 16px;
-  font-family: 'Press Start 2P', cursive;
   font-size: 14px;
   background: #727272;
   border: 4px solid;

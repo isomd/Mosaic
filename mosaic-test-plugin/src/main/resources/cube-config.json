@@ -103,5 +103,27 @@
         "defaultValue": true
       }
     ]
+  },
+  {
+    "id": "listener.test.plugin",
+    "config": [
+      {
+        "name": "retentionDays",
+        "type": "integer",
+        "desc": "日志保留天数",
+        "required": false,
+        "defaultValue": 30
+      },
+      {
+        "name": "logLevel",
+        "type": "string",
+        "desc": "日志级别设置",
+        "required": false,
+        "defaultValue": "INFO",
+        "validation": {
+          "allowedValues": ["DEBUG", "INFO", "WARN", "ERROR"]
+        }
+      }
+    ]
   }
 ]

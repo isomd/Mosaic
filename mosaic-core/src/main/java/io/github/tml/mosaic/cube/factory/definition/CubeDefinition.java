@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.cube.factory.definition;
 
 import io.github.tml.mosaic.core.tools.param.ConfigInfo;
+import io.github.tml.mosaic.install.domian.info.CubeListenerInfo;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class CubeDefinition {
     private transient ClassLoader classLoader;
     private final List<ExtensionPackageDefinition> extensionPackages = new ArrayList<>();
 
+    private List<CubeListenerDefinition> cubeListeners = new ArrayList<>();
+
     /**
      * Cube配置信息
      */
@@ -41,5 +44,9 @@ public class CubeDefinition {
 
     public void addExtensionPackage(ExtensionPackageDefinition epd) {
         extensionPackages.add(epd);
+    }
+
+    public void addCubeListener(CubeListenerDefinition listener) {
+        cubeListeners.add(listener);
     }
 }

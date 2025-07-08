@@ -1,9 +1,14 @@
 package io.github.tml.mosaic.hotSwap;
 
+import io.github.tml.mosaic.core.execption.HotSwapException;
+import io.github.tml.mosaic.hotSwap.entity.resp.AgentServerResp;
+import io.github.tml.mosaic.hotSwap.init.MosaicAgentSocketClient;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
+import io.github.tml.mosaic.util.HotSwapUtil;
 import lombok.Getter;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +51,16 @@ public class HotSwapContext {
         hotSwapPoints.remove(hotSwapPoints.size()-1);
     }
 
+    public HotSwapPoint getLastHotSwapPoint(String className, String methodName) {
+        int last = hotSwapPointRecord.get(className).get(methodName).size()-1;
+        if(last == -1) return null;
+        return hotSwapPointRecord.get(className).get(methodName).get(last);
+    }
+
+    public HotSwapPoint getOldestHotSwapPoint(String className, String methodName) {
+        return hotSwapPointRecord.isEmpty()? null : hotSwapPointRecord.get(className).get(methodName).get(0);
+    }
+
     public void putClassProxyCode(String className, String proxyCode) {
         classProxyCode.put(className, proxyCode);
     }
@@ -86,5 +101,58 @@ public class HotSwapContext {
                 .orElse(Collections.emptyList());
     }
 
+    public Map<String,String> getClassMethodLatestHotSwapPoint(String className) {
+        Map<String, List<HotSwapPoint>> methodHotswapMap = hotSwapPointRecord.get(className);
+        Map<String,String> methodLatestHotSwapPoint = new HashMap<>();
+        methodHotswapMap.keySet().forEach(key -> {
+            HotSwapPoint point = this.getLastHotSwapPoint(className,key);
+            if(point != null) {
+                methodLatestHotSwapPoint.put(key, point.getChangeRecord().getNewSourceCode());
+            }
+        });
+        return methodLatestHotSwapPoint;
+    }
 
+    public Map<String,String> getClassMethodOriginalHotSwapPoint(String className) {
+        Map<String, List<HotSwapPoint>> methodHotswapMap = hotSwapPointRecord.get(className);
+        Map<String,String> methodOriginalHotSwapPoint = new HashMap<>();
+        methodHotswapMap.keySet().forEach(key -> {
+            HotSwapPoint point = getOldestHotSwapPoint(className, key);
+            if(point != null) {
+                methodOriginalHotSwapPoint.put(key, point.getChangeRecord().getNewSourceCode());
+            }
+        });
+        return methodOriginalHotSwapPoint;
+    }
+    public String generateProxyCode(String source,Map<String,String> methodMap){
+        return HotSwapUtil.enhanceSourceCode(source,methodMap);
+    }
+
+    public String generateProxyCode(String sourceCode,
+                               int targetLine,
+                               HotSwapContext.InsertType operation,
+                               Supplier<String> codeSupplier,
+                               Set<String> importsToAdd){
+
+        return HotSwapUtil.modify(sourceCode,targetLine,operation,codeSupplier,importsToAdd);
+    }
+
+    public String generateProxyCode(String sourceCode,String methodCode){
+        return HotSwapUtil.enhanceMethodBody(sourceCode,methodCode);
+    }
+
+    public String decompileClassByClassName(String className) {
+        return HotSwapUtil.decompileClassFromClassName(className);
+    }
+
+    public void notifyAgentBySocket(String proxyCode,String className) {
+
+        MosaicAgentSocketClient client = MosaicAgentSocketClient.getInstance();
+        AgentServerResp resp = client.pushMessage(proxyCode, className);
+        if(resp.getIsSuccess()){
+            classProxyCode.put(proxyCode,className);
+        }else{
+            throw new HotSwapException(resp.getMessage());
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package io.github.tml.mosaic.cube;
 
+import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
+import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import io.github.tml.mosaic.core.tools.param.ConfigurableEntity;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.api.CubeApi;
@@ -71,8 +73,15 @@ public class Cube extends ConfigurableEntity implements CubeApi {
                 initialized = true;
                 // 初始化扩展包，为mosaicPackage塞入mosaicCube
                 for (ExtensionPackage extensionPackage : this.getMetaData().extensionPackages) {
-                    Optional.ofNullable(extensionPackage.getMosaicExtPackage())
-                            .ifPresent(mosaicExtPackage -> mosaicExtPackage.initCube(mosaicCube));
+                    Optional.ofNullable(extensionPackage.getMosaicExtPackage()).ifPresent(mosaicExtPackage -> mosaicExtPackage.initCube(mosaicCube));
+                }
+
+                // 判断，如果是功能型方块，需要将listener注册进广播器
+                if (this.getMetaData().model.equals("function")) {
+                    DefaultMosaicEventBroadcaster broadcaster = DefaultMosaicEventBroadcaster.broadcaster();
+                    for (MosaicEventListener<?> cubeListener : this.getMetaData().getCubeListeners()) {
+                        broadcaster.registerListener(cubeListener);
+                    }
                 }
             }
             return result;
@@ -110,11 +119,18 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         // 扩展包元数据
         private final List<ExtensionPackage> extensionPackages = new CopyOnWriteArrayList<>();
         private final Map<GUID, ExtensionPackage> extensionPackageMap = new ConcurrentHashMap<>();
+
+        // 监听器
+        private final List<MosaicEventListener<?>> cubeListeners = new CopyOnWriteArrayList<>();
     }
 
     public void addExtensionPackage(ExtensionPackage extensionPackage) {
         getMetaData().extensionPackages.add(extensionPackage);
         getMetaData().extensionPackageMap.put(extensionPackage.getId(), extensionPackage);
+    }
+
+    public void addCubeListener(MosaicEventListener<?> cubeListener) {
+        getMetaData().cubeListeners.add(cubeListener);
     }
 
     public ExtensionPackage findExPackage(GUID packageId) {

@@ -34,9 +34,8 @@ const modelClass = computed(() => {
 // 获取模式图标
 const getModelIcon = (model: string) => {
   const iconMap = {
-    singleton: 'mdi-diamond-stone',
-    property: 'mdi-cube-outline',
-    prototype: 'mdi-content-copy'
+    function: 'mdi-diamond-stone',
+    default: 'mdi-cube-outline',
   }
   return iconMap[model as keyof typeof iconMap] || 'mdi-package-variant'
 }
@@ -101,7 +100,7 @@ onMounted(() => {
                     class="model-chip"
                     :class="`model-chip--${modelClass}`"
                 >
-                  {{ props.cube.model }}
+                  {{ props.cube.scope }}
                 </v-chip>
               </div>
             </div>

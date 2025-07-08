@@ -20,8 +20,7 @@ import static io.github.tml.plugin.aiChat.config.Constant.DEFAULT_SYSTEM_PROMPT;
         name = "AI聊天助手",
         description = "提供AI问答功能的插件，支持多种大语言模型调用",
         version = "1.0.0",
-        scope = "singleton",
-        model = "function"
+        scope = "singleton"
 )
 public class AiChatCube extends MosaicCube {
 

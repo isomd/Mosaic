@@ -65,6 +65,7 @@
   "hotSwap": {
     "lineNumber": "行号",
     "slot": "槽",
+    "emptySot": "空槽",
     "className": "类名",
     "args": "参数",
     "plugin": "插件 ID",
@@ -76,7 +77,10 @@
     "changeTypes": {
       "REPLACE_ASSIGN_RIGHT": "替换等式右侧",
       "INSERT_AFTER": "插入代码行"
-    }
+    },
+    "rollback": "回滚",
+    "current": "当前",
+    "afterApplying": "应用后"
   },
   "world": {
     "worldName": "世界名",

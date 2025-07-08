@@ -11,6 +11,7 @@ export interface Cube {
     id: string;
     lastUpdatedTime: string;
     model: string;
+    scope: String;
     name: string;
     registeredTime: string;
     statistics: Statistics;

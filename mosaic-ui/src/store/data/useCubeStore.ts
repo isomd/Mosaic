@@ -5,14 +5,13 @@ import {useSlotStore} from "./useSlotStore";
 import {list2Map} from "@/utils/dataUtils";
 
 export const useCubeStore = defineStore('cube', () => {
-    const cubeMap = ref<Map<String,Cube>>(new Map())
+    const cubeList = ref<Cube[]>([])
     const slotStore = useSlotStore()
     const initFromLocalStorage = () => {
         const saved = localStorage.getItem('cubeList')
         if (saved) {
             try {
-                const list = JSON.parse(saved) as Cube[]
-                cubeMap.value = list2Map<Cube>(list, "id")
+                cubeList.value = JSON.parse(saved) as Cube[]
             } catch (e) {
                 console.error(e)
             }
@@ -23,7 +22,7 @@ export const useCubeStore = defineStore('cube', () => {
         try {
             const res = await getCubeList();
             const list = res.data.cubeList
-            cubeMap.value = list2Map<Cube>(list,"id")
+            cubeList.value = list
             localStorage.setItem('cubeList',JSON.stringify(list))
             return list;
         } catch (error) {
@@ -32,7 +31,7 @@ export const useCubeStore = defineStore('cube', () => {
         }
     }
     const getCubeById = (id:String)=>{
-        return cubeMap.value.get(id)
+        return list2Map<Cube>(cubeList.value,"id").get(id)
     }
     const getExPointBySlotId = (slotId:String)=>{
         let slot = slotStore.getSlotById(slotId)
@@ -48,5 +47,5 @@ export const useCubeStore = defineStore('cube', () => {
         let exPoint:ExtensionPoint = exPackage.extensionPoints.find(exPoint=>exPoint.id==exPointId)
         return exPoint
     }
-    return { getCubes,getExPointBySlotId,getCubeById,getExPoint }
+    return { getCubes,getExPointBySlotId,getCubeById,getExPoint,cubeList }
 })

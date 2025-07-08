@@ -2,8 +2,10 @@ package io.github.tml.mosaic.util;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -311,4 +313,42 @@ public class HotSwapUtil {
         return originalCU.toString();
     }
 
+
+    /**
+     * 根据sourceCode和methodMap构建增强源码字符串
+     * @param sourceCode 当前类源码字符串
+     * @param methodsToReplace 修改的方法源码字符串
+     * @return
+     */
+    public static String enhanceSourceCode(String sourceCode, Map<String, String> methodsToReplace) {
+        CompilationUnit compilationUnit = parseSourceCode(sourceCode);
+
+        addImports(compilationUnit, Set.of(CodeTemplateUtil.getCubeImportPath()));
+        Optional<ClassOrInterfaceDeclaration> classDeclaration = compilationUnit.getClassByName(
+                compilationUnit.getTypes().get(0).getNameAsString()
+        );
+
+        // 如果类被正确解析
+        if (classDeclaration.isPresent()) {
+            ClassOrInterfaceDeclaration clazz = classDeclaration.get();
+
+            // 遍历要替换的方法
+            for (Map.Entry<String, String> entry : methodsToReplace.entrySet()) {
+                String methodName = entry.getKey(); // 方法名称
+                String newMethodCode = entry.getValue(); // 新方法实现
+
+                // 解析新方法字符串
+                MethodDeclaration newMethod = StaticJavaParser.parseMethodDeclaration(newMethodCode);
+
+                // 查找类中是否存在同名方法
+                clazz.getMethodsByName(methodName).forEach(existingMethod -> {
+                    // 用新方法替换旧方法
+                    clazz.getMembers().replace(existingMethod, newMethod);
+                });
+            }
+        }
+
+        // 返回增强后的源码字符串
+        return compilationUnit.toString();
+    }
 }
