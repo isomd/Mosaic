@@ -1,7 +1,7 @@
 package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.convert.CubeConvert;
-import io.github.tml.mosaic.domain.CubeDomain;
+import io.github.tml.mosaic.domain.cube.CubeDomain;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;

@@ -38,7 +38,6 @@ public class CubeInfo {
         this.setName(name);
         this.setVersion(mCube.version());
         this.setDescription(mCube.description());
-        this.setModel(mCube.model());
         this.setScope(mCube.scope());
     }
 }

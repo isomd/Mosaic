@@ -2,7 +2,7 @@ package io.github.tml.mosaic.service.impl;
 
 import io.github.tml.mosaic.config.properties.MosaicPluginProperties;
 import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
-import io.github.tml.mosaic.domain.CubeDomain;
+import io.github.tml.mosaic.domain.cube.CubeDomain;
 import io.github.tml.mosaic.entity.dto.JarPkgDTO;
 import io.github.tml.mosaic.entity.enums.JarInstallStatus;
 import io.github.tml.mosaic.entity.vo.JarInstallResult;

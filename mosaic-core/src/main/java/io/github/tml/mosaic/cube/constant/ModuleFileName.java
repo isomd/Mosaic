@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.cube.module;
+package io.github.tml.mosaic.cube.constant;
 
 public enum ModuleFileName {
 

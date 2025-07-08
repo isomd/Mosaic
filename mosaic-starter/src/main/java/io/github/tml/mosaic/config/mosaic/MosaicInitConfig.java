@@ -4,9 +4,13 @@ import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.converter.InfoContextConverter;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.Cube;
+import io.github.tml.mosaic.cube.external.AngelCube;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
+import io.github.tml.mosaic.hotSwap.HotSwapContext;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
@@ -82,5 +86,11 @@ public class MosaicInitConfig {
         cubeActuatorProxy.init(cubeContext, slotManager);
         GoldenShovel.loadCubeActuatorProxy(cubeActuatorProxy);
         return cubeActuatorProxy;
+    }
+
+    @Bean
+    public HotSwapContext hotSwapContext(){
+        HotSwapContext hotSwapContext = new HotSwapContext();
+        return hotSwapContext;
     }
 }
