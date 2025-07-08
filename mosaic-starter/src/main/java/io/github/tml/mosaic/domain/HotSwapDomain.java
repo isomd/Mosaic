@@ -48,6 +48,7 @@ public class HotSwapDomain {
                     dto::getProxyCode,
                     Set.of(CodeTemplateUtil.getCubeImportPath())
             );
+
             //2.热部署注入
 //            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
             context.notifyAgentBySocket(proxy, dto.getClassName());
