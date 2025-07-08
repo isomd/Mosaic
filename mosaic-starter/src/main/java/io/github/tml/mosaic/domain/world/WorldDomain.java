@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.domain;
+package io.github.tml.mosaic.domain.world;
 
 import io.github.tml.mosaic.convert.WorldContainerConvert;
 import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;

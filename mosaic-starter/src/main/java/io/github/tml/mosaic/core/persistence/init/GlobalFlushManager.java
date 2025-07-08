@@ -1,6 +1,6 @@
 package io.github.tml.mosaic.core.persistence.init;
 
-import io.github.tml.mosaic.domain.HotSwapDomain;
+import io.github.tml.mosaic.domain.hotswap.HotSwapDomain;
 import io.github.tml.mosaic.hotSwap.HotSwapRepository;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
 import lombok.extern.slf4j.Slf4j;

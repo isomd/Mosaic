@@ -1,8 +1,9 @@
-package io.github.tml.mosaic.domain;
+package io.github.tml.mosaic.domain.slot;
 
 import io.github.tml.mosaic.convert.SlotConvert;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
+import io.github.tml.mosaic.domain.cube.CubeDomain;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.dto.SlotDTO;
 import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
@@ -30,8 +31,7 @@ public class SlotDomain {
     @Resource
     private SlotManager slotManager;
 
-    @Resource
-    private CubeDomain cubeDomain;
+
 
     /**
      * 创建槽
@@ -49,10 +49,6 @@ public class SlotDomain {
      * @return
      */
     public boolean setupSlot(SlotSetupDTO slotSetupDTO) throws CubeException{
-        Optional<CubeDTO> cubeOptional = cubeDomain.getCubeById(slotSetupDTO.getCubeId().toString());
-        if(cubeOptional.isEmpty()) {
-            throw new CubeException("cube id not exist");
-        }
         slotSetupDTO.setResName(Optional.ofNullable(slotSetupDTO.getResName()).orElse(DEFAULT_RETURN_NAME));
         return slotManager.setup(new DotNotationId(slotSetupDTO.getSlotId()), slotSetupDTO);
     }

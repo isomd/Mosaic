@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.domain;
+package io.github.tml.mosaic.domain.cube;
 
 import io.github.tml.mosaic.convert.CubeConvert;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
