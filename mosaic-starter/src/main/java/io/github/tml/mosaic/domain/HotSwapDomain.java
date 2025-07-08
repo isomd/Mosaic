@@ -28,8 +28,8 @@ public class HotSwapDomain {
 
     @Autowired
     MosaicHotSwapConfig hotSwapConfig;
-
-    private final HotSwapContext context = new HotSwapContext();
+    @Autowired
+    HotSwapContext context;
 
     /**
      *  根据参数进行代码增强并返回源码字符串
@@ -48,9 +48,12 @@ public class HotSwapDomain {
                     dto::getProxyCode,
                     Set.of(CodeTemplateUtil.getCubeImportPath())
             );
+
             //2.热部署注入
 //            AgentServerResp resp = NotifyAgentBySocket(proxy, dto.getClassName());
             context.notifyAgentBySocket(proxy, dto.getClassName());
+            //3.更新/新增缓存
+            context.putClassProxyCode(dto.getClassName(), proxy);
             return proxy;
         }catch (Exception e){
             throw new HotSwapException("热更新代码失败: "+e.getMessage());
