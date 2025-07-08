@@ -1,9 +1,11 @@
 package io.github.tml.mosaic.install.collector;
 
+import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.CubeListenerInfo;
 import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
 import io.github.tml.mosaic.install.domian.InfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +37,21 @@ public class CubeIdInfoCollector implements CommonInfoCollector {
                     continue;
                 }
             }
-            List<ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
-            if(CollectionUtils.isEmpty(extensionPackages)){
-                continue;
+
+            List<CubeListenerInfo> cubeListeners = cubeInfo.getCubeListeners();
+            for (CubeListenerInfo cubeListener : cubeListeners) {
+                if(Objects.nonNull(cubeListener.getClazz())){
+                    try {
+                        cubeListener.setCubeId(cubeInfo.getId());
+                        MosaicEventListener<?> mosaicEventListener = (MosaicEventListener) cubeListener.getClazz().getDeclaredConstructor().newInstance();
+                        cubeListener.setName(mosaicEventListener.getListenerName());
+                    }catch (Exception e){
+                        log.error("newInstance extension error, listener class:{}",cubeListener.getClazz().getName(),e);
+                    }
+                }
             }
+
+            List<ExtensionPackageInfo> extensionPackages = cubeInfo.getExtensionPackages();
             for (ExtensionPackageInfo extensionPackage : extensionPackages) {
                 if(Objects.nonNull(extensionPackage.getClazz())){
                     try {
@@ -49,7 +62,6 @@ public class CubeIdInfoCollector implements CommonInfoCollector {
                     }
                 }
             }
-
 
             // TODO 设置类加载器
             cubeInfo.setClassLoader(infoContext.getClassLoader());

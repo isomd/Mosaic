@@ -1,16 +1,15 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {type Slot} from '@/api/slot/slotType'
 import {getSlotList} from "@/api/slot/slotApi";
 import {list2Map} from "@/utils/dataUtils";
 
 export const useSlotStore = defineStore('slot', () => {
-    let slotMap = ref<Map<String,Slot>>(new Map())
+    let slotList = ref<Slot[]>([])
     const initFromLocalStorage = () => {
         const saved = localStorage.getItem('slotList')
         if (saved) {
             try {
-                const list = JSON.parse(saved) as Slot[]
-                slotMap.value = list2Map<Slot>(list, "slotId")
+                slotList.value = JSON.parse(saved) as Slot[]
             } catch (e) {
                 console.error(e)
             }
@@ -21,7 +20,7 @@ export const useSlotStore = defineStore('slot', () => {
         try {
             const res = await getSlotList();
             const list = res.data.slotList
-            slotMap.value = list2Map<Slot>(list,"slotId")
+            slotList.value = list
             localStorage.setItem('slotList',JSON.stringify(list))
             return list;
         } catch (error) {
@@ -30,8 +29,8 @@ export const useSlotStore = defineStore('slot', () => {
         }
     }
     const getSlotById = (id:String)=>{
-        return slotMap.value.get(id)
+        return list2Map<Slot>(slotList.value, "slotId").get(id)
     }
 
-    return { getSlots,getSlotById,slotMap }
+    return { getSlots,getSlotById,slotList }
 })

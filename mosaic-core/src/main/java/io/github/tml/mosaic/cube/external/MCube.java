@@ -31,9 +31,4 @@ public @interface MCube {
      * 方块的范围: 单例、多例
      */
     String scope() default "singleton";
-
-    /**
-     * 方块的模式: 功能型方块
-     */
-    String model() default "default";
 }

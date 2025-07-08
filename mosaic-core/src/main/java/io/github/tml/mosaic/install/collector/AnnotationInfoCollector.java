@@ -3,6 +3,7 @@ package io.github.tml.mosaic.install.collector;
 import io.github.tml.mosaic.cube.external.*;
 import io.github.tml.mosaic.install.collector.core.CommonInfoCollector;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
+import io.github.tml.mosaic.install.domian.info.CubeListenerInfo;
 import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
 import io.github.tml.mosaic.install.domian.info.ExtensionPointInfo;
 import io.github.tml.mosaic.install.domian.InfoContext;
@@ -22,6 +23,7 @@ public class AnnotationInfoCollector implements CommonInfoCollector {
         for (CubeInfo cubeInfo : cubeInfoList) {
             scanCubeInfo(cubeInfo);
             scanExtensionPackages(cubeInfo);
+
         }
     }
 

@@ -1,12 +1,10 @@
 package io.github.tml.mosaic.cube.factory.support;
 
+import io.github.tml.mosaic.core.event.listener.MosaicEventListener;
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
+import io.github.tml.mosaic.cube.factory.definition.*;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.cube.*;
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.cube.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
 import io.github.tml.mosaic.cube.external.MosaicExtPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,6 +27,21 @@ public abstract class AbstractAutowirePropertyCubeFactory extends AbstractAutowi
         populateCubeMetadata(cube, cubeDefinition);
         // 实例化并注入扩展包
         populateExtensionPackages(cube, cubeDefinition);
+        // 注册Listener
+        populateListener(cube, cubeDefinition);
+    }
+
+    private void populateListener(Cube cube, CubeDefinition cubeDefinition) {
+        for (CubeListenerDefinition cubeListenerDefinition : cubeDefinition.getCubeListeners()) {
+            try {
+                // 加载扩展包类
+                Class<?> mosaicListenerClazz = cubeDefinition.getClassLoader().loadClass(cubeListenerDefinition.getClassName());
+                MosaicEventListener<?> mosaicListener = (MosaicEventListener<?>) mosaicListenerClazz.getDeclaredConstructor().newInstance();
+                cube.addCubeListener(mosaicListener);
+            } catch (Exception e) {
+                log.error("[Cube][CubeFactory] extPackage init fail | Cube: {} | listener: {} | error: {}", cube.getCubeId(), cubeListenerDefinition.getName(), e.getMessage());
+            }
+        }
     }
 
     private void populateExtensionPackages(Cube cube, CubeDefinition cubeDefinition) {

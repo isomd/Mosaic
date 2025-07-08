@@ -1,11 +1,12 @@
-package io.github.tml.mosaic.cube.module;
+package io.github.tml.mosaic.cube.constant;
 
 public enum ModuleFileName {
 
     CUBE("cube"),
     API("api"),
     CONFIG("config"),
-    VIEW("view");
+    VIEW("view"),
+    LISTENER("listener");
 
     private String packageName;
 

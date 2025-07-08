@@ -21,6 +21,7 @@ declare module 'vue' {
     FloatingBallComponent: typeof import('./components/world/FloatingBallComponent.vue')['default']
     FooterComponent: typeof import('./components/layout/FooterComponent.vue')['default']
     HeaderComponent: typeof import('./components/layout/HeaderComponent.vue')['default']
+    LoaddingComponent: typeof import('./components/common/LoaddingComponent.vue')['default']
     MinecraftButtonComponent: typeof import('./components/common/MinecraftButtonComponent.vue')['default']
     MinecraftInputComponent: typeof import('./components/common/MinecraftInputComponent.vue')['default']
     MonacoEditor: typeof import('./components/code/MonacoEditor.vue')['default']

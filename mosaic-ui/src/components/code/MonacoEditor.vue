@@ -112,8 +112,9 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .monaco-editor {
+  position: relative;
   width: 90%;
-  height: 600px;
+  height: 80vh;
   border: 1px solid #ddd;
   border-radius: 4px;
 }

@@ -1,13 +1,7 @@
 package io.github.tml.mosaic.converter;
 
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.cube.factory.definition.ExtensionPackageDefinition;
-import io.github.tml.mosaic.cube.factory.definition.ExtensionPointDefinition;
-import io.github.tml.mosaic.cube.factory.definition.PointResultDefinition;
-import io.github.tml.mosaic.install.domian.info.CubeInfo;
-import io.github.tml.mosaic.install.domian.info.ExtensionPackageInfo;
-import io.github.tml.mosaic.install.domian.info.ExtensionPointInfo;
-import io.github.tml.mosaic.install.domian.info.PointsResultInfo;
+import io.github.tml.mosaic.cube.factory.definition.*;
+import io.github.tml.mosaic.install.domian.info.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -60,6 +54,17 @@ public class CubeDefinitionConverter {
                 }
             }
             cubeDef.addExtensionPackage(epDef);
+        }
+
+        // 处理监听器
+        for (CubeListenerInfo cubeListener : cubeInfo.getCubeListeners()) {
+            CubeListenerDefinition listenerDefinition = new CubeListenerDefinition();
+            listenerDefinition.setClassName(cubeListener.getClassName());
+            listenerDefinition.setName(cubeListener.getName());
+            listenerDefinition.setClazz(cubeListener.getClazz());
+            listenerDefinition.setCubeId(cubeListener.getCubeId());
+
+            cubeDef.addCubeListener(listenerDefinition);
         }
 
         return cubeDef;

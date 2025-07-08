@@ -1,8 +1,7 @@
 package io.github.tml.mosaic.hotSwap.init;
 
 import com.alibaba.fastjson.JSON;
-import io.github.tml.mosaic.MosaicAgent;
-import io.github.tml.mosaic.entity.resp.AgentServerResp;
+import io.github.tml.mosaic.hotSwap.entity.resp.AgentServerResp;
 import io.github.tml.mosaic.hotSwap.entity.req.AgentServerReq;
 
 import java.io.*;

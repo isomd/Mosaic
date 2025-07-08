@@ -14,11 +14,11 @@ const upload = (item) => {
   })
 }
 
-const cubeList = ref<Cube[]>([])
+const cubeList = computed(()=>{
+  return cubeStore.cubeList
+})
 const getCubeListFunction = () => {
-  cubeStore.getCubes().then((cubes:Cube[])=>{
-    cubeList.value = cubes
-  })
+  cubeStore.getCubes()
 }
 onMounted(()=>{
   getCubeListFunction()
