@@ -6,8 +6,11 @@ import {useSlotStore} from "@/store/data/useSlotStore";
 import {getClassStr} from "@/api/hotSwap/hotSwapApi";
 import {traverseWorld} from "../api/world/worldApi";
 import {useWorldStore} from "./data/useWorldStore";
+import {message} from "../utils/message";
+import {useI18n} from "vue-i18n";
 
 export const useStatusStore = defineStore('status', () => {
+    const {t} = useI18n()
     const slotStore = useSlotStore()
     const worldStore = useWorldStore()
     const cubeStore = useCubeStore()
@@ -43,7 +46,9 @@ export const useStatusStore = defineStore('status', () => {
             await slotStore.getSlots()
             await cubeStore.getCubes()
             await getClassCode(recentClassName.value)
+            message.success(`${t('message.currentWorld')}: ${currentWorld.value.name}`)
         } catch (error) {
+            message.error(error)
             console.error(error)
         } finally {
             setLoading(false)
