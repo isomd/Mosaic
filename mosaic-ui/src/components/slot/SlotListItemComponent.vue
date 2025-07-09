@@ -13,8 +13,8 @@ const deleteDialog = ref(false)
 const unSetupDialog = ref(false)
 const cubeStore = useCubeStore()
 const slotStore = useSlotStore()
-const exPoint = ref<ExtensionPoint>({
-
+const exPoint = computed(()=>{
+  return cubeStore.getExPoint(props.slot.cubeId,props.slot.exPackageId,props.slot.exPointId)
 })
 const props = defineProps({
   slot: {
@@ -22,12 +22,12 @@ const props = defineProps({
   } as Slot
 })
 onMounted(()=>{
-  exPoint.value = cubeStore.getExPoint(props.slot.cubeId,props.slot.exPackageId,props.slot.exPointId)
 })
 const handleDelete = () => {
   deleteSlot(props.slot.slotId).then((res:any)=>{
     if(res.code == 200) {
       slotStore.getSlots()
+      deleteDialog.value = false
     } else {
       //
     }
@@ -37,6 +37,7 @@ const handleUnSetup = () => {
   unSetup(props.slot.slotId).then((res:any)=>{
     if(res.code == 200) {
       slotStore.getSlots()
+      unSetupDialog.value = false
     } else {
       //
     }

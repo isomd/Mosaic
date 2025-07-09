@@ -11,25 +11,21 @@ const display = computed(()=>{
 const createWorldForm = ref<CreateWorldForm>({
   name: ''
 })
-const worldList = ref<World[]>([])
+const worldList = computed(()=>{
+  return worldStore.worldList
+})
 onMounted(()=>{
   getCurrentWorld().then((res:any)=>{
     if(res.code == 200){
       statusStore.setCurrentWorld(res.data)
     }
   })
-  worldStore.getWorlds().then((res:any)=>{
-    worldList.value = res
-
-  })
+  worldStore.getWorlds()
 })
 const handleCreateWorld = ()=>{
   createWorld(createWorldForm.value).then((res:any)=>{
     if(res.code == 200) {
-      worldStore.getWorlds().then((res:any)=>{
-        worldList.value = res
-
-      })
+      worldStore.getWorlds()
     } else {
       //
     }

@@ -21,7 +21,7 @@ let cubeList = computed(()=>{
   return cubeStore.cubeList
 })
 onMounted(() => {
-  if (props.slot) {
+  if (props.slot&&props.slot.slotId) {
     createSlotForm.value = props.slot
     createSlotForm.value.setupFlag = true
     isSetup.value = true
@@ -35,7 +35,7 @@ let createSlotForm = ref<CreateSlotForm>({
   cubeId: '',
   exPackageId: '',
   exPointId: '',
-  resName: '',
+  resName: 'default',
 })
 const rules = [
   value => {
@@ -92,17 +92,7 @@ defineExpose({handleSubmit})
           :rules="rules"
           :disabled="isSetup"
       ></v-text-field>
-      <v-label>
-        {{ $t('slot.resName') }}
-      </v-label>
-      <v-text-field
-          :disabled="readOnly"
-          v-model="createSlotForm.resName"
-          outlined
-          dense
-          class="mb-4"
-          variant="outlined"
-      ></v-text-field>
+
       <v-label v-if="!isSetup">
         {{ $t('slot.create') }}
       </v-label>
@@ -157,7 +147,21 @@ defineExpose({handleSubmit})
           </v-list-item>
         </template>
       </v-select>
-
+      <v-label>
+        {{ $t('slot.resName') }}
+      </v-label>
+      <v-select :disabled="readOnly" :items="extensionPoints.filter(exPoint=>exPoint.id === createSlotForm.exPointId)[0]?.pointResult?.pointItems"
+                variant="outlined" v-model="createSlotForm.resName" item-title="itemName">
+        <template v-slot:item="{props:itemProps,item,index}">
+          <v-list-item v-bind="itemProps"
+                       :value="item.raw">
+            <template #title><span>{{ item.raw.itemName }}  </span>
+              <v-chip>{{ item.raw.itemClass }}</v-chip>
+            </template>
+            <template #subtitle>{{ item.raw.description }}</template>
+          </v-list-item>
+        </template>
+      </v-select>
     </v-card-text>
     <v-card-actions>
       <slot name="actions"></slot>
