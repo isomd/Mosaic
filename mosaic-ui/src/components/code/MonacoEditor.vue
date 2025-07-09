@@ -55,10 +55,6 @@ const scrollY = computed(()=>{
   return `-${scrollTop.value}px`
 })
 onMounted(() => {
-  setInterval(()=>{
-    console.log(container.value.getBoundingClientRect())
-    console.log(container.value.style)
-  },3000)
   editor = monaco.editor.create(container.value, {
     value: props.modelValue,
     language: props.language,
