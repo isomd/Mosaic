@@ -86,5 +86,10 @@
   "world": {
     "worldName": "世界名",
     "createWorld": "创建世界"
+  },
+  "message": {
+    "switchSuccess": "切换成功！",
+    "switchError": "",
+    "currentWorld": "当前世界"
   }
 }

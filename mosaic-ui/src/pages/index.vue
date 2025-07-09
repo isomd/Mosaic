@@ -1,7 +1,6 @@
 <script lang="ts"setup>
 import {useStatusStore} from '@/store/useStatusStore'
 import {ref} from "vue";
-import LoaddingComponent from "../components/common/LoaddingComponent.vue";
 const statusStore = useStatusStore()
 
 onMounted(()=>{
@@ -12,6 +11,7 @@ onMounted(()=>{
     <headerComponent></headerComponent>
     <sidebarComponent></sidebarComponent>
     <v-main>
+      <MessageComponent></MessageComponent>
       <LoaddingComponent></LoaddingComponent>
       <FloatingBallComponent></FloatingBallComponent>
       <WorldPanelComponent></WorldPanelComponent>
