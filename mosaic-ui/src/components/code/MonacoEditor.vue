@@ -55,6 +55,10 @@ const scrollY = computed(()=>{
   return `-${scrollTop.value}px`
 })
 onMounted(() => {
+  setInterval(()=>{
+    console.log(container.value.getBoundingClientRect())
+    console.log(container.value.style)
+  },3000)
   editor = monaco.editor.create(container.value, {
     value: props.modelValue,
     language: props.language,
@@ -120,8 +124,9 @@ onUnmounted(() => {
 
 .layer{
   position: absolute;
+  top: 0;
   height: v-bind(containerHeight);
-  transform: translate(5px,v-bind(translateY));
+  //transform: translate(5px,v-bind(translateY));
   --line-number-width: 19px;
   width: var(--line-number-width);
   .line {
@@ -175,8 +180,9 @@ onUnmounted(() => {
 }
 .changeRecord-layer{
   position: absolute;
+  top: 0;
   height: v-bind(containerHeight);
-  transform: translate(0,v-bind(translateY));
+  //transform: translate(0,v-bind(translateY));
   --line-number-width: 19px;
   left: 0;
   width: var(--line-number-width);
