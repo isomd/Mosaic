@@ -120,8 +120,9 @@ onUnmounted(() => {
 
 .layer{
   position: absolute;
+  top: 0;
   height: v-bind(containerHeight);
-  transform: translate(5px,v-bind(translateY));
+  //transform: translate(5px,v-bind(translateY));
   --line-number-width: 19px;
   width: var(--line-number-width);
   .line {
@@ -175,8 +176,9 @@ onUnmounted(() => {
 }
 .changeRecord-layer{
   position: absolute;
+  top: 0;
   height: v-bind(containerHeight);
-  transform: translate(0,v-bind(translateY));
+  //transform: translate(0,v-bind(translateY));
   --line-number-width: 19px;
   left: 0;
   width: var(--line-number-width);
