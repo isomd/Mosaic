@@ -10,7 +10,6 @@ watch(newAlert.value, () => {
 })
 
 const deleteAlert = (id: string) => {
-  console.log(id)
   setTimeout(() => {
     alertMap.value.delete(id)
   }, 3000)
