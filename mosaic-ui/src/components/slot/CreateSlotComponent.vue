@@ -26,7 +26,6 @@ const handleSubmit = (createSlotForm) => {
     if (res.code == 200) {
       dialog.value = false
       slotStore.getSlots()
-
     } else {
       //
     }

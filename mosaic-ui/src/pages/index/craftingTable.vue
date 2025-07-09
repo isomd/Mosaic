@@ -19,21 +19,19 @@ onMounted(()=>{
   searchInput.value = statusStore.getRecentClassName()
   if(searchInput.value != '')handleSearch()
 })
-const code = ref('')
+const code = computed(()=>{
+  return statusStore.classCode
+})
+watch(code, (newValue, oldValue) => {
+  getHotSwapPointList()
+})
 const searchInput = ref('')
 const handleSearch = () => {
   getHotSwapPointsForm.value.className = searchInput.value
   getClassCode()
 }
 const getClassCode = ()=>{
-  getClassStr(searchInput.value).then((res:any)=>{
-    if(res.code == 200) {
-      statusStore.setRecentClassName(searchInput.value)
-      code.value = res.message
-    } else {
-      code.value = ''
-    }
-  }).then(getHotSwapPointList)
+  statusStore.getClassCode(searchInput.value).then(getHotSwapPointList)
 }
 const dialog = ref(false)
 const handleClickAdd = (line:number) => {
@@ -42,8 +40,7 @@ const handleClickAdd = (line:number) => {
 }
 const targetLine = ref(0)
 const updateCode = (newCode:String)=>{
-  code.value = newCode
-  getHotSwapPointList()
+  getClassCode()
 }
 
 const methodInfoList = ref<MethodInfo[]>([
@@ -62,10 +59,10 @@ const getMethodList = computed(()=>{
   return methodSet
 })
 const getHotSwapPointList = ()=>{
+  methodInfoList.value = []
   getHotSwapPoints(getHotSwapPointsForm.value).then((res:any)=>{
     if(res.code == 200){
       points.value = res.data
-      methodInfoList.value = []
       let methods = getMethodList.value
       methods.forEach(method => {
         let changeRecord = findRecentVersion(method)

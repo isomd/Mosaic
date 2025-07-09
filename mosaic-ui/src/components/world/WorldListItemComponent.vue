@@ -12,19 +12,10 @@ const props = defineProps({
 })
 const worldStore = useWorldStore()
 const dialog = ref(false)
-const traverseWorldForm = ref<TraverseWorldForm>({})
 const deleteWorldForm = ref<DeleteWorldForm>({})
-onMounted(()=>{
-  traverseWorldForm.value.uuid = props.world.id.uuid
-  deleteWorldForm.value.uuid = props.world.id.uuid
-})
+
 const handleTraverse = ()=>{
-  traverseWorld(traverseWorldForm.value).then((res:any)=>{
-    if(res.code == 200){
-      statusStore.setCurrentWorld(props.world)
-      worldStore.getWorlds()
-    }
-  })
+  statusStore.setCurrentWorld(props.world)
 }
 const handleDelete = ()=>{
   removeWorld(deleteWorldForm.value).then((res:any)=>{
