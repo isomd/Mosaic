@@ -108,6 +108,10 @@ public class Cube extends ConfigurableEntity implements CubeApi {
         return getId();
     }
 
+    public boolean isAngleCube() {
+        return this.getMetaData().model.equals(ANGLE_TYPE);
+    }
+
     @Data
     public static class MetaData {
 

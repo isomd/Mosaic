@@ -42,14 +42,16 @@ public class PointsResultInfo {
 
     public void addByReturnType(Class<?> returnType){
         if (MosaicVoid.isVoid(returnType)) {
-            addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, MosaicVoid.class, ""));
+            addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, MosaicVoid.class, "void"));
         }else if (ClassUtils.isBasicType(returnType)){
-            addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, returnType, ""));
+            addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, returnType, returnType.getName()));
         }else if(ClassUtils.isCustomEntityClass(returnType)){
             Field[] fields = returnType.getFields();
             for (Field field : fields) {
-                addPointResultInfo(new PointResultItemInfo(field.getName(), field.getType(), ""));
+                addPointResultInfo(new PointResultItemInfo(field.getName(), field.getType(), returnType.getName()));
             }
+        }else{
+            addPointResultInfo(new PointResultItemInfo(DEFAULT_RETURN_NAME, returnType, returnType.getName()));
         }
     }
 

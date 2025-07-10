@@ -25,6 +25,8 @@ public interface CubeActuator {
 
         private MosaicCube cube;
 
+        private boolean isAngleCube;
+
         private MosaicExtPackage<? extends MosaicCube> exPackage;
 
         private ExtensionPoint exPoint;
