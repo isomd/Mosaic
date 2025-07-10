@@ -9,10 +9,10 @@ export function getCubeList(){
 }
 export function uploadPluginJar(file:File){
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('files', file);
     return request({
         method:'post',
-        url:'/jar/uploadJar',
+        url:'/jar/batch-upload',
         data:formData,
         timeout: 100000
     })
