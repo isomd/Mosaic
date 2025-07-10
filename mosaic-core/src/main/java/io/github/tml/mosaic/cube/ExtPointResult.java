@@ -12,8 +12,6 @@ import java.util.Optional;
  */
 public class ExtPointResult {
 
-    public final static String DEFAULT_RETURN_NAME = "default";
-
     private final Map<String, ExtPointResultItem> items = new HashMap<>();
 
     public void addResultItem(ExtPointResultItem extPointResultItem){

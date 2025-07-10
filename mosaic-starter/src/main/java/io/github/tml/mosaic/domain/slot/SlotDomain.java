@@ -3,12 +3,10 @@ package io.github.tml.mosaic.domain.slot;
 import io.github.tml.mosaic.convert.SlotConvert;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
-import io.github.tml.mosaic.domain.cube.CubeDomain;
-import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.dto.SlotDTO;
 import io.github.tml.mosaic.entity.dto.SlotSetupDTO;
 import io.github.tml.mosaic.slot.Slot;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.slot.service.SlotManager;
 import io.github.tml.mosaic.slot.support.SlotBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,8 +16,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
 
 /**
  * 槽领域
@@ -49,7 +45,6 @@ public class SlotDomain {
      * @return
      */
     public boolean setupSlot(SlotSetupDTO slotSetupDTO) throws CubeException{
-        slotSetupDTO.setResName(Optional.ofNullable(slotSetupDTO.getResName()).orElse(DEFAULT_RETURN_NAME));
         return slotManager.setup(new DotNotationId(slotSetupDTO.getSlotId()), slotSetupDTO);
     }
 

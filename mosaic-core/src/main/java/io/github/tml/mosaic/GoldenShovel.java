@@ -3,7 +3,7 @@ package io.github.tml.mosaic;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.core.tools.guid.DotNotationId;
 import io.github.tml.mosaic.core.tools.guid.GUID;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.slot.service.SlotManager;
 import io.github.tml.mosaic.slot.support.SlotBuilder;
 
 /**
@@ -87,6 +87,11 @@ public class GoldenShovel {
 
         public SlotBootStrap exPointId(String exPointId) {
             builder.exPointId(exPointId);
+            return this;
+        }
+
+        public SlotBootStrap configId(String configId) {
+            builder.configId(configId);
             return this;
         }
 

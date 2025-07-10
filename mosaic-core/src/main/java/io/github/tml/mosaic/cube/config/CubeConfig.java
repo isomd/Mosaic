@@ -9,8 +9,8 @@ import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
-import io.github.tml.mosaic.slot.infrastructure.GenericSlotManager;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.slot.service.GenericSlotManager;
+import io.github.tml.mosaic.slot.service.SlotManager;
 
 import java.util.List;
 
