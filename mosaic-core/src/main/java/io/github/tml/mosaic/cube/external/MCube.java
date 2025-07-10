@@ -2,6 +2,8 @@ package io.github.tml.mosaic.cube.external;
 
 import java.lang.annotation.*;
 
+import static io.github.tml.mosaic.cube.constant.CubeScopeType.SINGLETON;
+
 /**
  * 描述: Cube注解，标识这是一个方块
  * @author suifeng
@@ -30,5 +32,5 @@ public @interface MCube {
     /**
      * 方块的范围: 单例、多例
      */
-    String scope() default "singleton";
+    String scope() default SINGLETON;
 }

@@ -5,6 +5,7 @@ import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.constant.CubeModelType;
 import io.github.tml.mosaic.cube.external.AngelCube;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
@@ -134,9 +135,9 @@ public class CubeDomain {
 
         CubeDTO cube = cubeOpt.get();
 
-        // 检查是否为function类型
-        if (!CubeModelType.FUNCTION_TYPE.equals(cube.getModel())) {
-            throw new IllegalArgumentException("只有function类型的Cube才支持状态管理，当前类型: " + cube.getModel());
+        // 检查是否为angle类型
+        if (!CubeModelType.ANGLE_TYPE.equals(cube.getModel())) {
+            throw new IllegalArgumentException("只有angle类型的Cube才支持状态管理，当前类型: " + cube.getModel());
         }
 
         log.debug("Angel Cube validation passed for ID: {}", cubeId);
@@ -145,7 +146,7 @@ public class CubeDomain {
     /**
      * 将Cube转换为AngelCube
      */
-    private AngelCube convertToAngelCube(io.github.tml.mosaic.cube.Cube cube) {
+    private AngelCube convertToAngelCube(Cube cube) {
         Object mosaicCube = cube.getMosaicCube();
 
         if (!(mosaicCube instanceof AngelCube)) {

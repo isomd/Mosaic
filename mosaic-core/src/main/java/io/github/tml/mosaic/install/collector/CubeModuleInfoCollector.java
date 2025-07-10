@@ -16,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.*;
 
 import static io.github.tml.mosaic.cube.constant.CubeModelType.DEFAULT_TYPE;
-import static io.github.tml.mosaic.cube.constant.CubeModelType.FUNCTION_TYPE;
+import static io.github.tml.mosaic.cube.constant.CubeModelType.ANGLE_TYPE;
 import static java.lang.reflect.Modifier.isAbstract;
 
 /**
@@ -48,7 +48,7 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
                 cubeInfoMap.put(getRootPackageName(clazz, ModuleFileName.CUBE.getPackageName()), cubeInfo);
 
                 if (AngelCube.class.isAssignableFrom(clazz)) {
-                    cubeInfo.setModel(FUNCTION_TYPE);
+                    cubeInfo.setModel(ANGLE_TYPE);
                 } else {
                     cubeInfo.setModel(DEFAULT_TYPE);
                 }

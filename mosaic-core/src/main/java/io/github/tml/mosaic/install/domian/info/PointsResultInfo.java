@@ -9,7 +9,8 @@ import lombok.Getter;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
+import static io.github.tml.mosaic.core.CubeConstant.DEFAULT_RETURN_NAME;
+
 
 @Getter
 public class PointsResultInfo {

@@ -9,5 +9,5 @@ public class CubeModelType {
 
     public static final String DEFAULT_TYPE = "default";
 
-    public static final String FUNCTION_TYPE = "function";
+    public static final String ANGLE_TYPE = "angle";
 }

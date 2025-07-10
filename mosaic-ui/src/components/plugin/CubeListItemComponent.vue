@@ -34,7 +34,7 @@ const modelClass = computed(() => {
 // 获取模式图标
 const getModelIcon = (model: string) => {
   const iconMap = {
-    function: 'mdi-diamond-stone',
+    angel: 'mdi-diamond-stone',
     default: 'mdi-cube-outline',
   }
   return iconMap[model as keyof typeof iconMap] || 'mdi-package-variant'
