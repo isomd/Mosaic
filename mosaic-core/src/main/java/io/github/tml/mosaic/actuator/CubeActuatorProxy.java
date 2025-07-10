@@ -8,7 +8,7 @@ import io.github.tml.mosaic.cube.ExtPointResult;
 import io.github.tml.mosaic.cube.ExtensionPackage;
 import io.github.tml.mosaic.cube.ExtensionPoint;
 import io.github.tml.mosaic.slot.Slot;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
+import io.github.tml.mosaic.slot.service.SlotManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

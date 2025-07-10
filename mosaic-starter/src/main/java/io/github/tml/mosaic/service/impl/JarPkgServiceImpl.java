@@ -50,10 +50,10 @@ public class JarPkgServiceImpl implements JarPkgService {
     @PostConstruct
     public void initDirectory() {
         try {
-            Path storageDir = resolveStoragePath();
-            Files.createDirectories(storageDir);
-            loadExistingJarPackages();
-            log.info("JAR包存储目录初始化完成: {}", storageDir.toAbsolutePath());
+//            Path storageDir = resolveStoragePath();
+//            Files.createDirectories(storageDir);
+//            loadExistingJarPackages();
+//            log.info("JAR包存储目录初始化完成: {}", storageDir.toAbsolutePath());
         } catch (Exception e) {
             log.error("JAR包存储目录初始化失败", e);
             throw new RuntimeException("JAR包存储目录初始化失败: " + e.getMessage(), e);

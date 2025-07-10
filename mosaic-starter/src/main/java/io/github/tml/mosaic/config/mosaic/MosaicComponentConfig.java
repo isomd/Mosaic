@@ -3,14 +3,10 @@ package io.github.tml.mosaic.config.mosaic;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.hotSwap.HotSwapContext;
-import io.github.tml.mosaic.slot.infrastructure.SlotManager;
-import io.github.tml.mosaic.util.StringUtil;
-import io.github.tml.mosaic.world.factory.WorldContainerFactory;
+import io.github.tml.mosaic.slot.service.SlotManager;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MosaicComponentConfig {
     @Getter

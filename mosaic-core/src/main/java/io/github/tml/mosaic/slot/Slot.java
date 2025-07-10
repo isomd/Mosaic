@@ -10,6 +10,9 @@ import lombok.Setter;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static io.github.tml.mosaic.core.CubeConstant.DEFAULT_CONFIG_ID_VALUE;
+import static io.github.tml.mosaic.core.CubeConstant.DEFAULT_RETURN_NAME;
+
 /**
  * 放置Cube的槽，用于引入Cube插件来进行部署和使用
  */
@@ -63,7 +66,12 @@ public class Slot extends UniqueEntity {
         // 需要的返回名称
         @Getter
         @Setter
-        private String resName;
+        private String resName = DEFAULT_RETURN_NAME;
+
+        // 安装配置项
+        @Getter
+        @Setter
+        private String configId = DEFAULT_CONFIG_ID_VALUE;
 
         /**
          * 可靠性校验，校验SetupCubeInfo是否可用
