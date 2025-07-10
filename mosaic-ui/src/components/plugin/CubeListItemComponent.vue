@@ -2,6 +2,8 @@
 import { defineProps, ref, onMounted, computed } from "vue";
 import { type Cube,AngelCubeStatusUpdateReq } from "../../api/plugin/pluginType";
 import { updateAngelCubeStatus } from '../../api/plugin/pluginApi'
+import totemIconUrl from '../../assets/icons/minecraft-totem3.png?url'
+import grassIconUrl from '../../assets/icons/minecraft-grass.svg?url'
 
 import MCLeverSwitch from './MCLeverSwitch.vue' // 引入拉杆组件
 
@@ -63,8 +65,8 @@ const modelClass = computed(() => {
 // 获取模式图标
 const getModelIcon = (model: string) => {
   const iconMap = {
-    angle: 'mdi-diamond-stone',
-    default: 'mdi-cube-outline',
+    angle: 'minecraft-totem', // 使用自定义标识
+    default: 'minecraft-grass', // 使用自定义标识
   }
   return iconMap[model as keyof typeof iconMap] || 'mdi-package-variant'
 }
@@ -107,15 +109,31 @@ onMounted(() => {
         <!-- 保持原有头部内容 -->
         <div class="cube-header">
           <div class="cube-icon-wrapper">
+            <img
+                v-if="props.cube.model === 'angle'"
+                :src="totemIconUrl"
+                alt="Minecraft Totem"
+                class="minecraft-icon minecraft-totem"
+                width="70"
+                height="64"
+            />
+            <img
+                v-else-if="props.cube.model === 'default'"
+                :src="grassIconUrl"
+                alt="Minecraft Grass"
+                class="minecraft-icon minecraft-grass"
+                width="70"
+                height="64"
+            />
             <v-icon
+                v-else
                 :icon="getModelIcon(props.cube.model)"
-                :class="`model-icon--${modelClass}`"
                 size="36"
-            ></v-icon>
+            />
             <div class="status-badge" :class="`status-badge--${statusClass}`">
               <v-icon
                   :icon="getStatusIcon(props.cube.status)"
-                  size="14"
+                  size="24"
               ></v-icon>
             </div>
           </div>
@@ -728,7 +746,7 @@ $radius-tiny: 8px;            // 微小圆角
           rgba(255, 255, 255, 0.98) 0%,
           rgba(255, 255, 255, 0.92) 100%);
   border-radius: $radius-medium;
-  padding: 1.2rem;
+  padding: 0.8rem;
   box-shadow:
       0 6px 20px rgba(139, 115, 85, 0.18),
       0 2px 8px rgba(139, 115, 85, 0.1),
