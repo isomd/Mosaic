@@ -1,6 +1,7 @@
 package io.github.tml.mosaic.actuator;
 
 import io.github.tml.mosaic.core.execption.ActuatorException;
+import io.github.tml.mosaic.cube.external.MosaicCube;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.cube.Cube;
@@ -36,6 +37,7 @@ public class CubeActuatorProxy {
     public void initActuators() {
         actuatorMap.put(GenericCubeActuator.class, new GenericCubeActuator());
         actuatorMap.put(AsyncCubeActuator.class, new AsyncCubeActuator());
+        actuatorMap.put(AngelCubeActuator.class, new AngelCubeActuator());
     }
 
     private CubeActuator actuator(Class<? extends CubeActuator> actuatorClass) {
@@ -83,11 +85,14 @@ public class CubeActuatorProxy {
             throw new ActuatorException(String.format("resName %s not found : %s", resName, executeInfoLog(cubeId, exPackageId, exPointId)));
         }
 
-        return new CubeActuator.ExecuteContext(slot, cube.getMosaicCube(), exPackage.getMosaicExtPackage(), exPoint, args);
+        return new CubeActuator.ExecuteContext(slot, cube.getMosaicCube(), cube.isAngleCube(), exPackage.getMosaicExtPackage(), exPoint, args);
     }
 
     //TODO 待丰富
     private CubeActuator chooseActuator(CubeActuator.ExecuteContext executeContext) {
+        if (executeContext.isAngleCube()) {
+            return actuator(AngelCubeActuator.class);
+        }
         return actuator(GenericCubeActuator.class);
     }
 
