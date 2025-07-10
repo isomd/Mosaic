@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 import { defineProps, ref, onMounted, computed } from "vue";
-import { type Cube } from "../../api/plugin/pluginType";
+import { type Cube,AngelCubeStatusUpdateReq } from "../../api/plugin/pluginType";
+import { updateAngelCubeStatus } from '../../api/plugin/pluginApi'
+
+import MCLeverSwitch from './MCLeverSwitch.vue' // 引入拉杆组件
+
 
 const dialog = ref(false)
 const isHovered = ref(false)
 const configDialog = ref(false)
+
+// 添加状态相关的响应式数据
+const isUpdatingStatus = ref(false)
 
 const props = defineProps({
   cube: {
@@ -12,6 +19,28 @@ const props = defineProps({
     default: () => ({} as Cube)
   }
 })
+
+// 添加状态切换方法
+const handleStatusToggle = async (cube: Cube) => {
+  if (cube.model !== 'angle') return // 只有 Angel Cube 可以切换状态
+
+  isUpdatingStatus.value = true
+  try {
+    const action = cube.status === 'ACTIVE' ? 'STOP' : 'START'
+    await updateAngelCubeStatus(cube.id, action)
+
+    // 更新本地状态
+    cube.status = cube.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+
+    // 可以添加成功提示
+    // ElMessage.success(`${action === 'START' ? '启动' : '停止'}成功`)
+  } catch (error) {
+    console.error('状态更新失败:', error)
+    // ElMessage.error('状态更新失败')
+  } finally {
+    isUpdatingStatus.value = false
+  }
+}
 
 // 计算属性：格式化内存使用量
 const formattedMemory = computed(() => {
@@ -34,7 +63,7 @@ const modelClass = computed(() => {
 // 获取模式图标
 const getModelIcon = (model: string) => {
   const iconMap = {
-    angel: 'mdi-diamond-stone',
+    angle: 'mdi-diamond-stone',
     default: 'mdi-cube-outline',
   }
   return iconMap[model as keyof typeof iconMap] || 'mdi-package-variant'
@@ -64,11 +93,18 @@ onMounted(() => {
         @mouseleave="isHovered = false"
         elevation="0"
     >
+      <!-- 外层光晕 - 仅在启用状态显示 -->
+      <div
+          v-if="statusClass === 'active'"
+          class="active-glow-outer"
+      ></div>
+
       <!-- 卡片状态指示条 -->
       <div class="status-indicator" :class="`status-indicator--${statusClass}`"></div>
 
       <!-- 卡片头部 -->
       <template v-slot:title>
+        <!-- 保持原有头部内容 -->
         <div class="cube-header">
           <div class="cube-icon-wrapper">
             <v-icon
@@ -125,10 +161,10 @@ onMounted(() => {
 
       <!-- 卡片内容 -->
       <template v-slot:text>
+        <!-- 保持原有内容 -->
         <div class="cube-content">
           <p class="cube-description">{{ props.cube.description }}</p>
 
-          <!-- 统计信息网格 -->
           <div class="stats-grid">
             <div class="stat-item">
               <v-icon icon="mdi-package-variant" class="stat-icon"></v-icon>
@@ -168,7 +204,6 @@ onMounted(() => {
       <!-- 卡片操作区域 -->
       <v-card-actions class="cube-actions">
         <div class="action-buttons">
-
           <v-tooltip text="查看详情" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
               <v-btn
@@ -180,18 +215,6 @@ onMounted(() => {
               ></v-btn>
             </template>
           </v-tooltip>
-
-<!--          <v-tooltip text="移除插件" location="top">-->
-<!--            <template v-slot:activator="{ props: tooltipProps }">-->
-<!--              <v-btn-->
-<!--                  v-bind="tooltipProps"-->
-<!--                  icon="mdi-delete-outline"-->
-<!--                  class="remove-btn icon-btn"-->
-<!--                  size="large"-->
-<!--                  variant="outlined"-->
-<!--              ></v-btn>-->
-<!--            </template>-->
-<!--          </v-tooltip>-->
 
           <v-tooltip text="插件配置" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
@@ -206,7 +229,15 @@ onMounted(() => {
           </v-tooltip>
         </div>
 
-        <v-spacer></v-spacer>
+        <!-- 使用拉杆组件 -->
+        <div class="center-lever-area">
+          <MCLeverSwitch
+              v-if="props.cube.model === 'angle'"
+              :status="props.cube.status"
+              :is-loading="isUpdatingStatus"
+              @toggle="handleStatusToggle(props.cube)"
+          />
+        </div>
 
         <div class="cube-meta-info">
           <div class="meta-item">
@@ -218,7 +249,6 @@ onMounted(() => {
             <span class="meta-text">{{ new Date(props.cube.lastUpdatedTime).toLocaleDateString('zh-CN') }}</span>
           </div>
         </div>
-
       </v-card-actions>
     </v-card>
 
@@ -227,7 +257,6 @@ onMounted(() => {
 
     <!-- 配置对话框组件 -->
     <CubeConfigComponent v-model="configDialog" :pluginData="props.cube"></CubeConfigComponent>
-
   </div>
 </template>
 
@@ -321,13 +350,138 @@ $radius-tiny: 8px;            // 微小圆角
     }
   }
 
-  // 状态变体
+  // ===== ACTIVE 状态 - 添加旋转光晕效果 =====
   &--active {
+    // 更亮的背景
+    background: linear-gradient(135deg,
+        rgba(254, 254, 254, 1) 0%,
+        rgba(248, 252, 250, 0.98) 30%,
+        rgba(240, 248, 245, 0.95) 100%) !important;
+
+    box-shadow:
+        0 12px 40px rgba(74, 155, 142, 0.2),
+        0 4px 16px rgba(74, 155, 142, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+
+    // 创建旋转光晕的多层效果
+    &::before {
+      background: conic-gradient(from 0deg,
+          rgba(74, 155, 142, 0.8) 0deg,
+          rgba(107, 182, 176, 0.6) 90deg,
+          rgba(45, 90, 39, 0.7) 180deg,
+          rgba(74, 155, 142, 0.9) 270deg,
+          rgba(74, 155, 142, 0.8) 360deg
+      );
+      opacity: 1;
+      animation: rotateGlow 4s linear infinite;
+      filter: blur(2px);
+    }
+
+    // 添加第二层内光晕
+    &:after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: conic-gradient(from 180deg,
+          rgba(74, 155, 142, 0.4) 0deg,
+          rgba(107, 182, 176, 0.3) 120deg,
+          rgba(45, 90, 39, 0.5) 240deg,
+          rgba(74, 155, 142, 0.4) 360deg
+      );
+      border-radius: $radius-large;
+      z-index: -1;
+      animation: rotateGlow 6s linear infinite reverse;
+      filter: blur(1px);
+    }
+
+    // 添加第三层外光晕（伪元素不够用，用额外的div）
+    .active-glow-outer {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      right: -8px;
+      bottom: -8px;
+      background: conic-gradient(from 45deg,
+          rgba(74, 155, 142, 0.2) 0deg,
+          rgba(107, 182, 176, 0.15) 60deg,
+          rgba(45, 90, 39, 0.25) 120deg,
+          rgba(74, 155, 142, 0.1) 180deg,
+          rgba(107, 182, 176, 0.2) 240deg,
+          rgba(45, 90, 39, 0.15) 300deg,
+          rgba(74, 155, 142, 0.2) 360deg
+      );
+      border-radius: calc(#{$radius-large} + 8px);
+      z-index: -2;
+      animation: rotateGlow 8s linear infinite;
+      filter: blur(4px);
+      opacity: 0.7;
+    }
+
     &::before {
       background: linear-gradient(135deg, $oasis-green, $oasis-blue, $oasis-green);
+      opacity: 0; // 隐藏原来的边框，让光晕效果更突出
+    }
+
+    // hover 时增强光晕效果
+    &:hover,
+    &.desert-cube-card--hovered {
+      transform: translateY(-15px) scale(1.03);
+      box-shadow:
+          0 25px 70px rgba(74, 155, 142, 0.3),
+          0 10px 35px rgba(74, 155, 142, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+
+      .active-glow-outer {
+        opacity: 1;
+        top: -12px;
+        left: -12px;
+        right: -12px;
+        bottom: -12px;
+      }
+    }
+
+    // 活跃状态的内容增强
+    .cube-header {
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -20px;
+        right: -20px;
+        bottom: -10px;
+        background: radial-gradient(ellipse at center,
+            rgba(74, 155, 142, 0.06) 0%,
+            rgba(74, 155, 142, 0.02) 50%,
+            transparent 80%);
+        border-radius: $radius-medium;
+        z-index: -1;
+      }
+    }
+
+    .stats-grid {
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(245, 252, 248, 0.9));
+      border-color: rgba(74, 155, 142, 0.25);
+      box-shadow:
+          0 4px 20px rgba(74, 155, 142, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .cube-actions {
+      background: linear-gradient(135deg,
+          rgba(245, 252, 248, 0.7),
+          rgba(240, 248, 245, 0.5)) !important;
+      border-top-color: rgba(74, 155, 142, 0.3) !important;
     }
   }
 
+  // INACTIVE 状态保持不变
   &--inactive {
     opacity: 0.9;
 
@@ -356,6 +510,17 @@ $radius-tiny: 8px;            // 微小圆角
   }
 }
 
+// 添加旋转光晕动画
+@keyframes rotateGlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 状态指示器增强
 .status-indicator {
   position: absolute;
   top: 0;
@@ -368,11 +533,91 @@ $radius-tiny: 8px;            // 微小圆角
   &--active {
     background: linear-gradient(90deg, $oasis-green, $oasis-blue);
     box-shadow: 0 0 12px rgba(74, 155, 142, 0.5);
+    height: 6px;
+
+    // 添加流动光效
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.6),
+          transparent);
+      animation: flowingLight 3s ease-in-out infinite;
+    }
   }
 
   &--inactive {
     background: linear-gradient(90deg, $sunset-orange, #E6B887);
     box-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
+  }
+}
+
+// 状态徽章增强
+.status-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid $clear-white;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease;
+
+  &--active {
+    background: linear-gradient(135deg, $oasis-green, $oasis-blue);
+    color: white;
+    box-shadow:
+        0 4px 16px rgba(74, 155, 142, 0.4),
+        0 0 20px rgba(74, 155, 142, 0.2);
+
+    // 脉冲光环
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg,
+          rgba(74, 155, 142, 0.4) 0deg,
+          rgba(107, 182, 176, 0.2) 120deg,
+          rgba(45, 90, 39, 0.3) 240deg,
+          rgba(74, 155, 142, 0.4) 360deg
+      );
+      animation: rotateGlow 3s linear infinite;
+      z-index: -1;
+      filter: blur(2px);
+    }
+  }
+
+  &--inactive {
+    background: linear-gradient(135deg, $sunset-orange, #E6B887);
+    color: white;
+  }
+}
+
+// 添加流动光效动画
+@keyframes flowingLight {
+  0%, 100% {
+    left: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
   }
 }
 
@@ -654,13 +899,18 @@ $radius-tiny: 8px;            // 微小圆角
 .cube-actions {
   background: linear-gradient(135deg, rgba(244, 228, 188, 0.5), rgba(230, 211, 163, 0.3)) !important;
   border-top: 2px solid rgba(230, 211, 163, 0.6) !important;
-  padding: 1.5rem 2rem !important;
+  padding: 2.5rem 2rem !important; // 增加垂直padding
   border-radius: 0 0 $radius-large $radius-large;
+  min-height: 200px; // 设置最小高度
+  display: flex;
+  align-items: center; // 垂直居中对齐
+  justify-content: space-between; // 两端对齐
 }
 
 .action-buttons {
   display: flex;
   gap: 1.25rem;
+  flex-shrink: 0; // 防止按钮被压缩
 }
 
 .icon-btn {
@@ -715,6 +965,8 @@ $radius-tiny: 8px;            // 微小圆角
   flex-direction: column;
   gap: 0.5rem;
   text-align: right;
+  flex-shrink: 0; // 防止meta信息被压缩
+  min-width: 120px; // 确保有足够的宽度
 }
 
 .meta-item {

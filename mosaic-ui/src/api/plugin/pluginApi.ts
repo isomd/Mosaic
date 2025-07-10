@@ -30,3 +30,15 @@ export function updateCubeConfiguration(form){
         data:form
     })
 }
+
+// 添加这个函数到 pluginApi.ts
+export function updateAngelCubeStatus(cubeId: string, action: 'START' | 'STOP') {
+    return request({
+        url: '/cube/angel/updateStatus',
+        method: 'post',
+        data: {
+            cubeId: cubeId,
+            action: action
+        }
+    })
+}

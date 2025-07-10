@@ -31,6 +31,11 @@ export interface Config {
     [property: string]: any;
 }
 
+// 添加到 pluginType.ts
+export interface AngelCubeStatusUpdateReq {
+    cubeId: string;
+    action: 'START' | 'STOP';
+}
 
 export interface ConfigItem {
     name: string;
