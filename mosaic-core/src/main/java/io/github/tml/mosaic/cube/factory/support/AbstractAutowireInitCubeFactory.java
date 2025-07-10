@@ -24,7 +24,7 @@ public abstract class AbstractAutowireInitCubeFactory extends AbstractAutowireCo
 
             // Main initialization logic
             if (cube.init()) {
-                log.info("[Cube][CubeFactory] ✓ Cube initialized successfully | CubeId: {}, CubeName: {}", cube.getCubeId(), cube.getMetaData().getName());
+                log.info("[Cube][CubeFactory] ✓ Cube initialized successfully | CubeId: {}, CubeName: {}, ExtPackage:{}", cube.getCubeId(), cube.getMetaData().getName(), cube.getMetaData().getExtensionPackages().size());
 
                 // Post-initialization hook
                 postInitialization(cube, cubeDefinition, args);
