@@ -56,7 +56,7 @@ public class HotSwapDomain {
             context.putClassProxyCode(dto.getClassName(), proxy);
             return proxy;
         }catch (Exception e){
-            throw new HotSwapException("热更新代码失败: "+e.getMessage());
+            throw new HotSwapException("hotswap code fail: "+e.getMessage());
         }
     }
 
