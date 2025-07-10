@@ -21,6 +21,7 @@ declare module 'vue' {
     FooterComponent: typeof import('./components/layout/FooterComponent.vue')['default']
     HeaderComponent: typeof import('./components/layout/HeaderComponent.vue')['default']
     LoaddingComponent: typeof import('./components/common/LoaddingComponent.vue')['default']
+    MCLeverSwitch: typeof import('./components/plugin/MCLeverSwitch.vue')['default']
     MessageComponent: typeof import('./components/common/MessageComponent.vue')['default']
     MinecraftButtonComponent: typeof import('./components/common/MinecraftButtonComponent.vue')['default']
     MinecraftInputComponent: typeof import('./components/common/MinecraftInputComponent.vue')['default']

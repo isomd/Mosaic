@@ -117,8 +117,8 @@ public class CubeConvert {
 
     // ========== 私有辅助方法 ==========
 
-    private static CubeInfoVO.CubeStatus convertStatus(CubeDTO.CubeStatus status) {
-        return CubeInfoVO.CubeStatus.valueOf(status.name());
+    private static CubeStatus convertStatus(CubeStatus status) {
+        return CubeStatus.valueOf(status.name());
     }
 
     private static CubeOverviewDTO buildEmptyOverviewDTO() {

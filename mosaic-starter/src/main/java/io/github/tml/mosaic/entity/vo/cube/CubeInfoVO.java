@@ -29,15 +29,4 @@ public class CubeInfoVO {
     private CubeStatisticsVO statistics;
     private LocalDateTime registeredTime;
     private LocalDateTime lastUpdatedTime;
-
-    @Getter
-    public enum CubeStatus {
-        ACTIVE("运行中"),
-        INACTIVE("未激活");
-
-        private final String description;
-        CubeStatus(String description) {
-            this.description = description;
-        }
-    }
 }

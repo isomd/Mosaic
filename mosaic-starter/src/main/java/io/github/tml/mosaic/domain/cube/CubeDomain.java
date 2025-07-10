@@ -17,6 +17,7 @@ import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
 import io.github.tml.mosaic.entity.vo.cube.CubeInfoVO;
+import io.github.tml.mosaic.entity.vo.cube.CubeStatus;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.ReaderType;
@@ -44,7 +45,7 @@ public class CubeDomain {
     private final InfoContextInstaller installer;
 
     // 存储Angel Cube的运行状态，默认为INACTIVE
-    private final Map<String, CubeInfoVO.CubeStatus> angelCubeStatusMap = new ConcurrentHashMap<>();
+    private final Map<String, CubeStatus> angelCubeStatusMap = new ConcurrentHashMap<>();
 
     /**
      * 获取所有Cube列表
@@ -55,6 +56,9 @@ public class CubeDomain {
         List<CubeDefinition> cubeDefinitions = cubeContext.getAllCubeDefinitions();
         List<CubeDTO> result = cubeDefinitions.stream()
                 .map(CubeConvert::convert2DTO)
+                .peek(cubeDTO -> {
+                    cubeDTO.setStatus(angelCubeStatusMap.getOrDefault(cubeDTO.getId(), CubeStatus.INACTIVE));
+                })
                 .sorted(Comparator.comparing(CubeDTO::getId))
                 .collect(Collectors.toList());
         
@@ -100,7 +104,7 @@ public class CubeDomain {
 
             // 3. 转换为AngelCube并执行相应操作
             AngelCube angelCube = convertToAngelCube(cube);
-            CubeInfoVO.CubeStatus newStatus = executeAngelCubeAction(angelCube, action);
+            CubeStatus newStatus = executeAngelCubeAction(angelCube, action);
 
             // 4. 更新状态缓存
             angelCubeStatusMap.put(cubeId, newStatus);
@@ -137,18 +141,18 @@ public class CubeDomain {
     /**
      * 执行Angel Cube动作
      */
-    private CubeInfoVO.CubeStatus executeAngelCubeAction(AngelCube angelCube, AngelCubeStatusUpdateReq.AngelCubeAction action) {
+    private CubeStatus executeAngelCubeAction(AngelCube angelCube, AngelCubeStatusUpdateReq.AngelCubeAction action) {
         try {
             switch (action) {
                 case START:
                     angelCube.start();
                     log.info("Angel Cube started successfully");
-                    return CubeInfoVO.CubeStatus.ACTIVE;
+                    return CubeStatus.ACTIVE;
 
                 case STOP:
                     angelCube.stop();
                     log.info("Angel Cube stopped successfully");
-                    return CubeInfoVO.CubeStatus.INACTIVE;
+                    return CubeStatus.INACTIVE;
 
                 default:
                     throw new IllegalArgumentException("不支持的操作: " + action);
