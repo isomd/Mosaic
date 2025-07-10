@@ -102,14 +102,6 @@ public class CubeDomain {
             GUID guid = new GUUID(cubeId);
             Cube cube = cubeContext.getCube(guid);
 
-            // 3. 转换为AngelCube并执行相应操作
-            AngelCube angelCube = convertToAngelCube(cube);
-            CubeStatus newStatus = executeAngelCubeAction(angelCube, action);
-
-            // 4. 更新状态缓存
-            angelCubeStatusMap.put(cubeId, newStatus);
-
-            log.info("Domain: Successfully updated Angel Cube status for ID: {} to {}", cubeId, newStatus);
             return true;
 
         } catch (Exception e) {
