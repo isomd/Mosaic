@@ -64,6 +64,6 @@ public class CubeDTO extends CubeDefinition {
     }
 
     public enum CubeStatus {
-        ACTIVE, INACTIVE, ERROR, LOADING
+        ACTIVE, INACTIVE
     }
 }

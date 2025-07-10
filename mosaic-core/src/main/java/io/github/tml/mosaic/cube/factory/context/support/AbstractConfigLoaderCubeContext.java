@@ -12,6 +12,7 @@ import io.github.tml.mosaic.core.tools.param.ConfigItem;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.config.ConfigReader;
 import io.github.tml.mosaic.cube.config.YamlConfigReader;
+import io.github.tml.mosaic.cube.constant.CubeModelType;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import lombok.Getter;
@@ -76,7 +77,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
             removeSingletonCube(new GUUID(cubeId));
         }
 
-        if ("function".equals(cubeDefinition.getModel())) {
+        if (CubeModelType.FUNCTION_TYPE.equals(cubeDefinition.getModel())) {
             Cube cube = getCube(new GUUID(cubeId));
             CubeConfigUpdateEvent event = new CubeConfigUpdateEvent(cube.getMosaicCube(), cube.getAllConfigs(), config);
             eventBroadcaster.broadcastEvent(event);

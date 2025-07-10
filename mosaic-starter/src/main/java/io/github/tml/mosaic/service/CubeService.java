@@ -1,5 +1,6 @@
 package io.github.tml.mosaic.service;
 
+import io.github.tml.mosaic.entity.req.AngelCubeStatusUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.util.R;
@@ -32,4 +33,11 @@ public interface CubeService {
      * @return 更新结果响应
      */
     R<?> updateCubeConfiguration(CubeConfigUpdateReq configReq);
+
+    /**
+     * 更新Angel Cube的状态（启动/停止）
+     * @param statusReq 状态更新请求
+     * @return 更新结果响应
+     */
+    R<?> updateAngelCubeStatus(AngelCubeStatusUpdateReq statusReq);
 }

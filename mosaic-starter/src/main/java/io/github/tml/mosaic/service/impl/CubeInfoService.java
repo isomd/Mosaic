@@ -3,6 +3,7 @@ package io.github.tml.mosaic.service.impl;
 import io.github.tml.mosaic.convert.CubeConvert;
 import io.github.tml.mosaic.domain.cube.CubeDomain;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
+import io.github.tml.mosaic.entity.req.AngelCubeStatusUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.vo.cube.CubeInfoVO;
@@ -106,6 +107,25 @@ public class CubeInfoService implements CubeService {
         } catch (Exception e) {
             log.error("Service: Failed to update configuration for cube ID: {}", cubeId, e);
             return R.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public R<?> updateAngelCubeStatus(AngelCubeStatusUpdateReq statusReq) {
+        String cubeId = statusReq.getCubeId();
+        AngelCubeStatusUpdateReq.AngelCubeAction action = statusReq.getAction();
+
+        log.debug("Service: Updating Angel Cube status for ID: {} with action: {}", cubeId, action);
+
+        try {
+            Map<String, Object> result = cubeDomain.updateAngelCubeStatus(cubeId, action);
+            return R.success(result);
+        } catch (IllegalArgumentException e) {
+            log.warn("Service: Invalid Angel Cube status update request for ID: {}", cubeId, e);
+            return R.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("Service: Failed to update Angel Cube status for ID: {}", cubeId, e);
+            return R.error("更新Angel Cube状态失败: " + e.getMessage());
         }
     }
 }
