@@ -60,12 +60,12 @@ onMounted(() => {
 
 
 const handelSave = () => {
+  dialog.value = false
   statusStore.setLoading(true)
   createPoint(createPointForm.value).then((res: any) => {
     if (res.code == 200) {
       emit('updateCode', res.data.code)
       statusStore.setLoading(false)
-      dialog.value = false
     } else {
       statusStore.setLoading(false)
     }
@@ -135,7 +135,6 @@ const handleSubmit = (form) => {
   handelSave()
 }
 const update = (val) =>{
-  console.log(val)
   if(val.length > (extensionPoints.value.filter(exPoint=>exPoint.id === createPointForm.value.exPointId)[0]?.parameterTypes.length||0)){
     return
   }
