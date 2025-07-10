@@ -54,7 +54,7 @@ onMounted(()=>{
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" class="minecraft-user-btn">
           <v-icon start>mdi-earth-arrow-left</v-icon>
-          <span class="ml-2 d-none d-sm-inline">{{ statusStore.currentWorld.name }}</span>
+          <span class="ml-2 d-none d-sm-inline">{{ statusStore.currentWorld?.name }}</span>
           <v-icon end>mdi-chevron-down</v-icon>
         </v-btn>
       </template>

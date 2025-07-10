@@ -22,24 +22,17 @@ public class CubeDTO extends CubeDefinition {
                    String description, String model, String scope,
                    String className, ClassLoader classLoader) {
         super(id, name, version, description, model, scope, className, classLoader);
-        this.status = determineStatus();
+        this.status = CubeStatus.INACTIVE;
         this.registeredTime = LocalDateTime.now();
         this.lastUpdatedTime = LocalDateTime.now();
-    }
-
-    /**
-     * 判断Cube是否已激活
-     */
-    public boolean isActive() {
-        return this.status == CubeStatus.ACTIVE;
     }
 
     /**
      * 判断Cube是否配置完整
      */
     public boolean isConfigComplete() {
-        return Objects.nonNull(this.getId()) && 
-               Objects.nonNull(this.getName()) && 
+        return Objects.nonNull(this.getId()) &&
+               Objects.nonNull(this.getName()) &&
                Objects.nonNull(this.getClassName()) &&
                !this.getExtensionPackages().isEmpty();
     }
@@ -51,16 +44,6 @@ public class CubeDTO extends CubeDefinition {
         return this.getExtensionPackages().stream()
                 .mapToInt(pkg -> pkg.getExtensionPoints().size())
                 .sum();
-    }
-
-    /**
-     * 确定Cube状态
-     */
-    private CubeStatus determineStatus() {
-        if (this.getClassLoader() != null) {
-            return CubeStatus.ACTIVE;
-        }
-        return CubeStatus.INACTIVE;
     }
 
     public enum CubeStatus {

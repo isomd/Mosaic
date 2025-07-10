@@ -303,26 +303,6 @@ public class CubeDomain {
     }
 
     /**
-     * 获取Cube的扩展包数量
-     */
-    public int getExtensionPackageCount(String cubeId) {
-        return getCubeById(cubeId)
-                .map(cube -> cube.getExtensionPackages().size())
-                .orElse(0);
-    }
-
-    /**
-     * 获取Cube的扩展点总数
-     */
-    public int getTotalExtensionPointCount(String cubeId) {
-        return getCubeById(cubeId)
-                .map(cube -> cube.getExtensionPackages().stream()
-                        .mapToInt(pkg -> pkg.getExtensionPoints().size())
-                        .sum())
-                .orElse(0);
-    }
-
-    /**
      * 构建领域级别的过滤谓词
      */
     private Predicate<CubeDefinition> buildDomainFilterPredicate(CubeFilterReq filterDTO) {

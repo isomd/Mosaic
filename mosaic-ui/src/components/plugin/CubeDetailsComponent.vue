@@ -22,14 +22,8 @@ const formatDate = (dateString) => {
 // 添加到 script 部分
 const getStatusText = (status: string) => {
   const statusTextMap = {
-    'active': '运行中',
-    'running': '运行中',
-    'enabled': '已启用',
-    'inactive': '已停止',
-    'stopped': '已停止',
-    'disabled': '已禁用',
-    'pending': '等待中',
-    'loading': '加载中'
+    'active': '已启用',
+    'inactive': '未启用'
   }
   return statusTextMap[status?.toLowerCase()] || status || '未知'
 }
@@ -37,13 +31,7 @@ const getStatusText = (status: string) => {
 const getStatusClass = (status: string) => {
   const statusMap = {
     'active': 'status-active',
-    'running': 'status-active',
-    'enabled': 'status-active',
-    'inactive': 'status-inactive',
-    'stopped': 'status-inactive',
-    'disabled': 'status-inactive',
-    'pending': 'status-pending',
-    'loading': 'status-pending'
+    'inactive': 'status-inactive'
   }
   return statusMap[status?.toLowerCase()] || 'status-pending'
 }
