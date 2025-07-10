@@ -45,7 +45,7 @@ public class AngelCubeActuator extends AbstractCubeActuator{
      */
     private void runScavenger() {
         scavenger.execute(()->{
-            while (true){
+            for(;;){
                 AngelCubeWorker worker = deathbedCareList.poll();
                 if (worker != null){
                     log.info("scavenger ready handle angle cube {} stop", worker.angelCube.cubeId());
@@ -85,7 +85,7 @@ public class AngelCubeActuator extends AbstractCubeActuator{
 
     public class AngelCubeWorker{
 
-        private AngelCube angelCube;
+        private final AngelCube angelCube;
 
         private final String name;
 
