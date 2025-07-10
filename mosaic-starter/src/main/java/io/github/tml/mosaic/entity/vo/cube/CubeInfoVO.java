@@ -33,9 +33,8 @@ public class CubeInfoVO {
     @Getter
     public enum CubeStatus {
         ACTIVE("运行中"),
-        INACTIVE("未激活"),
-        ERROR("错误"),
-        LOADING("加载中");
+        INACTIVE("未激活");
+
         private final String description;
         CubeStatus(String description) {
             this.description = description;

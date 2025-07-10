@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.MosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.event.CubeConfigUpdateEvent;
-import io.github.tml.mosaic.core.event.event.CubeDefinitionRegisteredEvent;
 import io.github.tml.mosaic.core.execption.CubeException;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.param.ConfigInfo;
@@ -12,8 +11,9 @@ import io.github.tml.mosaic.core.tools.param.ConfigItem;
 import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.config.ConfigReader;
 import io.github.tml.mosaic.cube.config.YamlConfigReader;
+import io.github.tml.mosaic.cube.constant.CubeModelType;
+import io.github.tml.mosaic.cube.constant.CubeScopeType;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
-import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,11 +72,11 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         configurationMap.put(cubeId, jsonObject);
 
         // If singleton, remove and re-initialize
-        if ("singleton".equals(cubeDefinition.getModel())) {
+        if (CubeScopeType.SINGLETON.equals(cubeDefinition.getScope())) {
             removeSingletonCube(new GUUID(cubeId));
         }
 
-        if ("function".equals(cubeDefinition.getModel())) {
+        if (CubeModelType.ANGLE_TYPE.equals(cubeDefinition.getModel())) {
             Cube cube = getCube(new GUUID(cubeId));
             CubeConfigUpdateEvent event = new CubeConfigUpdateEvent(cube.getMosaicCube(), cube.getAllConfigs(), config);
             eventBroadcaster.broadcastEvent(event);

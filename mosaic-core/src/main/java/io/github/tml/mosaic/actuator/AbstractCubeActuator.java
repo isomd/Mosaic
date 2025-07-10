@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.github.tml.mosaic.cube.ExtPointResult.DEFAULT_RETURN_NAME;
+import static io.github.tml.mosaic.core.CubeConstant.DEFAULT_RETURN_NAME;
 
 @Slf4j
 public abstract class AbstractCubeActuator implements CubeActuator{

@@ -1,4 +1,4 @@
-package io.github.tml.mosaic.slot.infrastructure;
+package io.github.tml.mosaic.slot.service;
 
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.slot.Slot;

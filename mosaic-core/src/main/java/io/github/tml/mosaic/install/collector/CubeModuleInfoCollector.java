@@ -16,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.*;
 
 import static io.github.tml.mosaic.cube.constant.CubeModelType.DEFAULT_TYPE;
-import static io.github.tml.mosaic.cube.constant.CubeModelType.FUNCTION_TYPE;
+import static io.github.tml.mosaic.cube.constant.CubeModelType.ANGLE_TYPE;
 import static java.lang.reflect.Modifier.isAbstract;
 
 /**
@@ -39,36 +39,11 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
 
         for (Class<?> clazz : allClazz) {
             if (isValidCubeClass(clazz)) {
-                CubeInfo cubeInfo = new CubeInfo();
-                infoContext.addCubeInfo(cubeInfo);
-
-                cubeInfo.setClazz(clazz);
-                cubeInfo.setClassName(clazz.getName());
-
-                cubeInfoMap.put(getRootPackageName(clazz, ModuleFileName.CUBE.getPackageName()), cubeInfo);
-
-                if (AngelCube.class.isAssignableFrom(clazz)) {
-                    cubeInfo.setModel(FUNCTION_TYPE);
-                } else {
-                    cubeInfo.setModel(DEFAULT_TYPE);
-                }
-
+                buildCubeInfo(infoContext, clazz, cubeInfoMap);
             } else if(isValidExtensionPackageApiClass(clazz)){
-
-                ExtensionPackageInfo extensionPackageInfo = new ExtensionPackageInfo();
-                extensionPackageInfo.setClazz(clazz);
-                extensionPackageInfo.setClassName(clazz.getName());
-                extensionPackageInfoHashMap.computeIfAbsent(
-                        getRootPackageName(clazz, ModuleFileName.API.getPackageName()), (k)->new ArrayList<>()
-                ).add(extensionPackageInfo);
-
+                buildExtPackage(clazz, extensionPackageInfoHashMap);
             } else if (isValidCubeListener(clazz)) {
-                CubeListenerInfo cubeListenerInfo = new CubeListenerInfo();
-                cubeListenerInfo.setClazz(clazz);
-                cubeListenerInfo.setClassName(clazz.getName());
-                cubeListenerInfoHashMap.computeIfAbsent(
-                        getRootPackageName(clazz, ModuleFileName.LISTENER.getPackageName()), (k)->new ArrayList<>()
-                ).add(cubeListenerInfo);
+                buildCubeListener(clazz, cubeListenerInfoHashMap);
             }
         }
 
@@ -79,11 +54,52 @@ public class CubeModuleInfoCollector implements CommonInfoCollector {
             List<CubeListenerInfo> cubeListenerInfos = cubeListenerInfoHashMap.getOrDefault(packageName, Collections.emptyList());
             cubeInfo.setCubeListeners(cubeListenerInfos);
         });
+
+    }
+
+    private void buildCubeListener(Class<?> clazz, Map<String, List<CubeListenerInfo>> cubeListenerInfoHashMap) {
+        CubeListenerInfo cubeListenerInfo = new CubeListenerInfo();
+        cubeListenerInfo.setClazz(clazz);
+        cubeListenerInfo.setClassName(clazz.getName());
+        cubeListenerInfoHashMap.computeIfAbsent(
+                getRootPackageName(clazz, ModuleFileName.LISTENER.getPackageName()), (k)->new ArrayList<>()
+        ).add(cubeListenerInfo);
+    }
+
+    private void buildExtPackage(Class<?> clazz, Map<String, List<ExtensionPackageInfo>> extensionPackageInfoHashMap) {
+        ExtensionPackageInfo extensionPackageInfo = new ExtensionPackageInfo();
+        extensionPackageInfo.setClazz(clazz);
+        extensionPackageInfo.setClassName(clazz.getName());
+        extensionPackageInfoHashMap.computeIfAbsent(
+                getRootPackageName(clazz, ModuleFileName.API.getPackageName()), (k)->new ArrayList<>()
+        ).add(extensionPackageInfo);
+    }
+
+    private void buildCubeInfo(InfoContext infoContext, Class<?> clazz, Map<String, CubeInfo> cubeInfoMap) {
+        CubeInfo cubeInfo = new CubeInfo();
+        infoContext.addCubeInfo(cubeInfo);
+
+        cubeInfo.setClazz(clazz);
+        cubeInfo.setClassName(clazz.getName());
+
+        cubeInfoMap.put(getRootPackageName(clazz, ModuleFileName.CUBE.getPackageName()), cubeInfo);
+
+        if (AngelCube.class.isAssignableFrom(clazz)) {
+            cubeInfo.setModel(ANGLE_TYPE);
+        } else {
+            cubeInfo.setModel(DEFAULT_TYPE);
+        }
     }
 
 
+    // 根据当前功能模块前缀来截取根路径
     private String getRootPackageName(Class<?> clazz, String lastPackageName) {
-        return clazz.getPackage().getName().split("." + lastPackageName)[0];
+        String name = clazz.getPackage().getName();
+        if(name.startsWith(lastPackageName)){
+            return "";
+        }else{
+            return name.split("." + lastPackageName)[0];
+        }
     }
 
     /**

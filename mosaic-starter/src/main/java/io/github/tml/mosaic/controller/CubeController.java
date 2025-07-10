@@ -1,4 +1,5 @@
 package io.github.tml.mosaic.controller;
+import io.github.tml.mosaic.entity.req.AngelCubeStatusUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.service.CubeService;
@@ -74,5 +75,13 @@ public class CubeController {
     @PostMapping("/updateConfiguration")
     public R<?> updateCubeConfiguration(@RequestBody CubeConfigUpdateReq configReq) {
         return cubeService.updateCubeConfiguration(configReq);
+    }
+
+    /**
+     * 更新Angel Cube状态（启动/停止）
+     */
+    @PostMapping("/angel/updateStatus")
+    public R<?> updateAngelCubeStatus(@RequestBody AngelCubeStatusUpdateReq statusReq) {
+        return cubeService.updateAngelCubeStatus(statusReq);
     }
 }

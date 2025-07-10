@@ -1,8 +1,6 @@
 package io.github.tml.mosaic.core.event.event;
 
-import io.github.tml.mosaic.core.tools.param.ConfigInfo;
 import io.github.tml.mosaic.cube.external.MosaicCube;
-import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
 import lombok.Data;
 
 import java.util.Map;

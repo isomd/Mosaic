@@ -7,13 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ConfigDisplay: typeof import('./components/plugin/ConfigDisplay.vue')['default']
     ConfigFormComponent: typeof import('./components/common/ConfigFormComponent.vue')['default']
     ConfigInputComponent: typeof import('./components/common/ConfigInputComponent.vue')['default']
-    ConfigValueRenderer: typeof import('./components/plugin/config/ConfigValueRendererComponent.vue')['default']
     ConfirmComponent: typeof import('./components/common/ConfirmComponent.vue')['default']
     CreateHotSwapInfoDialog: typeof import('./components/hotSwap/CreateHotSwapInfoDialog.vue')['default']
     CreateSlotComponent: typeof import('./components/slot/CreateSlotComponent.vue')['default']
+    CreateSlotFormComponent: typeof import('./components/slot/CreateSlotFormComponent.vue')['default']
     CubeConfigComponent: typeof import('./components/plugin/CubeConfigComponent.vue')['default']
     CubeDetailsComponent: typeof import('./components/plugin/CubeDetailsComponent.vue')['default']
     CubeListItemComponent: typeof import('./components/plugin/CubeListItemComponent.vue')['default']
@@ -22,6 +21,8 @@ declare module 'vue' {
     FooterComponent: typeof import('./components/layout/FooterComponent.vue')['default']
     HeaderComponent: typeof import('./components/layout/HeaderComponent.vue')['default']
     LoaddingComponent: typeof import('./components/common/LoaddingComponent.vue')['default']
+    MCLeverSwitch: typeof import('./components/plugin/MCLeverSwitch.vue')['default']
+    MessageComponent: typeof import('./components/common/MessageComponent.vue')['default']
     MinecraftButtonComponent: typeof import('./components/common/MinecraftButtonComponent.vue')['default']
     MinecraftInputComponent: typeof import('./components/common/MinecraftInputComponent.vue')['default']
     MonacoEditor: typeof import('./components/code/MonacoEditor.vue')['default']
