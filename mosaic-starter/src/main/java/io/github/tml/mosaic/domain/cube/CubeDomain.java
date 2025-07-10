@@ -87,7 +87,7 @@ public class CubeDomain {
      * @param action 执行动作
      * @return 操作结果
      */
-    public Map<String, Object> updateAngelCubeStatus(String cubeId, AngelCubeStatusUpdateReq.AngelCubeAction action) {
+    public boolean updateAngelCubeStatus(String cubeId, AngelCubeStatusUpdateReq.AngelCubeAction action) {
         log.debug("Domain: Updating Angel Cube status for ID: {} with action: {}", cubeId, action);
 
         try {
@@ -96,7 +96,7 @@ public class CubeDomain {
 
             // 2. 获取Cube实例
             GUID guid = new GUUID(cubeId);
-            io.github.tml.mosaic.cube.Cube cube = cubeContext.getCube(guid);
+            Cube cube = cubeContext.getCube(guid);
 
             // 3. 转换为AngelCube并执行相应操作
             AngelCube angelCube = convertToAngelCube(cube);
@@ -105,17 +105,8 @@ public class CubeDomain {
             // 4. 更新状态缓存
             angelCubeStatusMap.put(cubeId, newStatus);
 
-            Map<String, Object> result = Map.of(
-                    "cubeId", cubeId,
-                    "action", action.name(),
-                    "actionDescription", action.getDescription(),
-                    "status", newStatus.name(),
-                    "statusDescription", newStatus.getDescription(),
-                    "timestamp", java.time.LocalDateTime.now()
-            );
-
             log.info("Domain: Successfully updated Angel Cube status for ID: {} to {}", cubeId, newStatus);
-            return result;
+            return true;
 
         } catch (Exception e) {
             log.error("Domain: Failed to update Angel Cube status for ID: {}", cubeId, e);
@@ -141,19 +132,6 @@ public class CubeDomain {
         }
 
         log.debug("Angel Cube validation passed for ID: {}", cubeId);
-    }
-
-    /**
-     * 将Cube转换为AngelCube
-     */
-    private AngelCube convertToAngelCube(Cube cube) {
-        Object mosaicCube = cube.getMosaicCube();
-
-        if (!(mosaicCube instanceof AngelCube)) {
-            throw new IllegalArgumentException("该Cube不是AngelCube类型，无法执行启动/停止操作");
-        }
-
-        return (AngelCube) mosaicCube;
     }
 
     /**
