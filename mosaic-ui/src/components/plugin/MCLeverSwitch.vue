@@ -65,22 +65,15 @@ const handleClick = () => {
         <div class="stone-top-face"></div>
         <div class="stone-highlight"></div>
         <div class="stone-depth-lines"></div>
+
+        <!-- 杆子插槽 -->
+        <div class="rod-socket"></div>
       </div>
 
       <!-- 拉杆杆子 -->
       <div class="lever-rod">
-        <div class="rod-segment rod-segment-1"></div>
-        <div class="rod-segment rod-segment-2"></div>
-        <div class="rod-segment rod-segment-3"></div>
-        <div class="rod-joint rod-joint-1"></div>
-        <div class="rod-joint rod-joint-2"></div>
-      </div>
-
-      <!-- 拉杆手柄 -->
-      <div class="lever-handle-grip">
-        <div class="grip-top"></div>
-        <div class="grip-shadow"></div>
-        <div class="grip-highlight"></div>
+        <div class="rod-main"></div>
+        <div class="rod-base-connection"></div>
       </div>
 
       <!-- 红石粒子效果 -->
@@ -145,8 +138,8 @@ $powered-green: #00FF7F;
 // MC拉杆容器
 .mc-lever-container {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   cursor: pointer;
   transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-style: preserve-3d;
@@ -194,8 +187,8 @@ $powered-green: #00FF7F;
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 70px;
-  height: 12px;
+  width: 80px;
+  height: 15px;
   background: radial-gradient(ellipse,
       rgba(0, 0, 0, 0.4) 0%,
       rgba(0, 0, 0, 0.2) 50%,
@@ -211,8 +204,8 @@ $powered-green: #00FF7F;
   bottom: -6px;
   left: 50%;
   transform: translateX(-50%) scale(1);
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   opacity: 0;
   transition: all 0.5s ease;
@@ -247,20 +240,20 @@ $powered-green: #00FF7F;
   }
 }
 
-// 石质底座
+// 石质底座（加宽）
 .lever-stone-base {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 44px;
-  height: 22px;
+  width: 70px;
+  height: 20px;
   background: linear-gradient(145deg,
       $stone-light 0%,
       $stone-base 40%,
       $stone-dark 100%);
   border: 2px solid #555555;
-  border-radius: 6px;
+  border-radius: 8px;
   box-shadow:
       0 8px 20px rgba(0, 0, 0, 0.4),
       inset 0 4px 8px rgba(255, 255, 255, 0.3),
@@ -285,7 +278,7 @@ $powered-green: #00FF7F;
       repeating-linear-gradient(-45deg,
           transparent, transparent 2px,
           rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 3px);
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 // 石头顶面
@@ -300,7 +293,7 @@ $powered-green: #00FF7F;
       $stone-light 30%,
       $stone-base 70%,
       $stone-dark 100%);
-  border-radius: 6px 6px 0 0;
+  border-radius: 8px 8px 0 0;
   border: 2px solid #777777;
   border-bottom: none;
   box-shadow:
@@ -312,8 +305,8 @@ $powered-green: #00FF7F;
 .stone-highlight {
   position: absolute;
   top: 2px;
-  left: 3px;
-  right: 3px;
+  left: 4px;
+  right: 4px;
   height: 3px;
   background: linear-gradient(90deg,
       transparent 0%,
@@ -327,8 +320,8 @@ $powered-green: #00FF7F;
 // 深度线条
 .stone-depth-lines {
   position: absolute;
-  inset: 4px;
-  border-radius: 3px;
+  inset: 5px;
+  border-radius: 4px;
 
   &::before,
   &::after {
@@ -346,160 +339,104 @@ $powered-green: #00FF7F;
   }
 
   &::before {
-    top: 30%;
+    top: 25%;
   }
 
   &::after {
-    bottom: 30%;
+    bottom: 25%;
   }
 }
 
-// 拉杆杆子
+// 杆子插槽
+.rod-socket {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(145deg,
+      darken($stone-dark, 20%),
+      darken($stone-dark, 10%), $stone-dark);
+  border-radius: 50%;
+  box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.6),
+      inset 0 -1px 2px rgba(255, 255, 255, 0.1);
+}
+
+// 拉杆杆子（重新设计 - 加粗加长）
 .lever-rod {
   position: absolute;
-  width: 8px;
-  height: 32px;
+  width: 9px;
+  height: 66px;
   left: 50%;
-  bottom: 20px;
+  bottom: 8px;
   transform-origin: bottom center;
   transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
-  filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.4));
-  transform: translateX(-50%) rotate(-40deg);
+  transform: translateX(-50%) rotate(-30deg);
 }
 
-// 杆子分段
-.rod-segment {
+.rod-main {
   position: absolute;
   width: 100%;
-  height: 9px;
-  background: linear-gradient(145deg, $wood-light, $wood-base, $wood-dark);
-  border: 1px solid #654321;
-  border-radius: 2px;
+  height: 62px;
+  background: linear-gradient(to right,
+      darken($wood-dark, 15%) 0%,
+      $wood-dark 20%,
+      $wood-base 50%,
+      $wood-dark 80%,
+      darken($wood-dark, 15%) 100%);
+  border-radius: 3px;
   box-shadow:
-      inset 2px 2px 3px rgba(222, 184, 135, 0.6),
-      inset -1px -1px 3px rgba(101, 67, 33, 0.8),
-      0 1px 3px rgba(0, 0, 0, 0.3);
-
-  &:nth-child(1) {
-    top: 0;
-    background: linear-gradient(145deg,
-        lighten($wood-light, 10%), $wood-light, $wood-base);
-  }
-
-  &:nth-child(2) {
-    top: 11px;
-    background: linear-gradient(145deg, $wood-light, $wood-base, $wood-dark);
-  }
-
-  &:nth-child(3) {
-    top: 22px;
-    background: linear-gradient(145deg, $wood-base, $wood-dark, darken($wood-dark, 10%));
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    background:
-        repeating-linear-gradient(0deg,
-            transparent, transparent 1px,
-            rgba(139, 69, 19, 0.3) 1px, rgba(139, 69, 19, 0.3) 2px),
-        repeating-linear-gradient(90deg,
-            transparent, transparent 1px,
-            rgba(222, 184, 135, 0.2) 1px, rgba(222, 184, 135, 0.2) 2px);
-    border-radius: 1px;
-  }
-}
-
-// 杆子连接点
-.rod-joint {
-  position: absolute;
-  width: 10px;
-  height: 2px;
-  left: -1px;
-  background: linear-gradient(145deg, #8B4513, #654321, #4A4A4A);
-  border-radius: 1px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.5),
-      inset 0 1px 0 rgba(139, 69, 19, 0.3);
-
-  &.rod-joint-1 {
-    top: 9px;
-  }
-
-  &.rod-joint-2 {
-    top: 20px;
-  }
-}
-
-// 拉杆手柄
-.lever-handle-grip {
-  position: absolute;
-  width: 18px;
-  height: 12px;
-  left: 50%;
-  top: 2px;
-  transform-origin: center bottom;
-  transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
-  transform: translateX(-50%) rotate(-40deg) translateY(-26px) translateX(-14px);
-}
-
-.grip-top {
-  width: 100%;
-  height: 10px;
-  background: linear-gradient(145deg,
-      lighten($wood-light, 15%), $wood-light, $wood-base);
-  border: 1px solid $wood-dark;
-  border-radius: 4px;
-  box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.4),
-      inset 0 2px 0 rgba(255, 255, 255, 0.6),
-      inset 0 -1px 0 rgba(139, 69, 19, 0.8);
-  position: relative;
-  overflow: hidden;
+      2px 2px 6px rgba(0, 0, 0, 0.5),
+      inset 1px 0 0 rgba(222, 184, 135, 0.3),
+      inset -1px 0 0 rgba(101, 67, 33, 0.6);
 
   &::before {
     content: '';
     position: absolute;
-    inset: 1px;
-    background:
-        repeating-linear-gradient(90deg,
-            transparent, transparent 2px,
-            rgba(139, 69, 19, 0.3) 2px, rgba(139, 69, 19, 0.3) 3px);
-    border-radius: 3px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(222, 184, 135, 0.8) 0%,
+        rgba(205, 133, 63, 0.6) 50%,
+        rgba(139, 69, 19, 0.4) 100%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 1px;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(139, 69, 19, 0.8) 0%,
+        rgba(101, 67, 33, 0.6) 50%,
+        rgba(74, 74, 74, 0.4) 100%);
   }
 }
 
-.grip-shadow {
+// 杆子与底座连接部分
+.rod-base-connection {
   position: absolute;
-  top: 8px;
-  right: -4px;
-  width: 4px;
-  height: 8px;
-  background: linear-gradient(180deg,
-      darken($wood-base, 10%),
-      darken($wood-dark, 10%),
-      #2F2F2F);
-  border-radius: 0 3px 3px 0;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(145deg,
+      $wood-base 0%,
+      $wood-dark 50%,
+      darken($wood-dark, 20%) 100%);
+  border-radius: 4px 4px 2px 2px;
+  border: 1px solid darken($wood-dark, 10%);
   box-shadow:
-      inset 1px 0 2px rgba(160, 82, 45, 0.2),
-      3px 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.grip-highlight {
-  position: absolute;
-  top: 1px;
-  left: 2px;
-  right: 2px;
-  height: 3px;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.6) 30%,
-      rgba(255, 255, 255, 0.9) 50%,
-      rgba(255, 255, 255, 0.6) 70%,
-      transparent 100%);
-  border-radius: 2px;
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(222, 184, 135, 0.3);
 }
 
 // ON状态
@@ -516,39 +453,7 @@ $powered-green: #00FF7F;
   }
 
   .lever-rod {
-    transform: translateX(-50%) rotate(40deg);
-    filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.4))
-    brightness(1.1) saturate(1.2);
-  }
-
-  .lever-handle-grip {
-    transform: translateX(-50%) rotate(40deg) translateY(-26px) translateX(14px);
-  }
-
-  .lever-stone-base {
-    background: linear-gradient(145deg,
-        lighten($powered-green, 20%) 0%,
-        $emerald-green 40%,
-        darken($emerald-green, 20%) 100%);
-    border-color: darken($emerald-green, 30%);
-    box-shadow:
-        0 8px 20px rgba(80, 200, 120, 0.6),
-        inset 0 4px 8px rgba(255, 255, 255, 0.4),
-        inset 0 -4px 8px rgba(50, 150, 100, 0.4),
-        0 0 32px rgba(80, 200, 120, 0.5);
-  }
-
-  .stone-top-face {
-    background: linear-gradient(145deg,
-        rgba(255,255,255,0.9) 0%,
-        lighten($powered-green, 25%) 30%,
-        $emerald-green 70%,
-        darken($emerald-green, 15%) 100%);
-    border-color: $emerald-green;
-    box-shadow:
-        0 3px 6px rgba(80, 200, 120, 0.4),
-        0 0 16px rgba(80, 200, 120, 0.5),
-        inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    transform: translateX(-50%) rotate(30deg);
   }
 }
 
@@ -577,28 +482,28 @@ $powered-green: #00FF7F;
   animation: circuitFlow 2s ease-in-out infinite;
 
   &.circuit-line-1 {
-    bottom: 8px;
-    left: 10px;
-    right: 10px;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
     height: 2px;
     border-radius: 1px;
     animation-delay: 0s;
   }
 
   &.circuit-line-2 {
-    bottom: 12px;
-    left: 5px;
+    bottom: 14px;
+    left: 8px;
     width: 2px;
-    height: 8px;
+    height: 10px;
     border-radius: 1px;
     animation-delay: 0.3s;
   }
 
   &.circuit-line-3 {
-    bottom: 12px;
-    right: 5px;
+    bottom: 14px;
+    right: 8px;
     width: 2px;
-    height: 8px;
+    height: 10px;
     border-radius: 1px;
     animation-delay: 0.6s;
   }
@@ -608,10 +513,6 @@ $powered-green: #00FF7F;
 .mc-lever-container--loading {
   .lever-rod {
     animation: leverOscillate 1.2s ease-in-out infinite;
-  }
-
-  .lever-handle-grip {
-    animation: handleOscillate 1.2s ease-in-out infinite;
   }
 
   .lever-stone-base {
@@ -624,7 +525,7 @@ $powered-green: #00FF7F;
   }
 }
 
-// 红石粒子效果（增强版）
+// 红石粒子效果
 .redstone-particles {
   position: absolute;
   top: -16px;
@@ -769,7 +670,7 @@ $powered-green: #00FF7F;
 
   .status-text {
     color: darken($emerald-green, 20%);
-    font-weight: 700;
+    font-weight: 500;
     text-shadow: 0 1px 3px rgba(80, 200, 120, 0.3);
   }
 }
@@ -823,26 +724,19 @@ $powered-green: #00FF7F;
 }
 
 .status-text {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
   transition: all 0.3s ease;
 }
 
 // 动画
 @keyframes leverOscillate {
-  0%, 100% { transform: translateX(-50%) rotate(-40deg); }
-  25% { transform: translateX(-50%) rotate(-45deg); }
-  50% { transform: translateX(-50%) rotate(40deg); }
-  75% { transform: translateX(-50%) rotate(45deg); }
-}
-
-@keyframes handleOscillate {
-  0%, 100% { transform: translateX(-50%) rotate(-40deg) translateY(-26px) translateX(-14px); }
-  25% { transform: translateX(-50%) rotate(-45deg) translateY(-26px) translateX(-15px); }
-  50% { transform: translateX(-50%) rotate(40deg) translateY(-26px) translateX(14px); }
-  75% { transform: translateX(-50%) rotate(45deg) translateY(-26px) translateX(15px); }
+  0%, 100% { transform: translateX(-50%) rotate(-30deg); }
+  25% { transform: translateX(-50%) rotate(-35deg); }
+  50% { transform: translateX(-50%) rotate(30deg); }
+  75% { transform: translateX(-50%) rotate(35deg); }
 }
 
 @keyframes baseGlow {
@@ -929,19 +823,19 @@ $powered-green: #00FF7F;
 // 响应式调整
 @media (max-width: 768px) {
   .mc-lever-container {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
   }
 
   .lever-stone-base {
-    width: 36px;
-    height: 18px;
+    width: 46px;
+    height: 20px;
   }
 
   .lever-rod {
-    width: 7px;
-    height: 28px;
-    bottom: 16px;
+    width: 5px;
+    height: 38px;
+    bottom: 18px;
   }
 
   .status-pill {
