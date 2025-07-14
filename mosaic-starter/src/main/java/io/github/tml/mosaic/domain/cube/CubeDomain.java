@@ -17,6 +17,7 @@ import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
 import io.github.tml.mosaic.entity.vo.cube.CubeInfoVO;
+import io.github.tml.mosaic.entity.vo.cube.CubeStatus;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
 import io.github.tml.mosaic.install.support.ReaderType;
@@ -44,7 +45,7 @@ public class CubeDomain {
     private final InfoContextInstaller installer;
 
     // 存储Angel Cube的运行状态，默认为INACTIVE
-    private final Map<String, CubeInfoVO.CubeStatus> angelCubeStatusMap = new ConcurrentHashMap<>();
+    private final Map<String, CubeStatus> angelCubeStatusMap = new ConcurrentHashMap<>();
 
     /**
      * 获取所有Cube列表
@@ -55,6 +56,9 @@ public class CubeDomain {
         List<CubeDefinition> cubeDefinitions = cubeContext.getAllCubeDefinitions();
         List<CubeDTO> result = cubeDefinitions.stream()
                 .map(CubeConvert::convert2DTO)
+                .peek(cubeDTO -> {
+                    cubeDTO.setStatus(angelCubeStatusMap.getOrDefault(cubeDTO.getId(), CubeStatus.INACTIVE));
+                })
                 .sorted(Comparator.comparing(CubeDTO::getId))
                 .collect(Collectors.toList());
         
@@ -82,48 +86,6 @@ public class CubeDomain {
     }
 
     /**
-     * 更新Angel Cube状态
-     * @param cubeId Cube标识
-     * @param action 执行动作
-     * @return 操作结果
-     */
-    public Map<String, Object> updateAngelCubeStatus(String cubeId, AngelCubeStatusUpdateReq.AngelCubeAction action) {
-        log.debug("Domain: Updating Angel Cube status for ID: {} with action: {}", cubeId, action);
-
-        try {
-            // 1. 验证Cube是否存在且为function类型
-            validateAngelCube(cubeId);
-
-            // 2. 获取Cube实例
-            GUID guid = new GUUID(cubeId);
-            io.github.tml.mosaic.cube.Cube cube = cubeContext.getCube(guid);
-
-            // 3. 转换为AngelCube并执行相应操作
-            AngelCube angelCube = convertToAngelCube(cube);
-            CubeInfoVO.CubeStatus newStatus = executeAngelCubeAction(angelCube, action);
-
-            // 4. 更新状态缓存
-            angelCubeStatusMap.put(cubeId, newStatus);
-
-            Map<String, Object> result = Map.of(
-                    "cubeId", cubeId,
-                    "action", action.name(),
-                    "actionDescription", action.getDescription(),
-                    "status", newStatus.name(),
-                    "statusDescription", newStatus.getDescription(),
-                    "timestamp", java.time.LocalDateTime.now()
-            );
-
-            log.info("Domain: Successfully updated Angel Cube status for ID: {} to {}", cubeId, newStatus);
-            return result;
-
-        } catch (Exception e) {
-            log.error("Domain: Failed to update Angel Cube status for ID: {}", cubeId, e);
-            throw new RuntimeException("更新Angel Cube状态失败: " + e.getMessage(), e);
-        }
-    }
-
-    /**
      * 验证是否为有效的Angel Cube
      */
     private void validateAngelCube(String cubeId) {
@@ -141,44 +103,6 @@ public class CubeDomain {
         }
 
         log.debug("Angel Cube validation passed for ID: {}", cubeId);
-    }
-
-    /**
-     * 将Cube转换为AngelCube
-     */
-    private AngelCube convertToAngelCube(Cube cube) {
-        Object mosaicCube = cube.getMosaicCube();
-
-        if (!(mosaicCube instanceof AngelCube)) {
-            throw new IllegalArgumentException("该Cube不是AngelCube类型，无法执行启动/停止操作");
-        }
-
-        return (AngelCube) mosaicCube;
-    }
-
-    /**
-     * 执行Angel Cube动作
-     */
-    private CubeInfoVO.CubeStatus executeAngelCubeAction(AngelCube angelCube, AngelCubeStatusUpdateReq.AngelCubeAction action) {
-        try {
-            switch (action) {
-                case START:
-                    angelCube.start();
-                    log.info("Angel Cube started successfully");
-                    return CubeInfoVO.CubeStatus.ACTIVE;
-
-                case STOP:
-                    angelCube.stop();
-                    log.info("Angel Cube stopped successfully");
-                    return CubeInfoVO.CubeStatus.INACTIVE;
-
-                default:
-                    throw new IllegalArgumentException("不支持的操作: " + action);
-            }
-        } catch (Exception e) {
-            log.error("Angel Cube action execution failed: {}", action, e);
-            throw new RuntimeException("Angel Cube操作执行失败: " + e.getMessage(), e);
-        }
     }
 
     /**
@@ -300,26 +224,6 @@ public class CubeDomain {
         boolean exists = cubeContext.containsCubeDefinition(cubeId);
         log.debug("Domain: Cube {} existence check result: {}", cubeId, exists);
         return exists;
-    }
-
-    /**
-     * 获取Cube的扩展包数量
-     */
-    public int getExtensionPackageCount(String cubeId) {
-        return getCubeById(cubeId)
-                .map(cube -> cube.getExtensionPackages().size())
-                .orElse(0);
-    }
-
-    /**
-     * 获取Cube的扩展点总数
-     */
-    public int getTotalExtensionPointCount(String cubeId) {
-        return getCubeById(cubeId)
-                .map(cube -> cube.getExtensionPackages().stream()
-                        .mapToInt(pkg -> pkg.getExtensionPoints().size())
-                        .sum())
-                .orElse(0);
     }
 
     /**

@@ -47,7 +47,7 @@ const worldNums = computed(()=>{
 const stats = ref([
   {
     title: 'dashboard.slotNum',
-    value: slotNums.value,
+    value: slotNums,
     icon: 'mdi-shovel',
     highlight: true,
     progress: 31.2,
@@ -55,7 +55,7 @@ const stats = ref([
   },
   {
     title: 'dashboard.worldNum',
-    value: worldNums.value,
+    value: worldNums,
     icon: 'mdi-earth-box',
     highlight: false,
     progress: 60,
@@ -63,7 +63,7 @@ const stats = ref([
   },
   {
     title: 'dashboard.pluginNum',
-    value: cubeNums.value,
+    value: cubeNums,
     icon: 'mdi-puzzle',
     highlight: false,
     progress: 100,

@@ -8,6 +8,7 @@ import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 描述: Cube上下文接口
@@ -25,4 +26,31 @@ public interface CubeContext extends CubeFactory {
     Map<String, Object> getCubeConfiguration(String cubeId);
 
     Map<String, Object> updateConfigurations(String cubeId, Map<String, Object> config);
+
+    Map<String, Map<String, Object>> getAllCubeConfigurations(String cubeId);
+
+    Map<String, Object> getCubeConfiguration(String cubeId, String configId);
+
+    Map<String, Object> updateCubeConfiguration(String cubeId, String configId, Map<String, Object> config);
+
+    String addCubeConfiguration(String cubeId, Map<String, Object> config);
+
+    boolean removeCubeConfiguration(String cubeId, String configId);
+
+    Set<String> getCubeConfigurationIds(String cubeId);
+
+    /**
+     * 克隆指定配置，如果不指定源配置ID则克隆默认配置
+     * @param cubeId 目标cube ID
+     * @param sourceConfigId 源配置ID，如果为null或空则克隆默认配置
+     * @return 新生成的配置ID
+     */
+    String cloneCubeConfiguration(String cubeId, String sourceConfigId);
+
+    /**
+     * 克隆默认配置
+     * @param cubeId 目标cube ID
+     * @return 新生成的配置ID
+     */
+    String cloneCubeConfiguration(String cubeId);
 }

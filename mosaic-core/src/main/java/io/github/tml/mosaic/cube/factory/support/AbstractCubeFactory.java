@@ -41,6 +41,8 @@ public abstract class AbstractCubeFactory extends DefaultSingletonCubeRegistry i
         return getCube(cubeId, null);
     }
 
+
+
     // 获取Cube定义，由子类实现
     protected abstract CubeDefinition getCubeDefinition(GUID cubeId) throws CubeException;
 

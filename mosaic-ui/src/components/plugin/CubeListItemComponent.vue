@@ -1,10 +1,19 @@
 <script lang="ts" setup>
 import { defineProps, ref, onMounted, computed } from "vue";
-import { type Cube } from "../../api/plugin/pluginType";
+import { type Cube,AngelCubeStatusUpdateReq } from "../../api/plugin/pluginType";
+import { updateAngelCubeStatus } from '../../api/plugin/pluginApi'
+import totemIconUrl from '../../assets/icons/minecraft-totem3.png?url'
+import grassIconUrl from '../../assets/icons/minecraft-grass.svg?url'
+
+import MCLeverSwitch from './MCLeverSwitch.vue' // 引入拉杆组件
+
 
 const dialog = ref(false)
 const isHovered = ref(false)
 const configDialog = ref(false)
+
+// 添加状态相关的响应式数据
+const isUpdatingStatus = ref(false)
 
 const props = defineProps({
   cube: {
@@ -12,6 +21,28 @@ const props = defineProps({
     default: () => ({} as Cube)
   }
 })
+
+// 添加状态切换方法
+const handleStatusToggle = async (cube: Cube) => {
+  if (cube.model !== 'angle') return // 只有 Angel Cube 可以切换状态
+
+  isUpdatingStatus.value = true
+  try {
+    const action = cube.status === 'ACTIVE' ? 'STOP' : 'START'
+    await updateAngelCubeStatus(cube.id, action)
+
+    // 更新本地状态
+    cube.status = cube.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+
+    // 可以添加成功提示
+    // ElMessage.success(`${action === 'START' ? '启动' : '停止'}成功`)
+  } catch (error) {
+    console.error('状态更新失败:', error)
+    // ElMessage.error('状态更新失败')
+  } finally {
+    isUpdatingStatus.value = false
+  }
+}
 
 // 计算属性：格式化内存使用量
 const formattedMemory = computed(() => {
@@ -34,8 +65,8 @@ const modelClass = computed(() => {
 // 获取模式图标
 const getModelIcon = (model: string) => {
   const iconMap = {
-    angel: 'mdi-diamond-stone',
-    default: 'mdi-cube-outline',
+    angle: 'minecraft-totem', // 使用自定义标识
+    default: 'minecraft-grass', // 使用自定义标识
   }
   return iconMap[model as keyof typeof iconMap] || 'mdi-package-variant'
 }
@@ -64,22 +95,45 @@ onMounted(() => {
         @mouseleave="isHovered = false"
         elevation="0"
     >
+      <!-- 简化呼吸光环 -->
+      <div
+          v-if="statusClass === 'active'"
+          class="breathing-aura"
+      ></div>
+
       <!-- 卡片状态指示条 -->
       <div class="status-indicator" :class="`status-indicator--${statusClass}`"></div>
 
       <!-- 卡片头部 -->
       <template v-slot:title>
+        <!-- 保持原有头部内容 -->
         <div class="cube-header">
           <div class="cube-icon-wrapper">
+            <img
+                v-if="props.cube.model === 'angle'"
+                :src="totemIconUrl"
+                alt="Minecraft Totem"
+                class="minecraft-icon minecraft-totem"
+                width="70"
+                height="64"
+            />
+            <img
+                v-else-if="props.cube.model === 'default'"
+                :src="grassIconUrl"
+                alt="Minecraft Grass"
+                class="minecraft-icon minecraft-grass"
+                width="70"
+                height="64"
+            />
             <v-icon
+                v-else
                 :icon="getModelIcon(props.cube.model)"
-                :class="`model-icon--${modelClass}`"
                 size="36"
-            ></v-icon>
+            />
             <div class="status-badge" :class="`status-badge--${statusClass}`">
               <v-icon
                   :icon="getStatusIcon(props.cube.status)"
-                  size="14"
+                  size="24"
               ></v-icon>
             </div>
           </div>
@@ -125,10 +179,10 @@ onMounted(() => {
 
       <!-- 卡片内容 -->
       <template v-slot:text>
+        <!-- 保持原有内容 -->
         <div class="cube-content">
           <p class="cube-description">{{ props.cube.description }}</p>
 
-          <!-- 统计信息网格 -->
           <div class="stats-grid">
             <div class="stat-item">
               <v-icon icon="mdi-package-variant" class="stat-icon"></v-icon>
@@ -168,7 +222,6 @@ onMounted(() => {
       <!-- 卡片操作区域 -->
       <v-card-actions class="cube-actions">
         <div class="action-buttons">
-
           <v-tooltip text="查看详情" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
               <v-btn
@@ -180,18 +233,6 @@ onMounted(() => {
               ></v-btn>
             </template>
           </v-tooltip>
-
-<!--          <v-tooltip text="移除插件" location="top">-->
-<!--            <template v-slot:activator="{ props: tooltipProps }">-->
-<!--              <v-btn-->
-<!--                  v-bind="tooltipProps"-->
-<!--                  icon="mdi-delete-outline"-->
-<!--                  class="remove-btn icon-btn"-->
-<!--                  size="large"-->
-<!--                  variant="outlined"-->
-<!--              ></v-btn>-->
-<!--            </template>-->
-<!--          </v-tooltip>-->
 
           <v-tooltip text="插件配置" location="top">
             <template v-slot:activator="{ props: tooltipProps }">
@@ -206,7 +247,15 @@ onMounted(() => {
           </v-tooltip>
         </div>
 
-        <v-spacer></v-spacer>
+        <!-- 使用拉杆组件 -->
+        <div class="center-lever-area">
+          <MCLeverSwitch
+              v-if="props.cube.model === 'angle'"
+              :status="props.cube.status"
+              :is-loading="isUpdatingStatus"
+              @toggle="handleStatusToggle(props.cube)"
+          />
+        </div>
 
         <div class="cube-meta-info">
           <div class="meta-item">
@@ -218,7 +267,6 @@ onMounted(() => {
             <span class="meta-text">{{ new Date(props.cube.lastUpdatedTime).toLocaleDateString('zh-CN') }}</span>
           </div>
         </div>
-
       </v-card-actions>
     </v-card>
 
@@ -227,7 +275,6 @@ onMounted(() => {
 
     <!-- 配置对话框组件 -->
     <CubeConfigComponent v-model="configDialog" :pluginData="props.cube"></CubeConfigComponent>
-
   </div>
 </template>
 
@@ -238,9 +285,9 @@ $desert-dune:   #E6D3A3;        // 沙丘色
 $oasis-green:   #4A9B8E;        // 绿洲绿色
 $oasis-blue:    #6BB6B0;         // 绿洲蓝绿色
 $palm-green:    #2D5A27;         // 棕榈绿
-$sunset-orange: #D4A574;      // 日落橙
-$clear-white:   #FEFEFE;        // 清爽白
-$shadow-brown:  #8B7355;       // 阴影棕
+$sunset-orange: #D4A574;         // 日落橙
+$clear-white:   #FEFEFE;         // 清爽白
+$shadow-brown:  #8B7355;         // 阴影棕
 
 // 圆角系统
 $radius-large: 24px;          // 主卡片圆角
@@ -255,53 +302,87 @@ $radius-tiny: 8px;            // 微小圆角
 
 .desert-cube-card {
   position: relative;
-  background: linear-gradient(135deg, $clear-white 0%, $desert-sand 100%) !important;
-  border: 3px solid transparent !important;
-  border-radius: $radius-large !important;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-      0 8px 32px rgba(139, 115, 85, 0.12),
-      0 2px 8px rgba(139, 115, 85, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  // 增强立体背景层次
+  background:
+      linear-gradient(135deg,
+          rgba(244, 228, 188, 0.25) 0%,
+          rgba(230, 211, 163, 0.20) 20%,
+          rgba(244, 228, 188, 0.15) 40%,
+          rgba(212, 165, 116, 0.18) 60%,
+          rgba(244, 228, 188, 0.12) 80%,
+          rgba(230, 211, 163, 0.15) 100%) !important;
 
-  // 渐变边框效果
+  // 增强立体效果
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 228, 188, 0.45) !important;
+  border-radius: $radius-large !important;
+  overflow: visible;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 多层立体阴影系统
+  box-shadow:
+      0 20px 60px rgba(139, 115, 85, 0.12),
+      0 12px 35px rgba(139, 115, 85, 0.08),
+      0 6px 18px rgba(139, 115, 85, 0.06),
+      0 2px 8px rgba(139, 115, 85, 0.04),
+      inset 0 2px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -2px 0 rgba(139, 115, 85, 0.08),
+      inset 0 0 1px rgba(255, 255, 255, 0.3) !important;
+
+  // 多层边框光晕效果
   &::before {
     content: '';
     position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(135deg, $desert-dune, $oasis-green, $desert-dune);
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg,
+        rgba(244, 228, 188, 0.6),
+        rgba(74, 155, 142, 0.4),
+        rgba(244, 228, 188, 0.5),
+        rgba(74, 155, 142, 0.3),
+        rgba(244, 228, 188, 0.6));
     border-radius: $radius-large;
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;
+    filter: blur(1px);
   }
 
-  // 顶部状态指示条
+  // 添加第二层外光晕
   &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, $oasis-green, $oasis-blue, $palm-green);
-    border-radius: $radius-large $radius-large 0 0;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    background: radial-gradient(ellipse at center,
+        rgba(74, 155, 142, 0.15) 0%,
+        rgba(244, 228, 188, 0.1) 40%,
+        transparent 70%);
+    border-radius: $radius-large;
+    z-index: -2;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1;
+    transition: opacity 0.4s ease;
+    filter: blur(4px);
   }
 
   &:hover,
   &--hovered {
-    transform: translateY(-12px) scale(1.02);
+    transform: translateY(-12px) scale(1.015);
+
+    // 悬浮时的增强立体阴影
     box-shadow:
-        0 20px 60px rgba(139, 115, 85, 0.25),
-        0 8px 24px rgba(139, 115, 85, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        0 35px 80px rgba(139, 115, 85, 0.18),
+        0 20px 50px rgba(139, 115, 85, 0.12),
+        0 12px 30px rgba(139, 115, 85, 0.08),
+        0 6px 15px rgba(139, 115, 85, 0.06),
+        0 2px 8px rgba(139, 115, 85, 0.04),
+        inset 0 3px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -3px 0 rgba(139, 115, 85, 0.12),
+        inset 0 0 2px rgba(255, 255, 255, 0.4) !important;
 
     &::before {
       opacity: 1;
@@ -312,27 +393,68 @@ $radius-tiny: 8px;            // 微小圆角
     }
 
     .icon-btn {
-      transform: scale(1.15) rotate(5deg);
+      transform: scale(1.12) rotate(3deg);
     }
 
     .cube-id-wrapper {
       transform: scale(1.02);
-      box-shadow: 0 4px 16px rgba(139, 115, 85, 0.2);
+      box-shadow:
+          0 6px 20px rgba(139, 115, 85, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .stats-grid {
+      transform: translateY(-2px);
+      box-shadow:
+          0 8px 25px rgba(139, 115, 85, 0.15),
+          inset 0 2px 0 rgba(255, 255, 255, 0.9),
+          inset 0 -1px 0 rgba(139, 115, 85, 0.08);
     }
   }
 
-  // 状态变体
+  // ===== 优雅的 ACTIVE 状态呼吸效果 =====
   &--active {
-    &::before {
-      background: linear-gradient(135deg, $oasis-green, $oasis-blue, $oasis-green);
+    // ACTIVE状态的增强背景
+    background:
+        linear-gradient(145deg,
+            rgba(248, 252, 250, 0.28) 0%,
+            rgba(245, 251, 248, 0.22) 25%,
+            rgba(242, 250, 246, 0.18) 50%,
+            rgba(245, 251, 248, 0.20) 75%,
+            rgba(248, 252, 250, 0.25) 100%) !important;
+
+    // 温和的呼吸动画
+    animation: gentleBreathe 4.5s ease-in-out infinite;
+
+    &:hover,
+    &.desert-cube-card--hovered {
+      transform: translateY(-15px) scale(1.02);
+      animation: gentleBreatheFast 3.5s ease-in-out infinite;
+    }
+
+    // 更柔和的内容动画
+    .cube-header {
+      animation: subtleHeaderPulse 4.5s ease-in-out infinite;
+    }
+
+    .stats-grid {
+      animation: softStatsBreathing 4.5s ease-in-out infinite;
+    }
+
+    .status-badge--active {
+      animation: gentleBadgePulse 3s ease-in-out infinite;
     }
   }
 
+  // INACTIVE 状态保持简洁
   &--inactive {
-    opacity: 0.9;
+    opacity: 0.92;
 
     &::before {
-      background: linear-gradient(135deg, $sunset-orange, #E6B887, $sunset-orange);
+      background: linear-gradient(135deg,
+          rgba(212, 165, 116, 0.5),
+          rgba(230, 183, 135, 0.4),
+          rgba(212, 165, 116, 0.5));
     }
   }
 
@@ -356,23 +478,256 @@ $radius-tiny: 8px;            // 微小圆角
   }
 }
 
+// ===== 简化优雅的呼吸光环 =====
+.breathing-aura {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: $radius-large;
+  pointer-events: none;
+  z-index: -3;
+  background: radial-gradient(circle,
+      rgba(74, 155, 142, 0.12) 0%,
+      rgba(107, 182, 176, 0.08) 40%,
+      rgba(74, 155, 142, 0.05) 70%,
+      transparent 100%);
+  animation: simpleBreathingAura 4.5s ease-in-out infinite;
+  filter: blur(8px);
+}
+
+// ===== 增强的呼吸动画 =====
+@keyframes gentleBreathe {
+  0%, 100% {
+    box-shadow:
+        0 22px 65px rgba(74, 155, 142, 0.12),
+        0 12px 35px rgba(74, 155, 142, 0.08),
+        0 6px 18px rgba(74, 155, 142, 0.06),
+        0 2px 8px rgba(74, 155, 142, 0.04),
+        inset 0 2px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -2px 0 rgba(139, 115, 85, 0.08),
+        0 0 0 1px rgba(74, 155, 142, 0.15),
+        0 0 15px rgba(74, 155, 142, 0.06);
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+        0 32px 85px rgba(74, 155, 142, 0.18),
+        0 18px 50px rgba(74, 155, 142, 0.12),
+        0 10px 28px rgba(74, 155, 142, 0.08),
+        0 4px 15px rgba(74, 155, 142, 0.06),
+        inset 0 3px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -3px 0 rgba(139, 115, 85, 0.1),
+        0 0 0 2px rgba(74, 155, 142, 0.25),
+        0 0 25px rgba(74, 155, 142, 0.1),
+        0 0 40px rgba(74, 155, 142, 0.08);
+    filter: brightness(1.03) saturate(1.12);
+    transform: scale(1.01);
+  }
+}
+
+@keyframes gentleBreatheFast {
+  0%, 100% {
+    box-shadow:
+        0 30px 75px rgba(74, 155, 142, 0.15),
+        0 18px 45px rgba(74, 155, 142, 0.1),
+        0 8px 22px rgba(74, 155, 142, 0.07),
+        0 3px 12px rgba(74, 155, 142, 0.05),
+        inset 0 3px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -3px 0 rgba(139, 115, 85, 0.09),
+        0 0 0 2px rgba(74, 155, 142, 0.2),
+        0 0 20px rgba(74, 155, 142, 0.08);
+    filter: brightness(1.02) saturate(1.05);
+    transform: translateY(-15px) scale(1.02);
+  }
+  50% {
+    box-shadow:
+        0 45px 95px rgba(74, 155, 142, 0.22),
+        0 25px 60px rgba(74, 155, 142, 0.15),
+        0 12px 35px rgba(74, 155, 142, 0.1),
+        0 6px 20px rgba(74, 155, 142, 0.07),
+        inset 0 4px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -4px 0 rgba(139, 115, 85, 0.12),
+        0 0 0 3px rgba(74, 155, 142, 0.3),
+        0 0 30px rgba(74, 155, 142, 0.12),
+        0 0 50px rgba(74, 155, 142, 0.1);
+    filter: brightness(1.05) saturate(1.1);
+    transform: translateY(-15px) scale(1.06);
+  }
+}
+
+@keyframes simpleBreathingAura {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes subtleHeaderPulse {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.03) saturate(1.05);
+    transform: scale(1.005);
+  }
+}
+
+@keyframes softStatsBreathing {
+  0%, 100% {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(245, 252, 248, 0.85));
+    box-shadow:
+        0 6px 22px rgba(74, 155, 142, 0.1),
+        inset 0 2px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 rgba(139, 115, 85, 0.06);
+    transform: scale(1);
+  }
+  50% {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.95),
+        rgba(248, 254, 251, 0.9));
+    box-shadow:
+        0 8px 28px rgba(74, 155, 142, 0.15),
+        inset 0 3px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -2px 0 rgba(139, 115, 85, 0.08),
+        0 0 20px rgba(74, 155, 142, 0.06);
+    transform: scale(1.005);
+  }
+}
+
+@keyframes gentleBadgePulse {
+  0%, 100% {
+    box-shadow:
+        0 4px 15px rgba(74, 155, 142, 0.3),
+        0 0 20px rgba(74, 155, 142, 0.12);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+        0 6px 22px rgba(74, 155, 142, 0.4),
+        0 0 30px rgba(74, 155, 142, 0.18),
+        0 0 45px rgba(74, 155, 142, 0.1);
+    transform: scale(1.08);
+  }
+}
+
+// 状态指示器优化
 .status-indicator {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 5px;
   z-index: 2;
   border-radius: $radius-large $radius-large 0 0;
 
   &--active {
     background: linear-gradient(90deg, $oasis-green, $oasis-blue);
-    box-shadow: 0 0 12px rgba(74, 155, 142, 0.5);
+    height: 6px;
+    animation: gentleStatusIndicatorBreathe 4.5s ease-in-out infinite;
+    box-shadow:
+        0 2px 8px rgba(74, 155, 142, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+    // 更柔和的流动光效
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.7),
+          transparent);
+      animation: subtleFlowingLight 6s ease-in-out infinite;
+    }
   }
 
   &--inactive {
     background: linear-gradient(90deg, $sunset-orange, #E6B887);
-    box-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
+    box-shadow:
+        0 2px 8px rgba(212, 165, 116, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes gentleStatusIndicatorBreathe {
+  0%, 100% {
+    box-shadow:
+        0 2px 8px rgba(74, 155, 142, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    height: 6px;
+  }
+  50% {
+    box-shadow:
+        0 3px 12px rgba(74, 155, 142, 0.4),
+        0 0 18px rgba(74, 155, 142, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    height: 7px;
+  }
+}
+
+@keyframes subtleFlowingLight {
+  0%, 100% {
+    left: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+// 状态徽章优化
+.status-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid $clear-white;
+  box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+
+  &--active {
+    background: linear-gradient(135deg, $oasis-green, $oasis-blue);
+    color: white;
+    box-shadow:
+        0 5px 18px rgba(74, 155, 142, 0.3),
+        0 0 20px rgba(74, 155, 142, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  &--inactive {
+    background: linear-gradient(135deg, $sunset-orange, #E6B887);
+    color: white;
+    box-shadow:
+        0 5px 18px rgba(212, 165, 116, 0.3),
+        0 0 20px rgba(212, 165, 116, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -386,43 +741,26 @@ $radius-tiny: 8px;            // 微小圆角
 .cube-icon-wrapper {
   position: relative;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background:
+      linear-gradient(135deg,
+          rgba(255, 255, 255, 0.98) 0%,
+          rgba(255, 255, 255, 0.92) 100%);
   border-radius: $radius-medium;
-  padding: 1rem;
+  padding: 0.8rem;
   box-shadow:
-      0 4px 16px rgba(139, 115, 85, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 6px 20px rgba(139, 115, 85, 0.18),
+      0 2px 8px rgba(139, 115, 85, 0.1),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(139, 115, 85, 0.05);
   transition: all 0.4s ease;
 
   &:hover {
     box-shadow:
-        0 8px 24px rgba(139, 115, 85, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    transform: translateY(-4px) rotate(-2deg);
-  }
-}
-
-.status-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 4px solid $clear-white;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
-
-  &--active {
-    background: linear-gradient(135deg, $oasis-green, $oasis-blue);
-    color: white;
-  }
-
-  &--inactive {
-    background: linear-gradient(135deg, $sunset-orange, #E6B887);
-    color: white;
+        0 8px 25px rgba(139, 115, 85, 0.25),
+        0 4px 12px rgba(139, 115, 85, 0.15),
+        inset 0 3px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -2px 0 rgba(139, 115, 85, 0.08);
+    transform: translateY(-3px) rotate(-2deg) scale(1.02);
   }
 }
 
@@ -447,6 +785,7 @@ $radius-tiny: 8px;            // 微小圆角
   flex: 1;
   min-width: 0;
   letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .cube-badges {
@@ -458,6 +797,7 @@ $radius-tiny: 8px;            // 微小圆角
 .version-chip {
   font-weight: 600 !important;
   border-radius: $radius-small !important;
+  box-shadow: 0 2px 6px rgba(139, 115, 85, 0.15) !important;
 
   &--singleton {
     background: rgba(107, 182, 176, 0.25) !important;
@@ -478,6 +818,7 @@ $radius-tiny: 8px;            // 微小圆角
 .model-chip {
   font-weight: 500 !important;
   border-radius: $radius-small !important;
+  box-shadow: 0 2px 6px rgba(139, 115, 85, 0.12) !important;
 
   &--singleton {
     background: rgba(107, 182, 176, 0.18) !important;
@@ -503,13 +844,17 @@ $radius-tiny: 8px;            // 微小圆角
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(244, 228, 188, 0.8));
-  padding: 0.75rem 1rem;
+  background:
+      linear-gradient(135deg,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(244, 228, 188, 0.85) 100%);
+  padding: 0.8rem 1.1rem;
   border-radius: $radius-small;
-  border: 2px solid rgba(230, 211, 163, 0.6);
+  border: 2px solid rgba(230, 211, 163, 0.7);
   box-shadow:
-      0 2px 8px rgba(139, 115, 85, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 4px 12px rgba(139, 115, 85, 0.15),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(139, 115, 85, 0.05);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -521,16 +866,21 @@ $radius-tiny: 8px;            // 微小圆角
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
     transition: left 0.6s ease;
   }
 
   &:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(244, 228, 188, 0.9));
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(244, 228, 188, 0.95) 100%);
     border-color: $oasis-green;
     box-shadow:
-        0 4px 16px rgba(139, 115, 85, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        0 6px 18px rgba(139, 115, 85, 0.2),
+        inset 0 3px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -2px 0 rgba(139, 115, 85, 0.08);
+    transform: scale(1.02);
 
     &::before {
       left: 100%;
@@ -595,13 +945,18 @@ $radius-tiny: 8px;            // 微小圆角
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(244, 228, 188, 0.6));
-  padding: 1.5rem;
+  background:
+      linear-gradient(135deg,
+          rgba(255, 255, 255, 0.88) 0%,
+          rgba(244, 228, 188, 0.7) 100%);
+  padding: 1.8rem;
   border-radius: $radius-medium;
-  border: 2px solid rgba(230, 211, 163, 0.5);
+  border: 2px solid rgba(230, 211, 163, 0.6);
   box-shadow:
-      0 3px 12px rgba(139, 115, 85, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 6px 18px rgba(139, 115, 85, 0.12),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(139, 115, 85, 0.05);
+  transition: all 0.3s ease;
 }
 
 .stat-item {
@@ -615,20 +970,25 @@ $radius-tiny: 8px;            // 微小圆角
     transform: translateY(-3px);
 
     .stat-icon {
-      transform: scale(1.15) rotate(5deg);
-      box-shadow: 0 6px 16px rgba(74, 155, 142, 0.3);
+      transform: scale(1.12) rotate(5deg);
+      box-shadow: 0 6px 18px rgba(74, 155, 142, 0.25);
     }
   }
 }
 
 .stat-icon {
   color: $oasis-green !important;
-  background: linear-gradient(135deg, rgba(74, 155, 142, 0.15), rgba(74, 155, 142, 0.08));
-  padding: 0.75rem;
+  background:
+      linear-gradient(135deg,
+          rgba(74, 155, 142, 0.18) 0%,
+          rgba(74, 155, 142, 0.10) 100%);
+  padding: 0.9rem;
   border-radius: $radius-small;
   flex-shrink: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(74, 155, 142, 0.15);
+  box-shadow:
+      0 4px 12px rgba(74, 155, 142, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .stat-content {
@@ -642,6 +1002,7 @@ $radius-tiny: 8px;            // 微小圆角
   color: $shadow-brown;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .stat-label {
@@ -652,23 +1013,33 @@ $radius-tiny: 8px;            // 微小圆角
 }
 
 .cube-actions {
-  background: linear-gradient(135deg, rgba(244, 228, 188, 0.5), rgba(230, 211, 163, 0.3)) !important;
-  border-top: 2px solid rgba(230, 211, 163, 0.6) !important;
-  padding: 1.5rem 2rem !important;
+  background:
+      linear-gradient(135deg,
+          rgba(244, 228, 188, 0.35) 0%,
+          rgba(230, 211, 163, 0.25) 100%) !important;
+  border-top: 2px solid rgba(230, 211, 163, 0.5) !important;
+  padding: 2.8rem 2.2rem !important;
   border-radius: 0 0 $radius-large $radius-large;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 .action-buttons {
   display: flex;
   gap: 1.25rem;
+  flex-shrink: 0;
 }
 
 .icon-btn {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   border-radius: $radius-medium !important;
 
   &:hover {
-    transform: translateY(-4px) scale(1.1);
+    transform: translateY(-4px) scale(1.12);
   }
 
   &:active {
@@ -679,34 +1050,27 @@ $radius-tiny: 8px;            // 微小圆角
 .details-btn {
   background: linear-gradient(135deg, $oasis-green, $oasis-blue) !important;
   color: white !important;
-  box-shadow: 0 6px 20px rgba(74, 155, 142, 0.4) !important;
+  box-shadow:
+      0 6px 20px rgba(74, 155, 142, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 
   &:hover {
-    box-shadow: 0 10px 30px rgba(74, 155, 142, 0.5) !important;
-  }
-}
-
-.remove-btn {
-  border-color: $sunset-orange !important;
-  color: $sunset-orange !important;
-  background: rgba(212, 165, 116, 0.08) !important;
-
-  &:hover {
-    background: rgba(212, 165, 116, 0.2) !important;
-    border-color: darken($sunset-orange, 15%) !important;
-    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.35) !important;
+    box-shadow:
+        0 8px 25px rgba(74, 155, 142, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
   }
 }
 
 .config-btn {
-  border-color: rgba(139, 115, 85, 0.5) !important;
+  border-color: rgba(139, 115, 85, 0.6) !important;
   color: $shadow-brown !important;
-  background: rgba(139, 115, 85, 0.08) !important;
+  background: rgba(139, 115, 85, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15) !important;
 
   &:hover {
-    background: rgba(139, 115, 85, 0.15) !important;
-    border-color: rgba(139, 115, 85, 0.7) !important;
-    box-shadow: 0 8px 24px rgba(139, 115, 85, 0.25) !important;
+    background: rgba(139, 115, 85, 0.18) !important;
+    border-color: rgba(139, 115, 85, 0.8) !important;
+    box-shadow: 0 8px 22px rgba(139, 115, 85, 0.25) !important;
   }
 }
 
@@ -715,6 +1079,8 @@ $radius-tiny: 8px;            // 微小圆角
   flex-direction: column;
   gap: 0.5rem;
   text-align: right;
+  flex-shrink: 0;
+  min-width: 120px;
 }
 
 .meta-item {
@@ -750,9 +1116,16 @@ $radius-tiny: 8px;            // 微小圆角
   .desert-cube-card {
     border-radius: $radius-medium !important;
 
-    &::before, &::after {
+    &::before {
       border-radius: $radius-medium;
     }
+  }
+
+  .breathing-aura {
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
   }
 
   .cube-name-row {
@@ -768,7 +1141,7 @@ $radius-tiny: 8px;            // 微小圆角
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
-    padding: 1.25rem;
+    padding: 1.5rem;
     border-radius: $radius-small;
   }
 
@@ -776,7 +1149,7 @@ $radius-tiny: 8px;            // 微小圆角
     flex-direction: column;
     gap: 1.5rem;
     align-items: stretch;
-    padding: 1.25rem 1.5rem !important;
+    padding: 1.5rem 1.8rem !important;
     border-radius: 0 0 $radius-medium $radius-medium;
   }
 
@@ -798,9 +1171,16 @@ $radius-tiny: 8px;            // 微小圆角
   .desert-cube-card {
     border-radius: $radius-small !important;
 
-    &::before, &::after {
+    &::before {
       border-radius: $radius-small;
     }
+  }
+
+  .breathing-aura {
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
   }
 
   .stats-grid {
@@ -819,7 +1199,7 @@ $radius-tiny: 8px;            // 微小圆角
   }
 
   .cube-icon-wrapper {
-    padding: 0.875rem;
+    padding: 1rem;
     border-radius: $radius-small;
   }
 

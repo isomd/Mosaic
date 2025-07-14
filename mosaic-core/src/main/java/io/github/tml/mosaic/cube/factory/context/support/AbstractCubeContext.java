@@ -38,8 +38,27 @@ public abstract class AbstractCubeContext implements CubeContext {
 
     @Override
     public Cube getCube(GUID cubeId, Object... args) throws CubeException {
+        if (cubeId == null) {
+            throw new CubeException("CubeId cannot be null");
+        }
+
+        // 简单判断：如果第一个参数是String，就当作configId处理
+        if (args != null && args.length > 0 && args[0] instanceof String) {
+            String configId = (String) args[0];
+            Map<String, Object> configMap = getCubeConfiguration(cubeId.toString(), configId);
+
+            // 构建新的参数数组，将配置Map放在第一位，其他参数后移
+            Object[] newArgs = new Object[args.length];
+            newArgs[0] = configMap;
+            if (args.length > 1) {
+                System.arraycopy(args, 1, newArgs, 1, args.length - 1);
+            }
+            return getBeanFactory().getCube(cubeId, newArgs);
+        }
+
         return getBeanFactory().getCube(cubeId, args);
     }
+
 
     public void removeSingletonCube(GUID cubeId) {
         getBeanFactory().removeSingleton(cubeId);

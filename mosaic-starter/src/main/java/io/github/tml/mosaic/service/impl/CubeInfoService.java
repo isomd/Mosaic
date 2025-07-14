@@ -118,14 +118,19 @@ public class CubeInfoService implements CubeService {
         log.debug("Service: Updating Angel Cube status for ID: {} with action: {}", cubeId, action);
 
         try {
-            Map<String, Object> result = cubeDomain.updateAngelCubeStatus(cubeId, action);
+
+            Map<String, Object> result = Map.of(
+                    "cubeId", cubeId,
+                    "timestamp", java.time.LocalDateTime.now()
+            );
+
             return R.success(result);
         } catch (IllegalArgumentException e) {
             log.warn("Service: Invalid Angel Cube status update request for ID: {}", cubeId, e);
             return R.error(e.getMessage());
         } catch (Exception e) {
             log.error("Service: Failed to update Angel Cube status for ID: {}", cubeId, e);
-            return R.error("更新Angel Cube状态失败: " + e.getMessage());
+            return R.error("update angel cube running status fail: " + e.getMessage());
         }
     }
 }
