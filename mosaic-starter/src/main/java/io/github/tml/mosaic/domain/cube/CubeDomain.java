@@ -1,12 +1,11 @@
 package io.github.tml.mosaic.domain.cube;
 
+import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.convert.CubeConvert;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.converter.InfoContextConverter;
 import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
-import io.github.tml.mosaic.cube.Cube;
-import io.github.tml.mosaic.cube.constant.CubeModelType;
 import io.github.tml.mosaic.cube.external.AngelCube;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
@@ -16,7 +15,6 @@ import io.github.tml.mosaic.entity.req.AngelCubeStatusUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
-import io.github.tml.mosaic.entity.vo.cube.CubeInfoVO;
 import io.github.tml.mosaic.entity.vo.cube.CubeStatus;
 import io.github.tml.mosaic.install.domian.info.CubeInfo;
 import io.github.tml.mosaic.install.installer.core.InfoContextInstaller;
@@ -43,6 +41,8 @@ import java.util.stream.Collectors;
 public class CubeDomain {
     private final CubeContext cubeContext;
     private final InfoContextInstaller installer;
+
+    private CubeActuatorProxy cubeActuatorProxy;
 
     // 存储Angel Cube的运行状态，默认为INACTIVE
     private final Map<String, CubeStatus> angelCubeStatusMap = new ConcurrentHashMap<>();
@@ -86,23 +86,28 @@ public class CubeDomain {
     }
 
     /**
-     * 验证是否为有效的Angel Cube
+     * 执行Angel Cube动作
      */
-    private void validateAngelCube(String cubeId) {
-        // 检查Cube是否存在
-        Optional<CubeDTO> cubeOpt = getCubeById(cubeId);
-        if (cubeOpt.isEmpty()) {
-            throw new IllegalArgumentException("Cube不存在，ID: " + cubeId);
+    private CubeStatus executeAngelCubeAction(AngelCube angelCube, AngelCubeStatusUpdateReq.AngelCubeAction action) {
+        try {
+            switch (action) {
+                case START:
+                    angelCube.start();
+                    log.info("Angel Cube started successfully");
+                    return CubeStatus.ACTIVE;
+
+                case STOP:
+                    angelCube.stop();
+                    log.info("Angel Cube stopped successfully");
+                    return CubeStatus.INACTIVE;
+
+                default:
+                    throw new IllegalArgumentException("不支持的操作: " + action);
+            }
+        } catch (Exception e) {
+            log.error("Angel Cube action execution failed: {}", action, e);
+            throw new RuntimeException("Angel Cube操作执行失败: " + e.getMessage(), e);
         }
-
-        CubeDTO cube = cubeOpt.get();
-
-        // 检查是否为angle类型
-        if (!CubeModelType.ANGLE_TYPE.equals(cube.getModel())) {
-            throw new IllegalArgumentException("只有angle类型的Cube才支持状态管理，当前类型: " + cube.getModel());
-        }
-
-        log.debug("Angel Cube validation passed for ID: {}", cubeId);
     }
 
     /**
