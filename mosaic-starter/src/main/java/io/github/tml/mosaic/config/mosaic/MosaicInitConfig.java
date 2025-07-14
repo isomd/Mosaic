@@ -4,6 +4,8 @@ import io.github.tml.mosaic.GoldenShovel;
 import io.github.tml.mosaic.actuator.CubeActuatorProxy;
 import io.github.tml.mosaic.converter.CubeDefinitionConverter;
 import io.github.tml.mosaic.converter.InfoContextConverter;
+import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.cube.Cube;
 import io.github.tml.mosaic.cube.factory.ClassPathCubeContext;
 import io.github.tml.mosaic.cube.factory.context.CubeContext;
 import io.github.tml.mosaic.cube.factory.definition.CubeDefinition;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * mosaic框架初始化
@@ -62,6 +65,11 @@ public class MosaicInitConfig {
 
         // 刷新容器
         context.refresh();
+
+        Cube cube = context.getCube(new GUUID("ai.chat.cube"));
+        String s = context.cloneCubeConfiguration("ai.chat.cube");
+
+        Map<String, Object> cubeConfiguration = context.getCubeConfiguration("ai.chat.cube", s);
 
         return context;
     }

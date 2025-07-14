@@ -5,7 +5,6 @@ import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.MosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.event.CubeConfigUpdateEvent;
 import io.github.tml.mosaic.core.execption.CubeException;
-import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
 import io.github.tml.mosaic.core.tools.guid.GuuidAllocator;
 import io.github.tml.mosaic.core.tools.param.ConfigInfo;
@@ -352,6 +351,73 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
 
         Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
         return cubeConfigs != null ? new HashSet<>(cubeConfigs.keySet()) : Collections.emptySet();
+    }
+
+    /**
+     * 克隆指定配置，如果不指定源配置ID则克隆默认配置
+     */
+    @Override
+    public String cloneCubeConfiguration(String cubeId, String sourceConfigId) {
+        if (cubeId == null || cubeId.trim().isEmpty()) {
+            log.warn("Attempted to clone configuration with empty cube ID.");
+            throw new CubeException("Cube ID cannot be null or empty");
+        }
+
+        // 如果没有指定源配置ID，则使用默认配置
+        String actualSourceConfigId = (sourceConfigId == null || sourceConfigId.trim().isEmpty())
+                ? DEFAULT_CONFIG_ID : sourceConfigId;
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        if (cubeConfigs == null || cubeConfigs.isEmpty()) {
+            log.error("No configurations found for cube: {}", cubeId);
+            throw new CubeException("No configurations found for cube: " + cubeId);
+        }
+
+        JSONObject sourceConfig = cubeConfigs.get(actualSourceConfigId);
+        if (sourceConfig == null) {
+            log.error("Source configuration not found for cube: {}, configId: {}", cubeId, actualSourceConfigId);
+            throw new CubeException("Source configuration not found for cube: " + cubeId + ", configId: " + actualSourceConfigId);
+        }
+
+        // 深度克隆配置
+        JSONObject clonedConfig = deepCloneJsonObject(sourceConfig);
+
+        // 生成新的配置ID
+        String newConfigId = guidAllocator.nextGUID().toString();
+
+        // 存储克隆的配置
+        cubeConfigs.put(newConfigId, clonedConfig);
+
+        log.info("Cloned configuration for cube: {}, source configId: {}, new configId: {}",
+                cubeId, actualSourceConfigId, newConfigId);
+
+        return newConfigId;
+    }
+
+    /**
+     * 克隆默认配置
+     */
+    @Override
+    public String cloneCubeConfiguration(String cubeId) {
+        return cloneCubeConfiguration(cubeId, null);
+    }
+
+    /**
+     * 深度克隆JSONObject
+     */
+    private JSONObject deepCloneJsonObject(JSONObject source) {
+        if (source == null) {
+            return new JSONObject();
+        }
+
+        try {
+            // 使用JSON序列化和反序列化进行深度克隆
+            String jsonString = source.toJSONString();
+            return JSONObject.parseObject(jsonString);
+        } catch (Exception e) {
+            log.error("Failed to deep clone JSONObject: {}", source, e);
+            throw new CubeException("Failed to clone configuration", e);
+        }
     }
 
     /** Convert JSONObject to Map<String, Object>, supporting recursion */

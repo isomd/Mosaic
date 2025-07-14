@@ -38,4 +38,19 @@ public interface CubeContext extends CubeFactory {
     boolean removeCubeConfiguration(String cubeId, String configId);
 
     Set<String> getCubeConfigurationIds(String cubeId);
+
+    /**
+     * 克隆指定配置，如果不指定源配置ID则克隆默认配置
+     * @param cubeId 目标cube ID
+     * @param sourceConfigId 源配置ID，如果为null或空则克隆默认配置
+     * @return 新生成的配置ID
+     */
+    String cloneCubeConfiguration(String cubeId, String sourceConfigId);
+
+    /**
+     * 克隆默认配置
+     * @param cubeId 目标cube ID
+     * @return 新生成的配置ID
+     */
+    String cloneCubeConfiguration(String cubeId);
 }
