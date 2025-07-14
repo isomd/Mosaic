@@ -66,11 +66,6 @@ public class MosaicInitConfig {
         // 刷新容器
         context.refresh();
 
-        Cube cube = context.getCube(new GUUID("ai.chat.cube"));
-        String s = context.cloneCubeConfiguration("ai.chat.cube");
-
-        Map<String, Object> cubeConfiguration = context.getCubeConfiguration("ai.chat.cube", s);
-
         return context;
     }
 
