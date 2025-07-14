@@ -5,7 +5,9 @@ import io.github.tml.mosaic.core.event.DefaultMosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.MosaicEventBroadcaster;
 import io.github.tml.mosaic.core.event.event.CubeConfigUpdateEvent;
 import io.github.tml.mosaic.core.execption.CubeException;
+import io.github.tml.mosaic.core.tools.guid.GUID;
 import io.github.tml.mosaic.core.tools.guid.GUUID;
+import io.github.tml.mosaic.core.tools.guid.GuuidAllocator;
 import io.github.tml.mosaic.core.tools.param.ConfigInfo;
 import io.github.tml.mosaic.core.tools.param.ConfigItem;
 import io.github.tml.mosaic.cube.Cube;
@@ -22,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract Cube context for loading configuration from files.
- * Handles config reading, parsing, and storage.
+ * Handles config reading, parsing, and storage with multi-configuration support.
  *
  * Author: suifeng
  * Date: 2025/6/7
@@ -31,16 +33,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshableCubeContext {
 
-    /** Stores configuration data by top-level config key */
-    protected final Map<String, JSONObject> configurationMap = new ConcurrentHashMap<>();
+    /** Stores multiple configuration data by cube ID, config ID */
+    protected final Map<String, Map<String, JSONObject>> configurationMap = new ConcurrentHashMap<>();
+
+    /** Default configuration identifier for each cube */
+    private static final String DEFAULT_CONFIG_ID = "default";
 
     /** The config file reader */
     private ConfigReader configReader;
+
+    /** GUID allocator for configuration IDs */
+    private final GuuidAllocator guidAllocator = new GuuidAllocator();
 
     private final MosaicEventBroadcaster eventBroadcaster = DefaultMosaicEventBroadcaster.broadcaster();
 
     @Override
     public Map<String, Object> updateConfigurations(String cubeId, Map<String, Object> config) {
+        return updateCubeConfiguration(cubeId, DEFAULT_CONFIG_ID, config);
+    }
+
+    /**
+     * Update specific configuration for a cube
+     */
+    public Map<String, Object> updateCubeConfiguration(String cubeId, String configId, Map<String, Object> config) {
         CubeDefinition cubeDefinition = getAllCubeDefinitionMap().get(new GUUID(cubeId));
         if (cubeDefinition == null) {
             log.error("Cube definition not found for cubeId: {}", cubeId);
@@ -69,7 +84,10 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.putAll(config);
-        configurationMap.put(cubeId, jsonObject);
+
+        // Ensure cube configuration map exists
+        configurationMap.computeIfAbsent(cubeId, k -> new ConcurrentHashMap<>());
+        configurationMap.get(cubeId).put(configId, jsonObject);
 
         // If singleton, remove and re-initialize
         if (CubeScopeType.SINGLETON.equals(cubeDefinition.getScope())) {
@@ -83,6 +101,16 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         }
 
         return config;
+    }
+
+    /**
+     * Add new configuration for a cube with auto-generated ID
+     */
+    public String addCubeConfiguration(String cubeId, Map<String, Object> config) {
+        String configId = guidAllocator.nextGUID().toString();
+        updateCubeConfiguration(cubeId, configId, config);
+        log.info("Added new configuration for cube: {}, configId: {}", cubeId, configId);
+        return configId;
     }
 
     /** Constructor: initialize config reader */
@@ -153,7 +181,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         }
     }
 
-    /** Parse configuration data and store by top-level key */
+    /** Parse configuration data and store by top-level key with default config ID */
     private void parseAndStoreConfiguration(JSONObject configData, String configLocation) {
         log.debug("Parsing configuration from: {}", configLocation);
         for (Map.Entry<String, Object> entry : configData.entrySet()) {
@@ -172,7 +200,7 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
                 configSection = new JSONObject();
                 configSection.put("value", value);
             }
-            updateConfiguration(topLevelKey, configSection);
+            updateConfiguration(topLevelKey, DEFAULT_CONFIG_ID, configSection);
             log.debug("Stored config section: {} from: {}", topLevelKey, configLocation);
         }
     }
@@ -203,29 +231,127 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         log.info("ConfigReader set to: {}", configReader.getClass().getSimpleName());
     }
 
-    /** Update or add configuration under a particular key */
-    protected void updateConfiguration(String configKey, JSONObject configValue) {
-        if (configKey == null || configKey.trim().isEmpty()) {
-            log.warn("Attempted to update configuration with empty key.");
+    /** Update or add configuration under a particular cube and config key */
+    protected void updateConfiguration(String cubeId, String configId, JSONObject configValue) {
+        if (cubeId == null || cubeId.trim().isEmpty()) {
+            log.warn("Attempted to update configuration with empty cube ID.");
+            return;
+        }
+        if (configId == null || configId.trim().isEmpty()) {
+            log.warn("Attempted to update configuration with empty config ID for cube: {}", cubeId);
             return;
         }
         if (configValue == null) {
-            log.warn("Attempted to update configuration with null value for key: {}", configKey);
+            log.warn("Attempted to update configuration with null value for cube: {}, configId: {}", cubeId, configId);
             configValue = new JSONObject();
         }
-        configurationMap.put(configKey, configValue);
-        log.debug("Configuration updated for key: {}", configKey);
+
+        configurationMap.computeIfAbsent(cubeId, k -> new ConcurrentHashMap<>());
+        configurationMap.get(cubeId).put(configId, configValue);
+        log.debug("Configuration updated for cube: {}, configId: {}", cubeId, configId);
     }
 
-    /** Get configuration by key; return empty JSONObject if not found */
+    /** Get default configuration by cube ID; return empty JSONObject if not found */
     @Override
-    public Map<String, Object> getCubeConfiguration(String configKey) {
-        if (configKey == null || configKey.trim().isEmpty()) {
-            log.warn("Attempted to get configuration with empty key.");
+    public Map<String, Object> getCubeConfiguration(String cubeId) {
+        if (cubeId == null || cubeId.trim().isEmpty()) {
+            log.warn("Attempted to get configuration with empty cube ID.");
             return new JSONObject();
         }
-        JSONObject config = configurationMap.get(configKey);
-        return config != null ? config : new JSONObject();
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        if (cubeConfigs == null || cubeConfigs.isEmpty()) {
+            log.debug("No configurations found for cube: {}", cubeId);
+            return new JSONObject();
+        }
+
+        JSONObject defaultConfig = cubeConfigs.get(DEFAULT_CONFIG_ID);
+        return defaultConfig != null ? convertJsonObjectToMap(defaultConfig) : new JSONObject();
+    }
+
+    /**
+     * Get all configurations for a specific cube
+     */
+    public Map<String, Map<String, Object>> getAllCubeConfigurations(String cubeId) {
+        if (cubeId == null || cubeId.trim().isEmpty()) {
+            log.warn("Attempted to get all configurations with empty cube ID.");
+            return Collections.emptyMap();
+        }
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        if (cubeConfigs == null || cubeConfigs.isEmpty()) {
+            log.debug("No configurations found for cube: {}", cubeId);
+            return Collections.emptyMap();
+        }
+
+        Map<String, Map<String, Object>> result = new HashMap<>();
+        for (Map.Entry<String, JSONObject> entry : cubeConfigs.entrySet()) {
+            result.put(entry.getKey(), convertJsonObjectToMap(entry.getValue()));
+        }
+
+        return result;
+    }
+
+    /**
+     * Get specific configuration by cube ID and config ID
+     */
+    public Map<String, Object> getCubeConfiguration(String cubeId, String configId) {
+        if (cubeId == null || cubeId.trim().isEmpty() || configId == null || configId.trim().isEmpty()) {
+            log.warn("Attempted to get configuration with empty cube ID or config ID.");
+            return new JSONObject();
+        }
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        if (cubeConfigs == null) {
+            log.debug("No configurations found for cube: {}", cubeId);
+            return new JSONObject();
+        }
+
+        JSONObject config = cubeConfigs.get(configId);
+        return config != null ? convertJsonObjectToMap(config) : new JSONObject();
+    }
+
+    /**
+     * Remove specific configuration
+     */
+    public boolean removeCubeConfiguration(String cubeId, String configId) {
+        if (cubeId == null || cubeId.trim().isEmpty() || configId == null || configId.trim().isEmpty()) {
+            log.warn("Attempted to remove configuration with empty cube ID or config ID.");
+            return false;
+        }
+
+        // Cannot remove default configuration
+        if (DEFAULT_CONFIG_ID.equals(configId)) {
+            log.warn("Cannot remove default configuration for cube: {}", cubeId);
+            return false;
+        }
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        if (cubeConfigs == null) {
+            log.debug("No configurations found for cube: {}", cubeId);
+            return false;
+        }
+
+        JSONObject removed = cubeConfigs.remove(configId);
+        if (removed != null) {
+            log.info("Removed configuration for cube: {}, configId: {}", cubeId, configId);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all configuration IDs for a specific cube
+     */
+    public Set<String> getCubeConfigurationIds(String cubeId) {
+        if (cubeId == null || cubeId.trim().isEmpty()) {
+            log.warn("Attempted to get configuration IDs with empty cube ID.");
+            return Collections.emptySet();
+        }
+
+        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
+        return cubeConfigs != null ? new HashSet<>(cubeConfigs.keySet()) : Collections.emptySet();
     }
 
     /** Convert JSONObject to Map<String, Object>, supporting recursion */

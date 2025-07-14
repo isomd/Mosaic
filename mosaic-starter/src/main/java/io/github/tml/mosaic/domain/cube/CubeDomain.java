@@ -86,31 +86,6 @@ public class CubeDomain {
     }
 
     /**
-     * 更新Angel Cube状态
-     * @param cubeId Cube标识
-     * @param action 执行动作
-     * @return 操作结果
-     */
-    public boolean updateAngelCubeStatus(String cubeId, AngelCubeStatusUpdateReq.AngelCubeAction action) {
-        log.debug("Domain: Updating Angel Cube status for ID: {} with action: {}", cubeId, action);
-
-        try {
-            // 1. 验证Cube是否存在且为function类型
-            validateAngelCube(cubeId);
-
-            // 2. 获取Cube实例
-            GUID guid = new GUUID(cubeId);
-            Cube cube = cubeContext.getCube(guid);
-
-            return true;
-
-        } catch (Exception e) {
-            log.error("Domain: Failed to update Angel Cube status for ID: {}", cubeId, e);
-            throw new RuntimeException("更新Angel Cube状态失败: " + e.getMessage(), e);
-        }
-    }
-
-    /**
      * 验证是否为有效的Angel Cube
      */
     private void validateAngelCube(String cubeId) {
@@ -128,31 +103,6 @@ public class CubeDomain {
         }
 
         log.debug("Angel Cube validation passed for ID: {}", cubeId);
-    }
-
-    /**
-     * 执行Angel Cube动作
-     */
-    private CubeStatus executeAngelCubeAction(AngelCube angelCube, AngelCubeStatusUpdateReq.AngelCubeAction action) {
-        try {
-            switch (action) {
-                case START:
-                    angelCube.start();
-                    log.info("Angel Cube started successfully");
-                    return CubeStatus.ACTIVE;
-
-                case STOP:
-                    angelCube.stop();
-                    log.info("Angel Cube stopped successfully");
-                    return CubeStatus.INACTIVE;
-
-                default:
-                    throw new IllegalArgumentException("不支持的操作: " + action);
-            }
-        } catch (Exception e) {
-            log.error("Angel Cube action execution failed: {}", action, e);
-            throw new RuntimeException("Angel Cube操作执行失败: " + e.getMessage(), e);
-        }
     }
 
     /**
