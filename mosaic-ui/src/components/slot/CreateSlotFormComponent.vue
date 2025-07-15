@@ -22,7 +22,7 @@ let cubeList = computed(()=>{
 })
 onMounted(() => {
   if (props.slot&&props.slot.slotId) {
-    createSlotForm.value = props.slot
+    createSlotForm.value = JSON.parse(JSON.stringify(props.slot))
     createSlotForm.value.setupFlag = true
     isSetup.value = true
   }
@@ -56,7 +56,7 @@ const extensionPackages = computed(() => {
     return [] as ExtensionPackage[]
   }
   let exPackages: ExtensionPackage[] = cubeStore.getCubeById(createSlotForm.value.cubeId).extensionPackages as ExtensionPackage[]
-  createSlotForm.value.exPackageId = exPackages[0]?.id
+  // if(createSlotForm.value.exPackageId==='')createSlotForm.value.exPackageId = exPackages[0]?.id
   return exPackages
 })
 const extensionPoints = computed(() => {
@@ -64,9 +64,9 @@ const extensionPoints = computed(() => {
     createSlotForm.value.exPointId = ''
     return [] as ExtensionPoint[]
   }
-  let exPoints: ExtensionPoint[] = extensionPackages.value.find((exPackage) => exPackage.id == createSlotForm.value.exPackageId)
-      .extensionPoints
-  createSlotForm.value.exPointId = exPoints[0]?.id
+  let exPoints: ExtensionPoint[] = extensionPackages.value.find((exPackage) => exPackage.id == createSlotForm.value.exPackageId)?.extensionPoints
+  // if(createSlotForm.value.exPointId==='')createSlotForm.value.exPointId = exPoints[0]?.id
+
   return exPoints
 })
 const form = ref(null)
@@ -75,6 +75,19 @@ const handleSubmit = async () => {
   if (!valid) return
   emit('submitValue',createSlotForm.value)
 }
+
+const updateCube = (val)=>{
+  createSlotForm.value.cubeId = val.id
+  updateExPackage(val.extensionPackages[0])
+}
+const updateExPackage = (val)=>{
+  createSlotForm.value.exPackageId = val?.id
+  updateExPoint(val?.extensionPoints[0])
+}
+const updateExPoint = (val)=>{
+  createSlotForm.value.exPointId = val?.id
+}
+
 defineExpose({handleSubmit})
 </script>
 <template>
@@ -113,7 +126,7 @@ defineExpose({handleSubmit})
       <v-select :disabled="!createSlotForm.setupFlag || readOnly" :rules="setupRules" :items="cubeList" item-title="name"
                 variant="outlined" item-value="id" v-model="createSlotForm.cubeId">
         <template v-slot:item="{ props: itemProps, item }">
-          <v-list-item v-bind="itemProps" :subtitle="item.raw.description">
+          <v-list-item v-bind="itemProps" :subtitle="item.raw.description" @click="updateCube(item.raw)">
 
           </v-list-item>
         </template>
@@ -125,7 +138,7 @@ defineExpose({handleSubmit})
                 :items="extensionPackages" item-title="name" variant="outlined" item-value="id"
                 v-model="createSlotForm.exPackageId">
         <template v-slot:item="{ props: itemProps, item }">
-          <v-list-item v-bind="itemProps" :subtitle="item.raw.description">
+          <v-list-item v-bind="itemProps" :subtitle="item.raw.description" @click="updateExPackage(item.raw)">
 
           </v-list-item>
         </template>
@@ -150,7 +163,7 @@ defineExpose({handleSubmit})
       <v-label>
         {{ $t('slot.resName') }}
       </v-label>
-      <v-select :disabled="readOnly" :items="extensionPoints.filter(exPoint=>exPoint.id === createSlotForm.exPointId)[0]?.pointResult?.pointItems"
+      <v-select :disabled="readOnly" :items="extensionPoints?.filter(exPoint=>exPoint.id === createSlotForm.exPointId)[0]?.pointResult?.pointItems"
                 variant="outlined" v-model="createSlotForm.resName" item-title="itemName">
         <template v-slot:item="{props:itemProps,item,index}">
           <v-list-item v-bind="itemProps"
