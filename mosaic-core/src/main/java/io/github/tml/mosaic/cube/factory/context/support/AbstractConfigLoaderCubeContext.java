@@ -102,6 +102,12 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         return config;
     }
 
+    /** Constructor: initialize config reader */
+    public AbstractConfigLoaderCubeContext() {
+        super();
+        this.configReader = createDefaultConfigReader();
+        log.info("[Cube][CubeContext] cubeContext load god cube configuration by configReader: {}", configReader.getClass().getSimpleName());
+    }
 
     /** Refresh and reload all configuration resources from files */
     @Override
