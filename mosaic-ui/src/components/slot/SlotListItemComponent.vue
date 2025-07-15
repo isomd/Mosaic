@@ -63,11 +63,11 @@ const handleUnSetup = () => {
         -
       </span>
     </div>
-    <div v-else class="extension-point">
-      <div class="setup" @click="dialog = true">
-        {{$t('slot.setup')}}
-      </div>
-    </div>
+<!--    <div v-else class="extension-point">-->
+<!--      <div class="setup" @click="dialog = true">-->
+<!--        {{$t('slot.setup')}}-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="action">
       <v-icon @click="deleteDialog = true">mdi-trash-can</v-icon>
     </div>

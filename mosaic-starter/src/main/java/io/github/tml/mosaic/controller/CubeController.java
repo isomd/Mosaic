@@ -62,22 +62,6 @@ public class CubeController {
     }
 
     /**
-     * 获取指定Cube的配置信息
-     */
-    @GetMapping("/{cubeId}/getConfiguration")
-    public R<?> getCubeConfiguration(@PathVariable String cubeId) {
-        return cubeService.getCubeConfiguration(cubeId);
-    }
-
-    /**
-     * 更新指定Cube的配置信息
-     */
-    @PostMapping("/updateConfiguration")
-    public R<?> updateCubeConfiguration(@RequestBody CubeConfigUpdateReq configReq) {
-        return cubeService.updateCubeConfiguration(configReq);
-    }
-
-    /**
      * 更新Angel Cube状态（启动/停止）
      */
     @PostMapping("/angel/updateStatus")

@@ -33,11 +33,7 @@ public interface CubeContext extends CubeFactory {
 
     Map<String, Object> updateCubeConfiguration(String cubeId, String configId, Map<String, Object> config);
 
-    String addCubeConfiguration(String cubeId, Map<String, Object> config);
-
     boolean removeCubeConfiguration(String cubeId, String configId);
-
-    Set<String> getCubeConfigurationIds(String cubeId);
 
     /**
      * 克隆指定配置，如果不指定源配置ID则克隆默认配置

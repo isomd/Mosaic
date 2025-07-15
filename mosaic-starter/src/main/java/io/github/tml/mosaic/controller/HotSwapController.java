@@ -1,11 +1,9 @@
 package io.github.tml.mosaic.controller;
 
 import io.github.tml.mosaic.entity.req.HotSwapPointRequest;
-import io.github.tml.mosaic.entity.resp.CreateHotSwapPointResp;
 import io.github.tml.mosaic.service.HotSwapService;
 import io.github.tml.mosaic.util.R;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,7 +29,7 @@ public class HotSwapController {
      */
     @GetMapping("getClassStr")
     public R<?> classString(@RequestParam(value = "className") String classFullName){
-        return R.success(hotSwapService.getClassStrByClassFullName(classFullName));
+        return hotSwapService.getClassStrByClassFullName(classFullName);
     }
 
     /**
@@ -41,11 +39,7 @@ public class HotSwapController {
      */
     @PostMapping("/create/point")
     public R<?> createPoint(@RequestBody HotSwapPointRequest hotSwapPointRequest){
-        CreateHotSwapPointResp resp = hotSwapService.createHotSwapPoint(hotSwapPointRequest);
-        if(StringUtils.isEmpty(resp.getErrorMsg())){
-            return R.success(resp);
-        }
-        return R.error(resp.getErrorMsg());
+        return hotSwapService.createHotSwapPoint(hotSwapPointRequest);
     }
 
     /**
@@ -55,7 +49,7 @@ public class HotSwapController {
      */
     @GetMapping("/getHotSwapPoints")
     public R<?> getHotSwapPoints(@RequestParam("className") String classFullName){
-        return  R.success(hotSwapService.getHotSwapPoints(classFullName));
+        return  hotSwapService.getHotSwapPoints(classFullName);
     }
 
     /**
@@ -66,6 +60,6 @@ public class HotSwapController {
      */
     @PostMapping("/rollBackHotSwapPoint")
     public R<?> rollBackHotSwapPoint(@RequestParam("className")String classFullName,@RequestParam("method")String method){
-        return R.success(hotSwapService.rollBackClassHotSwapPoint(classFullName,method));
+        return hotSwapService.rollBackClassHotSwapPoint(classFullName,method);
     }
 }
