@@ -4,6 +4,7 @@ import io.github.tml.mosaic.entity.dto.HotSwapDTO;
 import io.github.tml.mosaic.entity.req.HotSwapPointRequest;
 import io.github.tml.mosaic.entity.resp.CreateHotSwapPointResp;
 import io.github.tml.mosaic.hotSwap.model.HotSwapPoint;
+import io.github.tml.mosaic.util.R;
 
 import java.util.List;
 
@@ -14,13 +15,13 @@ import java.util.List;
  */
 public interface HotSwapService {
 
-    String getClassStrByClassFullName(String classFullName);
+    R<?> getClassStrByClassFullName(String classFullName);
 
-    String proxyCode(HotSwapDTO dto);
+    R<?> proxyCode(HotSwapDTO dto);
 
-    CreateHotSwapPointResp createHotSwapPoint(HotSwapPointRequest dto);
+    R<?> createHotSwapPoint(HotSwapPointRequest dto);
 
-    List<HotSwapPoint> getHotSwapPoints(String classFullName);
+    R<?> getHotSwapPoints(String classFullName);
 
-    String rollBackClassHotSwapPoint(String className, String methodName);
+    R<?> rollBackClassHotSwapPoint(String className, String methodName);
 }
