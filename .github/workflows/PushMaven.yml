@@ -19,22 +19,23 @@ jobs:
       - id: install-secret-key
         name: Install gpg secret key
         run: |
-          cat <(echo -e "-----BEGIN PGP PRIVATE KEY BLOCK-----
-  lIYEaHOGTxYJKwYBBAHaRw8BAQdARUEeGhfYf5FSGYSr0DLj08/2GVjNzY9gYnQS
-  DRgXTNf+BwMC7rArt7ZG1z73Oo/ybN3FT0sMr/H3BwgTfJBEYLXT7Xv9SNPmqMvw
-  h0qUmFd0t6r7/t7nR+vI6+7mf37Pg04N6FXYQVzfCS/wP9Pa5P9wzbQpVGltZU1h
-  Y2hpbmVMYWIgPFRpbWVNYWNoaW5lTGFiQGdtYWlsLmNvbT6ImQQTFgoAQRYhBDqo
-  lVWmumcNJQJwSivYXAcINY+HBQJoc4ZPAhsDBQkFo5qABQsJCAcCAiICBhUKCQgL
-  AgQWAgMBAh4HAheAAAoJECvYXAcINY+HWYgBALT5kctWNG6Z6So81anAGEkgYGSV
-  0fu8jGRfjfKkqY2jAP4/Gsi1SlG9uRPda1Ciel0Cv+myHM24Fy1Va8IpZ46nD5yL
-  BGhzhk8SCisGAQQBl1UBBQEBB0AXoYx+Yzh0uLmtRrtvNoiiENMDoHJ/njHOpTKM
-  f1BzQAMBCAf+BwMCboZni+776Bz31tK+WYiFtevO2KtvuMVHVmn07aeKRnB5l8KO
-  N71p0v7ONokXz6R6uiYxBQ6JGTMrPxjqXDgfjePtk0xqkvfU3a7DAve8k4h+BBgW
-  CgAmFiEEOqiVVaa6Zw0lAnBKK9hcBwg1j4cFAmhzhk8CGwwFCQWjmoAACgkQK9hc
-  Bwg1j4dMNAEA9dq7ueNMHd38/fOnO02djYfLIO4rJVHfOil3uccwNbkA/1IDCVLN
-  kfv3iju+ufCJiKrjEvzdySCCP2UzF9DcHg8I
-  =qB9y
-  -----END PGP PRIVATE KEY BLOCK-----") | gpg --batch --import
+          echo -e "-----BEGIN PGP PRIVATE KEY BLOCK-----\n\
+          lIYEaHOGTxYJKwYBBAHaRw8BAQdARUEeGhfYf5FSGYSr0DLj08/2GVjNzY9gYnQS\n\
+          DRgXTNf+BwMC7rArt7ZG1z73Oo/ybN3FT0sMr/H3BwgTfJBEYLXT7Xv9SNPmqMvw\n\
+          h0qUmFd0t6r7/t7nR+vI6+7mf37Pg04N6FXYQVzfCS/wP9Pa5P9wzbQpVGltZU1h\n\
+          Y2hpbmVMYWIgPFRpbWVNYWNoaW5lTGFiQGdtYWlsLmNvbT6ImQQTFgoAQRYhBDqo\n\
+          lVWmumcNJQJwSivYXAcINY+HBQJoc4ZPAhsDBQkFo5qABQsJCAcCAiICBhUKCQgL\n\
+          AgQWAgMBAh4HAheAAAoJECvYXAcINY+HWYgBALT5kctWNG6Z6So81anAGEkgYGSV\n\
+          0fu8jGRfjfKkqY2jAP4/Gsi1SlG9uRPda1Ciel0Cv+myHM24Fy1Va8IpZ46nD5yL\n\
+          BGhzhk8SCisGAQQBl1UBBQEBB0AXoYx+Yzh0uLmtRrtvNoiiENMDoHJ/njHOpTKM\n\
+          f1BzQAMBCAf+BwMCboZni+776Bz31tK+WYiFtevO2KtvuMVHVmn07aeKRnB5l8KO\n\
+          N71p0v7ONokXz6R6uiYxBQ6JGTMrPxjqXDgfjePtk0xqkvfU3a7DAve8k4h+BBgW\n\
+          CgAmFiEEOqiVVaa6Zw0lAnBKK9hcBwg1j4cFAmhzhk8CGwwFCQWjmoAACgkQK9hc\n\
+          Bwg1j4dMNAEA9dq7ueNMHd38/fOnO02djYfLIO4rJVHfOil3uccwNbkA/1IDCVLN\n\
+          kfv3iju+ufCJiKrjEvzdySCCP2UzF9DcHg8I\n\
+          =qB9y\n\
+          -----END PGP PRIVATE KEY BLOCK-----" | gpg --batch --import
+          
           gpg --list-secret-keys --keyid-format LONG
       - name: Publish package
         env:
