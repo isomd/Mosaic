@@ -14,6 +14,9 @@ import io.github.tml.mosaic.cube.factory.definition.CubeRegistrationResult;
 import io.github.tml.mosaic.entity.dto.CubeDTO;
 import io.github.tml.mosaic.entity.req.AngelCubeStatusUpdateReq;
 import io.github.tml.mosaic.entity.req.CubeConfigUpdateReq;
+import io.github.tml.mosaic.entity.req.CubeMultiConfigUpdateReq;
+import io.github.tml.mosaic.entity.req.CubeConfigAddReq;
+import io.github.tml.mosaic.entity.req.CubeConfigCloneReq;
 import io.github.tml.mosaic.entity.req.CubeFilterReq;
 import io.github.tml.mosaic.entity.dto.CubeOverviewDTO;
 import io.github.tml.mosaic.entity.vo.cube.CubeInfoVO;
@@ -30,6 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -52,7 +56,7 @@ public class CubeDomain {
      */
     public List<CubeDTO> getCubeList() {
         log.debug("Domain: Fetching all cube definitions");
-        
+
         List<CubeDefinition> cubeDefinitions = cubeContext.getAllCubeDefinitions();
         List<CubeDTO> result = cubeDefinitions.stream()
                 .map(CubeConvert::convert2DTO)
@@ -61,27 +65,60 @@ public class CubeDomain {
                 })
                 .sorted(Comparator.comparing(CubeDTO::getId))
                 .collect(Collectors.toList());
-        
+
         log.info("Domain: Successfully retrieved {} cube definitions", result.size());
         return result;
     }
 
     /**
-     * 获取Cube配置信息
+     * 获取Cube默认配置信息
      * @param cubeId Cube标识
      */
     public Map<String, Object> getCubeConfiguration(String cubeId) {
-        log.debug("Domain: Fetching configuration for cube ID: {}", cubeId);
+        log.debug("Domain: Fetching default configuration for cube ID: {}", cubeId);
 
         try {
-            // 从上下文获取配置
             Map<String, Object> configurations = cubeContext.getCubeConfiguration(cubeId);
-
-            log.info("Domain: Successfully retrieved configuration for cube ID: {}", cubeId);
+            log.info("Domain: Successfully retrieved default configuration for cube ID: {}", cubeId);
             return configurations;
         } catch (Exception e) {
-            log.error("Domain: Failed to fetch configuration for cube ID: {}", cubeId, e);
-            throw new RuntimeException("获取Cube配置失败: " + e.getMessage(), e);
+            log.error("Domain: Failed to fetch default configuration for cube ID: {}", cubeId, e);
+            throw new RuntimeException("获取Cube默认配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取Cube所有配置信息
+     * @param cubeId Cube标识
+     */
+    public Map<String, Map<String, Object>> getAllCubeConfigurations(String cubeId) {
+        log.debug("Domain: Fetching all configurations for cube ID: {}", cubeId);
+
+        try {
+            Map<String, Map<String, Object>> configurations = cubeContext.getAllCubeConfigurations(cubeId);
+            log.info("Domain: Successfully retrieved all configurations for cube ID: {}", cubeId);
+            return configurations;
+        } catch (Exception e) {
+            log.error("Domain: Failed to fetch all configurations for cube ID: {}", cubeId, e);
+            throw new RuntimeException("获取Cube所有配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取Cube指定配置信息
+     * @param cubeId Cube标识
+     * @param configId 配置标识
+     */
+    public Map<String, Object> getCubeConfiguration(String cubeId, String configId) {
+        log.debug("Domain: Fetching configuration for cube ID: {}, config ID: {}", cubeId, configId);
+
+        try {
+            Map<String, Object> configurations = cubeContext.getCubeConfiguration(cubeId, configId);
+            log.info("Domain: Successfully retrieved configuration for cube ID: {}, config ID: {}", cubeId, configId);
+            return configurations;
+        } catch (Exception e) {
+            log.error("Domain: Failed to fetch configuration for cube ID: {}, config ID: {}", cubeId, configId, e);
+            throw new RuntimeException("获取Cube指定配置失败: " + e.getMessage(), e);
         }
     }
 
@@ -89,15 +126,12 @@ public class CubeDomain {
      * 验证是否为有效的Angel Cube
      */
     private void validateAngelCube(String cubeId) {
-        // 检查Cube是否存在
         Optional<CubeDTO> cubeOpt = getCubeById(cubeId);
         if (cubeOpt.isEmpty()) {
             throw new IllegalArgumentException("Cube不存在，ID: " + cubeId);
         }
 
         CubeDTO cube = cubeOpt.get();
-
-        // 检查是否为angle类型
         if (!CubeModelType.ANGLE_TYPE.equals(cube.getModel())) {
             throw new IllegalArgumentException("只有angle类型的Cube才支持状态管理，当前类型: " + cube.getModel());
         }
@@ -106,25 +140,93 @@ public class CubeDomain {
     }
 
     /**
-     * 更新Cube配置信息
+     * 更新Cube默认配置信息
      * @param cubeId Cube标识
      * @param configReq 配置更新请求
      */
     public Map<String, Object> updateCubeConfiguration(String cubeId, CubeConfigUpdateReq configReq) {
-        log.debug("Domain: Updating configuration for cube ID: {} with request: {}", cubeId, configReq);
+        log.debug("Domain: Updating default configuration for cube ID: {} with request: {}", cubeId, configReq);
 
         try {
-            // 执行配置更新
             Map<String, Object> updatedConfigurations = cubeContext.updateConfigurations(
                     cubeId,
                     configReq.getConfigurations()
             );
 
-            log.info("Domain: Successfully updated configuration for cube ID: {}", cubeId);
+            log.info("Domain: Successfully updated default configuration for cube ID: {}", cubeId);
             return updatedConfigurations;
         } catch (Exception e) {
-            log.error("Domain: Failed to update configuration for cube ID: {}", cubeId, e);
-            throw new RuntimeException("更新Cube配置失败: " + e.getMessage(), e);
+            log.error("Domain: Failed to update default configuration for cube ID: {}", cubeId, e);
+            throw new RuntimeException("更新Cube默认配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 更新Cube指定配置信息
+     * @param configReq 多配置更新请求
+     */
+    public Map<String, Object> updateCubeConfiguration(CubeMultiConfigUpdateReq configReq) {
+        String cubeId = configReq.getCubeId();
+        String configId = configReq.getConfigId();
+        log.debug("Domain: Updating configuration for cube ID: {}, config ID: {} with request: {}",
+                cubeId, configId, configReq);
+
+        try {
+            Map<String, Object> updatedConfigurations = cubeContext.updateCubeConfiguration(
+                    cubeId,
+                    configId,
+                    configReq.getConfigurations()
+            );
+
+            log.info("Domain: Successfully updated configuration for cube ID: {}, config ID: {}", cubeId, configId);
+            return updatedConfigurations;
+        } catch (Exception e) {
+            log.error("Domain: Failed to update configuration for cube ID: {}, config ID: {}", cubeId, configId, e);
+            throw new RuntimeException("更新Cube指定配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 删除Cube指定配置
+     * @param cubeId Cube标识
+     * @param configId 配置标识
+     */
+    public boolean removeCubeConfiguration(String cubeId, String configId) {
+        log.debug("Domain: Removing configuration for cube ID: {}, config ID: {}", cubeId, configId);
+
+        try {
+            boolean removed = cubeContext.removeCubeConfiguration(cubeId, configId);
+
+            if (removed) {
+                log.info("Domain: Successfully removed configuration for cube ID: {}, config ID: {}", cubeId, configId);
+            } else {
+                log.warn("Domain: Configuration not found or cannot be removed for cube ID: {}, config ID: {}", cubeId, configId);
+            }
+
+            return removed;
+        } catch (Exception e) {
+            log.error("Domain: Failed to remove configuration for cube ID: {}, config ID: {}", cubeId, configId, e);
+            throw new RuntimeException("删除Cube配置失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 克隆Cube配置
+     * @param cloneReq 配置克隆请求
+     */
+    public String cloneCubeConfiguration(CubeConfigCloneReq cloneReq) {
+        String cubeId = cloneReq.getCubeId();
+        String sourceConfigId = cloneReq.getSourceConfigId();
+        log.debug("Domain: Cloning configuration for cube ID: {}, source config ID: {}", cubeId, sourceConfigId);
+
+        try {
+            String newConfigId = cubeContext.cloneCubeConfiguration(cubeId, sourceConfigId);
+            log.info("Domain: Successfully cloned configuration for cube ID: {}, source config ID: {}, new config ID: {}",
+                    cubeId, sourceConfigId, newConfigId);
+            return newConfigId;
+        } catch (Exception e) {
+            log.error("Domain: Failed to clone configuration for cube ID: {}, source config ID: {}", cubeId, sourceConfigId, e);
+            throw new RuntimeException("克隆Cube配置失败: " + e.getMessage(), e);
         }
     }
 
@@ -135,15 +237,12 @@ public class CubeDomain {
      */
     public List<CubeRegistrationResult> installAndRegisterCubes(String... configLocations) {
         try {
-            // 转换信息上下文
             List<CubeInfo> cubeInfos = InfoContextConverter.convertInfoContextsToCubeInfoList(
                     installer.installCubeInfoContext(configLocations)
             );
 
-            // 转换为Cube定义
             List<CubeDefinition> cubeDefinitions = CubeDefinitionConverter.convertCubeInfoListToCubeDefinitionList(cubeInfos);
 
-            // 注册到上下文容器
             return cubeContext.registerAllCubeDefinition(cubeDefinitions);
 
         } catch (Exception e) {
@@ -167,18 +266,18 @@ public class CubeDomain {
      */
     public List<CubeDTO> getCubesByFilter(CubeFilterReq filterDTO) {
         log.debug("Domain: Applying filter criteria: {}", filterDTO);
-        
+
         List<CubeDefinition> allDefinitions = cubeContext.getAllCubeDefinitions();
-        
+
         List<CubeDefinition> filteredDefinitions = allDefinitions.stream()
                 .filter(buildDomainFilterPredicate(filterDTO))
                 .collect(Collectors.toList());
-        
+
         List<CubeDTO> result = filteredDefinitions.stream()
                 .map(CubeConvert::convert2DTO)
                 .sorted(Comparator.comparing(CubeDTO::getId))
                 .collect(Collectors.toList());
-        
+
         log.info("Domain: Filter applied, found {} matching cubes", result.size());
         return result;
     }
@@ -188,18 +287,18 @@ public class CubeDomain {
      */
     public Optional<CubeDTO> getCubeById(String cubeId) {
         log.debug("Domain: Fetching cube definition for ID: {}", cubeId);
-        
+
         Map<GUID, CubeDefinition> definitionMap = cubeContext.getAllCubeDefinitionMap();
         CubeDefinition definition = definitionMap.get(new GUUID(cubeId));
-        
+
         if (definition == null) {
             log.warn("Domain: Cube definition not found for ID: {}", cubeId);
             return Optional.empty();
         }
-        
+
         CubeDTO result = CubeConvert.convert2DTO(definition);
         log.debug("Domain: Successfully retrieved cube definition for ID: {}", cubeId);
-        
+
         return Optional.of(result);
     }
 
@@ -208,10 +307,10 @@ public class CubeDomain {
      */
     public CubeOverviewDTO generateCubeOverview() {
         log.debug("Domain: Generating cube overview statistics");
-        
+
         List<CubeDefinition> allDefinitions = cubeContext.getAllCubeDefinitions();
         CubeOverviewDTO overview = CubeConvert.convertToOverviewDTO(allDefinitions);
-        
+
         log.info("Domain: Successfully generated cube overview statistics");
         return overview;
     }
@@ -233,18 +332,18 @@ public class CubeDomain {
         Predicate<CubeDefinition> predicate = def -> true;
 
         if (filterDTO.hasName()) {
-            predicate = predicate.and(def -> 
-                def.getName().toLowerCase().contains(filterDTO.getName().toLowerCase()));
+            predicate = predicate.and(def ->
+                    def.getName().toLowerCase().contains(filterDTO.getName().toLowerCase()));
         }
 
         if (filterDTO.hasModel()) {
-            predicate = predicate.and(def -> 
-                filterDTO.getModel().equals(def.getModel()));
+            predicate = predicate.and(def ->
+                    filterDTO.getModel().equals(def.getModel()));
         }
 
         if (filterDTO.hasVersion()) {
-            predicate = predicate.and(def -> 
-                filterDTO.getVersion().equals(def.getVersion()));
+            predicate = predicate.and(def ->
+                    filterDTO.getVersion().equals(def.getVersion()));
         }
 
         return predicate;

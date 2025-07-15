@@ -68,6 +68,7 @@ const handleSave = () => {
   createPoint(createPointForm.value).then((res: any) => {
     if (res.code == 200) {
       emit('updateCode', res.data.code)
+      slotStore.getSlots()
       statusStore.setLoading(false)
     } else {
       statusStore.setLoading(false)
@@ -104,13 +105,12 @@ const isJavaIdentifierValid = (name: String) => {
 
   return !javaKeywords.has(name);
 }
-const handleSlotChange = (newSlot) => {
-  // createPointForm.value = {
-  //   ...createPointForm.value,
-  //   ...newSlot
-  // }
-  console.log(newSlot)
-  createPointForm.value.slotId = newSlot.slotId
+const handleSlotChange = (value) => {
+  if (typeof value === 'string') {
+    createPointForm.value.slotId = value
+  } else if(typeof value === 'object'){
+    createPointForm.value.slotId = value.slotId
+  }
 }
 const handleSubmit = async () => {
   const {valid} = await form.value.validate();
@@ -167,9 +167,6 @@ const rules = [
     return t('slot.rule.empty')
   },
 ]
-const customFilter = (item, queryText) => {
-  return item.raw.slotId.toLowerCase().includes(queryText.toLowerCase())
-}
 </script>
 <template>
   <v-dialog class="hotSwap" v-model="dialog" max-width="480">
@@ -197,6 +194,7 @@ const customFilter = (item, queryText) => {
                         item-value="slotId"
                         item-title="slotId"
                         aria-autocomplete="none"
+                        @update:modelValue="handleSlotChange"
             >
             </v-combobox>
           </v-list-item-subtitle>

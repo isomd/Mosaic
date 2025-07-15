@@ -102,16 +102,6 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         return config;
     }
 
-    /**
-     * Add new configuration for a cube with auto-generated ID
-     */
-    public String addCubeConfiguration(String cubeId, Map<String, Object> config) {
-        String configId = guidAllocator.nextGUID().toString();
-        updateCubeConfiguration(cubeId, configId, config);
-        log.info("Added new configuration for cube: {}, configId: {}", cubeId, configId);
-        return configId;
-    }
-
     /** Constructor: initialize config reader */
     public AbstractConfigLoaderCubeContext() {
         super();
@@ -338,19 +328,6 @@ public abstract class AbstractConfigLoaderCubeContext extends AbstractRefreshabl
         }
 
         return false;
-    }
-
-    /**
-     * Get all configuration IDs for a specific cube
-     */
-    public Set<String> getCubeConfigurationIds(String cubeId) {
-        if (cubeId == null || cubeId.trim().isEmpty()) {
-            log.warn("Attempted to get configuration IDs with empty cube ID.");
-            return Collections.emptySet();
-        }
-
-        Map<String, JSONObject> cubeConfigs = configurationMap.get(cubeId);
-        return cubeConfigs != null ? new HashSet<>(cubeConfigs.keySet()) : Collections.emptySet();
     }
 
     /**
