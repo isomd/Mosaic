@@ -196,6 +196,7 @@ const customFilter = (item, queryText) => {
                         v-model="createPointForm.slotId"
                         item-value="slotId"
                         item-title="slotId"
+                        aria-autocomplete="none"
             >
             </v-combobox>
           </v-list-item-subtitle>
