@@ -7,10 +7,13 @@ import {useCubeStore} from "@/store/data/useCubeStore";
 import {useSlotStore} from "@/store/data/useSlotStore";
 import {useStatusStore} from "@/store/useStatusStore";
 import type {ExtensionPackage, ExtensionPoint} from "@/api/plugin/pluginType";
+import {useI18n} from "vue-i18n";
 const statusStore = useStatusStore()
 
 const cubeStore = useCubeStore()
 const slotStore = useSlotStore()
+const {t} = useI18n()
+
 const emit = defineEmits(['update:modelValue', 'updateCode'])
 const props = defineProps({
   value: Boolean,
@@ -59,7 +62,7 @@ onMounted(() => {
 })
 
 
-const handelSave = () => {
+const handleSave = () => {
   dialog.value = false
   statusStore.setLoading(true)
   createPoint(createPointForm.value).then((res: any) => {
@@ -101,39 +104,21 @@ const isJavaIdentifierValid = (name: String) => {
 
   return !javaKeywords.has(name);
 }
-const createSlot = ref<boolean>(false)
 const handleSlotChange = (newSlot) => {
-  if(newSlot.slotId === 'yqdsmyszmdxz'){
-    createSlot.value = true
-    createPointForm.value = {
-      slotId: '',
-      cubeId: "",
-      exPackageId: "",
-      exPointId: "",
-      resName: "",
-      className: '',
-      targetLine: 0,
-      changeType: 'INSERT_AFTER',
-      args: []
-    }
-    return
-  }
-  createSlot.value = false
-  createPointForm.value = {
-    ...createPointForm.value,
-    ...newSlot
-  }
+  // createPointForm.value = {
+  //   ...createPointForm.value,
+  //   ...newSlot
+  // }
+  console.log(newSlot)
+  createPointForm.value.slotId = newSlot.slotId
 }
-
+const handleSubmit = async () => {
+  const {valid} = await form.value.validate();
+  if (!valid) return
+  handleSave()
+}
 const combobox = ref()
-const createSlotRef = ref()
-const handleSubmit = (form) => {
-  createPointForm.value = {
-    ...createPointForm.value,
-    ...form
-  }
-  handelSave()
-}
+const form = ref()
 const update = (val) =>{
   if(val.length > (extensionPoints.value.filter(exPoint=>exPoint.id === createPointForm.value.exPointId)[0]?.parameterTypes.length||0)){
     return
@@ -146,8 +131,7 @@ const extensionPackages = computed(() => {
     form.value.exPackageId = ''
     return [] as ExtensionPackage[]
   }
-  let exPackages: ExtensionPackage[] = cubeStore.getCubeById(form.value.cubeId).extensionPackages as ExtensionPackage[]
-  form.value.exPackageId = exPackages[0]?.id
+  let exPackages: ExtensionPackage[] = cubeStore.getCubeById(form.value.cubeId)?.extensionPackages as ExtensionPackage[]
   return exPackages
 })
 const extensionPoints = computed(() => {
@@ -156,18 +140,42 @@ const extensionPoints = computed(() => {
     form.value.exPointId = ''
     return [] as ExtensionPoint[]
   }
-  let exPoints: ExtensionPoint[] = extensionPackages.value.find((exPackage) => exPackage.id == form.value.exPackageId)
-      .extensionPoints
-  form.value.exPointId = exPoints[0]?.id
+  let exPoints: ExtensionPoint[] = extensionPackages.value.find((exPackage) => exPackage.id == form.value.exPackageId)?.extensionPoints
   return exPoints
 })
 const closeChip = (index) =>{
   createPointForm.value.args.splice(index,1)
 }
+let cubeList = computed(()=>{
+  return cubeStore.cubeList
+})
+const updateCube = (val)=>{
+  createPointForm.value.cubeId = val.id
+  updateExPackage(val.extensionPackages[0])
+}
+const updateExPackage = (val)=>{
+  createPointForm.value.exPackageId = val?.id
+  updateExPoint(val?.extensionPoints[0])
+}
+const updateExPoint = (val)=>{
+  createPointForm.value.exPointId = val?.id
+  createPointForm.value.resName = "default"
+}
+const rules = [
+  value => {
+    if (value) return true
+    return t('slot.rule.empty')
+  },
+]
+const customFilter = (item, queryText) => {
+  return item.raw.slotId.toLowerCase().includes(queryText.toLowerCase())
+}
 </script>
 <template>
   <v-dialog class="hotSwap" v-model="dialog" max-width="480">
+    <v-form @submit.prevent="handleSubmit" ref="form">
     <v-card style="overflow: hidden">
+
       <v-list>
         <v-list-item>
           <v-list-item-title>
@@ -182,52 +190,89 @@ const closeChip = (index) =>{
             {{ $t('hotSwap.slot') }}
           </v-list-item-title>
           <v-list-item-subtitle>
-            <v-select :items="slotList"
-                      variant="outlined"
-                      :model-value="createPointForm.slotId"
-                      @update:modelValue="handleSlotChange">
-              <template v-slot:item="{props:itemProps,item,index}">
-                <v-list-item v-bind="itemProps" :title="''" :key="item.id" v-if="item.raw.slotId === 'yqdsmyszmdxz'">
-                  <template #title>{{ $t('hotSwap.createSlot') }}</template>
-                </v-list-item>
-                <v-list-item v-bind="itemProps" :title="''" :key="index" v-else>
-                  <template #title>{{ cubeStore.getExPointBySlotId(item.raw.slotId)?.extensionName||item.raw.slotId }}</template>
-                  <template #subtitle>{{ cubeStore.getExPointBySlotId(item.raw.slotId)?.description||$t('hotSwap.emptySlot') }}</template>
+            <v-combobox :items="slotList.filter((slot)=>{return !slot.cubeId})"
+                        :rules="rules"
+                        variant="outlined"
+                        v-model="createPointForm.slotId"
+                        item-value="slotId"
+                        item-title="slotId"
+                        aria-autocomplete="none"
+            >
+            </v-combobox>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>
+            {{ $t('slot.cube') }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <v-select :items="cubeList" item-title="name" :rules="rules"
+                      variant="outlined" item-value="id" v-model="createPointForm.cubeId">
+              <template v-slot:item="{ props: itemProps, item }">
+                <v-list-item v-bind="itemProps" :subtitle="item.raw.description" @click="updateCube(item.raw)">
+
                 </v-list-item>
               </template>
             </v-select>
           </v-list-item-subtitle>
-<!--          <v-list-item v-if="createPointForm.slotId">-->
-<!--            <v-list-item-title>-->
-<!--              {{ $t('hotSwap.plugin') }}:-->
-<!--            </v-list-item-title>-->
-<!--            <v-list-item-subtitle>-->
-<!--              {{ createPointForm.cubeId }}-->
-<!--            </v-list-item-subtitle>-->
-<!--            <v-list-item-title>-->
-<!--              {{ $t('hotSwap.exPackage') }}:-->
-<!--            </v-list-item-title>-->
-<!--            <v-list-item-subtitle>-->
-<!--              {{ createPointForm.exPackageId }}-->
-<!--            </v-list-item-subtitle>-->
-<!--            <v-list-item-title>-->
-<!--              {{ $t('hotSwap.exPoint') }}:-->
-<!--            </v-list-item-title>-->
-<!--            <v-list-item-subtitle>-->
-<!--              {{ createPointForm.exPointId }}-->
-<!--            </v-list-item-subtitle>-->
-<!--            <v-list-item-title>-->
-<!--              {{ $t('hotSwap.parameterTypes') }}:-->
-<!--            </v-list-item-title>-->
-<!--            <v-list-item-action>-->
-<!--              <v-chip-group>-->
-<!--                <v-chip v-for="type in cubeStore.getExPointBySlotId(createPointForm.slotId)?.parameterTypes"><span-->
-<!--                    style="color:#CC7731">{{ type }}</span></v-chip>-->
-<!--              </v-chip-group>-->
-<!--            </v-list-item-action>-->
-<!--          </v-list-item>-->
         </v-list-item>
-        <CreateSlotFormComponent @submitValue="handleSubmit" ref="createSlotRef" :key="createPointForm" :slot="createPointForm" :create="true"></CreateSlotFormComponent>
+        <v-list-item>
+          <v-list-item-title>
+            {{ $t('slot.extensionPackage') }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <v-select
+                :items="extensionPackages" item-title="name" variant="outlined" item-value="id" :rules="rules"
+                v-model="createPointForm.exPackageId">
+              <template v-slot:item="{ props: itemProps, item }">
+                <v-list-item v-bind="itemProps" :subtitle="item.raw.description" @click="updateExPackage(item.raw)">
+
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>
+            {{ $t('slot.extensionPoint') }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <v-select
+                :items="extensionPoints" item-title="extensionName" variant="outlined" item-value="id" :rules="rules"
+                v-model="createPointForm.exPointId">
+              <template v-slot:item="{ props: itemProps, item }">
+                <v-list-item v-bind="itemProps">
+                  <v-list-item-subtitle class="d-flex align-center">
+                    <v-chip x-small label class="mr-2">{{ item.raw.methodName }}()</v-chip>
+                    <v-chip x-small label color="indigo" text-color="white">
+                      {{ item.raw.returnType }}
+                    </v-chip>
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>
+            {{ $t('slot.resName') }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <v-select  :items="extensionPoints?.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.pointResult?.pointItems" :rules="rules"
+                       variant="outlined" v-model="createPointForm.resName" item-title="itemName">
+              <template v-slot:item="{props:itemProps,item,index}">
+                <v-list-item v-bind="itemProps"
+                             :value="item.raw">
+                  <template #title><span>{{ item.raw.itemName }}  </span>
+                    <v-chip>{{ item.raw.itemClass }}</v-chip>
+                  </template>
+                  <template #subtitle>{{ item.raw.description }}</template>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <!--        <CreateSlotFormComponent @submitValue="handleSubmit" ref="createSlotRef" :key="createPointForm.slotId" :slot="createPointForm" :create="true"></CreateSlotFormComponent>-->
         <v-list-item>
           <v-list-item-title>
             {{ $t('hotSwap.args') }}
@@ -246,9 +291,10 @@ const closeChip = (index) =>{
                 ref="combobox"
                 @click:clear.stop
                 @update:modelValue="update"
+                :rules="[()=>createPointForm.args.length>=(extensionPoints?.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.parameterTypes.length||0)]"
             >
               <template v-slot:append>
-                {{`${createPointForm.args.length}/${extensionPoints.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.parameterTypes.length||0}`}}
+                {{`${createPointForm.args.length}/${extensionPoints?.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.parameterTypes.length||0}`}}
               </template>
               <template v-slot:item="{ props:itemProps, item }">
                 <v-list-item v-bind="itemProps" class="selection">
@@ -258,33 +304,33 @@ const closeChip = (index) =>{
                 <v-chip @click:close="closeChip(index)">
                   <strong>{{ item.raw }}</strong>&nbsp;&nbsp;
                   <span style="color: #CC7731">({{
-                      extensionPoints.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.parameterTypes[index]
+                      extensionPoints?.filter(exPoint=>exPoint.id === createPointForm.exPointId)[0]?.parameterTypes[index]
                     }})</span>
                 </v-chip>
               </template>
             </v-combobox>
           </v-list-item-subtitle>
         </v-list-item>
-<!--        <v-list-item>-->
-<!--          <v-list-item-title>-->
-<!--            {{ $t('hotSwap.resName') }}-->
-<!--          </v-list-item-title>-->
-<!--          <v-list-item-subtitle>-->
+        <!--        <v-list-item>-->
+        <!--          <v-list-item-title>-->
+        <!--            {{ $t('hotSwap.resName') }}-->
+        <!--          </v-list-item-title>-->
+        <!--          <v-list-item-subtitle>-->
 
-<!--            <v-select :items="cubeStore.getExPointBySlotId(createPointForm.slotId)?.pointResult?.pointItems"-->
-<!--                      variant="outlined" v-model="createPointForm.resName" item-title="itemName">-->
-<!--              <template v-slot:item="{props:itemProps,item,index}">-->
-<!--                <v-list-item v-bind="itemProps"-->
-<!--                             :value="item.raw">-->
-<!--                  <template #title><span>{{ item.raw.itemName }}  </span>-->
-<!--                    <v-chip>{{ item.raw.itemClass }}</v-chip>-->
-<!--                  </template>-->
-<!--                  <template #subtitle>{{ item.raw.description }}</template>-->
-<!--                </v-list-item>-->
-<!--              </template>-->
-<!--            </v-select>-->
-<!--          </v-list-item-subtitle>-->
-<!--        </v-list-item>-->
+        <!--            <v-select :items="cubeStore.getExPointBySlotId(createPointForm.slotId)?.pointResult?.pointItems"-->
+        <!--                      variant="outlined" v-model="createPointForm.resName" item-title="itemName">-->
+        <!--              <template v-slot:item="{props:itemProps,item,index}">-->
+        <!--                <v-list-item v-bind="itemProps"-->
+        <!--                             :value="item.raw">-->
+        <!--                  <template #title><span>{{ item.raw.itemName }}  </span>-->
+        <!--                    <v-chip>{{ item.raw.itemClass }}</v-chip>-->
+        <!--                  </template>-->
+        <!--                  <template #subtitle>{{ item.raw.description }}</template>-->
+        <!--                </v-list-item>-->
+        <!--              </template>-->
+        <!--            </v-select>-->
+        <!--          </v-list-item-subtitle>-->
+        <!--        </v-list-item>-->
         <v-list-item>
           <v-list-item-title>
             {{ $t('hotSwap.changeType') }}
@@ -309,12 +355,13 @@ const closeChip = (index) =>{
         <v-btn @click="emit('update:modelValue', false)">
           关闭
         </v-btn>
-        <v-btn @click="createSlotRef.handleSubmit()">
+        <v-btn type="submit">
           保存
         </v-btn>
       </v-card-actions>
-    </v-card>
 
+    </v-card>
+    </v-form>
   </v-dialog>
 </template>
 <style lang="scss" scoped>
